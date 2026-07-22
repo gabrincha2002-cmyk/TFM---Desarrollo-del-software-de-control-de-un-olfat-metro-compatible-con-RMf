@@ -1,0 +1,157 @@
+def iniciar_protocolo(self):
+    self.ciclo_actual = 1
+    self.indice_canal_protocolo = 0
+    self.segundos_restantes = 0
+    self.fase_actual = None
+        
+    if self.protocolo_activo:
+        if self.protocolo_parado:
+            self.protocolo_parado = False
+            self.consola.registro("Reanudando protocolo...")
+            #HAY QUE CONTINUAR IMPLEMENTACIÓN
+            if self.fase_actual == "Exposición":
+                canal = self.canales_protocolo[self.indice_canal_protocolo]
+                canal.activar_canal()
+                self.periodo_exposicion(canal, self.segundos_restantes)
+            if self.fase_actual == "Desensibilización":
+                self.cuadros_canales[2].activar_canal() #CANAL DE DESENSIBILIZACIÓN
+                self.periodo_desensibilizacion(self.segundos_restantes)
+            if self.fase_actual == "Intervalo":
+                self.periodo_intervalo(self.segundos_restantes)
+        else:
+            self.consola.registro("Ya hay un protocolo activo", nivel="AVISO")
+        return
+        
+    else:
+        self.protocolo_activo= True
+        canales_con_olor = []
+
+        for canal in self.cuadros_canales:
+            if canal.e_olor_canal.get() != "":
+                canales_con_olor.append(canal)
+
+        #Validación
+        ##ESTOS CONDICIONALES SE LOS PUEDO METER A UNA FUNCIÓN PARA QUE ASEGURE LA VALIDACIÓN DEL PROTOCOLO
+        if not canales_con_olor:
+            self.consola.registro("No hay ningún canal con olor seleccionado, Defina al menos un canal para iniciar el protocolo", nivel="AVISO")
+            self.protocolo_activo= False
+            return
+        self.consola.registro(f"{self.e_num_ciclos.get()}")
+        if self.e_num_ciclos.get() == 0:
+            self.consola.registro("El número de ciclos no está definido. Defina al menos un ciclo para iniciar el protocolo", nivel="AVISO")
+            self.protocolo_activo= False
+            return
+
+        if self.e_tiempo_exposicion.get() == 0:
+            self.consola.registro("El tiempo de exposición no está definido", nivel="AVISO")
+            self.protocolo_activo= False
+            return
+
+        if self.e_tiempo_desensibilizacion.get() == 0:
+            self.consola.registro("El tiempo de desensibilización no está definido", nivel="AVISO")
+            self.protocolo_activo= False
+            return
+
+        if self.cb_aleatorio.get() == 0 and self.cb_secuencial.get() == 0:
+            self.consola.registro("No se ha seleccionado el orden de los canales. Seleccione un orden para iniciar el protocolo", nivel="AVISO")
+            self.protocolo_activo= False
+            return
+
+        if self.cb_aleatorio.get() == 1 and self.cb_secuencial.get() == 1:
+            self.consola.registro("No se pueden seleccionar ambos órdenes de canal a la vez. Seleccione un orden para iniciar el protocolo", nivel="AVISO")
+            self.protocolo_activo= False
+            return
+
+        if self.cb_aleatorio.get() == 1:
+            self.canales_protocolo = random.sample(canales_con_olor, len(canales_con_olor))
+            orden_protocolo = "aleatorio"
+        else:
+            #hacemos una copia de la lista de olores en el protocolo y no una referencia al objeto que los guarda
+            self.canales_protocolo = list(canales_con_olor)
+            orden_protocolo = "secuencial"
+
+        #ARRANQUE PROTOCOLO
+        self.consola.registro(f"Iniciando protocolo en {len(self.canales_protocolo)} canales: { [olor.e_olor_canal.get() for olor in self.canales_protocolo] }")
+        #self.sv_estado_protocolo.set(f"Ciclo {self.ciclo_actual}/{self.e_num_ciclos.get()} - Canal {self.colores_canales[self.canal_proto_idx]} - Fase: {self.fase_actual or 'N/A'} - Tiempo restante: {self.segundos_restantes}s")
+        #self.sv_cuenta_atras.set(f"{self.segundos_restantes}s")
+        self.bloquear_botones(bloquear=True)
+        self.iniciar_exposicion()
+
+    def iniciar_exposicion(self):
+        if self.indice_canal_protocolo >= len(self.canales_protocolo):
+            self.iniciar_intervalo()
+            return
+        
+        canal = self.canales_protocolo[self.indice_canal_protocolo]
+        self.fase_actual = "Exposición"
+        self.consola.registro(f"Ciclo {self.ciclo_actual}/{self.e_num_ciclos.get()} Iniciando exposición en canal {canal.e_olor_canal.get()} durante {self.e_tiempo_exposicion.get()} segundos")
+        canal.activar_canal()
+        self.periodo_exposicion(canal, int(self.e_tiempo_exposicion.get()))
+
+    def periodo_exposicion(self, canal, segundos_restantes):
+        if self.protocolo_parado:
+            self.segundos_restantes = segundos_restantes
+            return
+        
+        if segundos_restantes > 0:
+            self.segundos_restantes = segundos_restantes
+            #self.sv_cuenta_atrasc.set(f"{self.segundos_restantes}s")
+            self.temporizador_activo = self.after(1000, lambda: self.periodo_exposicion(canal, segundos_restantes - 1))
+        else:
+            #self.sv_cuenta_atras.set("")
+            canal.parar_canal()
+            self.iniciar_desensibilizacion()
+    
+    def iniciar_desensibilizacion(self):
+        self.fase_actual = "Desensibilización"
+        self.consola.registro(f"Ciclo {self.ciclo_actual}/{self.e_num_ciclos.get()} Iniciando desensibilización durante {self.e_tiempo_desensibilizacion.get()} segundos")
+        self.cuadros_canales[2].activar_canal() #CANAL DE DESENSIBILIZACIÓN
+        self.periodo_desensibilizacion(int(self.e_tiempo_desensibilizacion.get()))
+
+    def periodo_desensibilizacion(self, segundos_restantes):
+        if self.protocolo_parado:
+            self.segundos_restantes = segundos_restantes
+            return
+        
+        if segundos_restantes > 0:
+            #canal.activar_canal()
+            self.segundo_restantes = segundos_restantes
+            #self.sv_cuenta_atras.set(f"{self.segundos_restantes}s")
+            self.temporizador_activo = self.after(1000, lambda: self.periodo_desensibilizacion(segundos_restantes - 1))
+
+        else:
+            #self.sv_cuenta_atras.set("")
+            self.cuadros_canales[2].parar_canal()
+            self.indice_canal_protocolo += 1
+            self.iniciar_exposicion()
+
+    def iniciar_intervalo(self):
+        self.ciclo_actual += 1
+        if self.ciclo_actual > int(self.e_num_ciclos.get()):
+            self.finalizar_protocolo()
+            return
+        self.fase_actual = "Intervalo"
+        self.indice_canal_protocolo = 0
+        self.consola.registro(f"Pausa entre ciclos durante: {self.e_intervalo_ciclos.get()} segundos. Ciclo siguiente: {self.ciclo_actual}/{self.e_num_ciclos.get()}")
+        self.periodo_intervalo(int(self.e_intervalo_ciclos.get()))
+
+
+    def periodo_intervalo(self, segundos_restantes):
+        if self.protocolo_parado:
+            self.segundos_restantes = segundos_restantes
+            return
+        if segundos_restantes > 0:
+            self.segundos_restantes = segundos_restantes
+            #self.sv_cuenta_atras.set(f"{self.segundos_restantes}s")
+            self.temporizador_activo = self.after(1000, lambda: self.periodo_intervalo(segundos_restantes - 1))
+        else:
+            #self.sv_cuenta_atras.set("")
+            self.iniciar_exposicion()
+
+    def finalizar_protocolo(self):
+        self.protocolo_activo = False
+        self.protocolo_parado = False
+        self.fase_actual = None
+        #self.sv_cuenta_atras.set("")
+        self.bloquear_botones(bloquear=False)
+        self.consola.registro("Protocolo finalizado")
