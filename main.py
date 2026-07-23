@@ -922,6 +922,38 @@ class App(ctk.CTk):
                 colores_canales = self.colores_canales,
         )
     
+    def generar_informe(self):
+        
+        formatos = [('PDF','*.pdf'),('Excel', '*.xlsx'),('CSV','*.csv')]
+        ruta = ctk.filedialog.asksaveasfilename(title='Guardar informe de sesión',
+                                                filetypes=formatos, defaultextension=".pdf",
+                                                  initialfile=f'informe_{self.e_id_sesion.get()}_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}')
+        datos= self._construir_datos_informe()
+
+        self.consola.registro(f'Generando informe en {ruta}....')
+
+        if ruta.endswith('.pdf'):
+            try:
+                reports.generar_pdf(ruta, datos)
+                self.consola.registro(f"InformePDF generado correctamente en {ruta}")
+            except Exception as e:
+                self.consola.registro(f'Error al generar informe PDF: {e}', nivel = "ERROR")
+
+        elif ruta.endswith('.xlsx'):
+            try:
+                reports.generar_excel(ruta, datos)
+                self.consola.registro(f"Informe Excel generado correctamente en {ruta}")
+            except Exception as e:
+                self.consola.registro(f'Error al generar informe Excel: {e}', nivel = "ERROR")
+
+        elif ruta.endswith('.csv'):
+            try:
+                reports.generar_csv(ruta, datos)
+                self.consola.registro(f"Informe CSV generado correctamente en {ruta}")
+            except Exception as e:
+                self.consola.registro(f'Error al generar informe CSV: {e}', nivel = "ERROR")
+
+    """
     def generar_csv(self, ruta):
         #Extrae los datos de la UI, llama al módulo reports para generar el CSV y registra la acción en la consola
         try:
@@ -931,6 +963,7 @@ class App(ctk.CTk):
 
         except Exception as e:
             self.consola.registro(f"Error al generar CSV: {e}", nivel="ERROR")
+    """
 
     def b_buscar_dispositivos(self):
         if self.ws_client.conectado:

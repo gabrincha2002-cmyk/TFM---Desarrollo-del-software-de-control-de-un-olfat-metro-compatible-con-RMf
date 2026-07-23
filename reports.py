@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 
 import customtkinter as ctk
 import datetime
+import statistics
 
 from widgets import Canal, Consola
 from main import media
@@ -56,7 +57,7 @@ class DatosInforme:
     metricas_calibracion: dict[int, dict]
     colores_canales: list[str]
 
-
+"""
 def generar_informe(self):
         
         formatos = [('PDF','*.pdf'),('Excel', '*.xlsx'),('CSV','*.csv')]
@@ -70,13 +71,14 @@ def generar_informe(self):
         self.consola.registro(f'Generando informe en {ruta}....')
 
         if ruta.endswith('.pdf'):
-            generar_pdf(ruta)
+            self.generar_pdf(ruta)
         elif ruta.endswith('.xlsx'):
             self.generar_excel(ruta)
         elif ruta.endswith('.csv'):
             self.generar_csv(ruta)
 
         self.consola.registro(f'Informe generado en: {ruta}')
+"""
 
 def generar_csv(ruta: str , datos: DatosInforme):
         seccion_sesion=[["OlfaMetric - Informe de sesión"],
@@ -198,7 +200,8 @@ def _generar_csv_eventos(ruta: str, datos: DatosInforme):
             writer.writerows(eventos)
 
 
-def generar_excel(self,ruta):
+def generar_excel(ruta: str, datos: DatosInforme):
+        
         workbook = openpyxl.Workbook()
 
         #Estilos
@@ -223,10 +226,10 @@ def generar_excel(self,ruta):
         hoja_resumen['A1'].font = Font(bold=True, size=20, color='FF01BDCE')
         
         datos_sesion = [
-            ("ID sesión", self.e_id_sesion.get()),
-            ("ID paciente", self.e_id_paciente.get()),
+            ("ID sesión", datos.id_sesion),
+            ("ID paciente", datos.id_paciente),
             ("Fecha", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")),
-            ("Duración de sesión", self.duracion_sesion.get().replace("Duración de sesión: ",""))
+            ("Duración de sesión", datos.duracion_sesion.replace("Duración de sesión: ",""))
         ]
         for contador, (clave,valor) in enumerate(datos_sesion, start=2):
             hoja_resumen[f'A{contador}'] = clave
@@ -240,10 +243,10 @@ def generar_excel(self,ruta):
         fila += 1
 
         datos_protocolo = [
-            ("Número de ciclos", self.e_num_ciclos.get()),
-            ("Tiempo de exposición", f'{self.e_tiempo_exposicion.get()} s'),
-            ("Tiempo de desensibilización", f'{self.e_tiempo_desensibilizacion.get()} s'),
-            ("Tiempo de intervalo entre ciclos", f'{self.e_intervalo_ciclos.get()} s')
+            ("Número de ciclos", datos.num_ciclos),
+            ("Tiempo de exposición", f'{datos.tiempo_exposicion} s'),
+            ("Tiempo de desensibilización", f'{datos.tiempo_desensibilizacion} s'),
+            ("Tiempo de intervalo entre ciclos", f'{datos.intervalo_ciclos} s')
         ]
 
         for clave, valor in datos_protocolo:
@@ -273,18 +276,18 @@ def generar_excel(self,ruta):
 
         #en caso de existir los datos relativos a la calibración se introducen en sus correspondientes
         #celdas mediante un bucle anidado, por el que con cada fila par se aplica un relleno característico
-        if self.metricas_calibracion:
-            for num_canal, metrica in self.metricas_calibracion.items():
+        if datos.metricas_calibracion:
+            for num_canal, metrica in datos.metricas_calibracion.items():
                 fila_datos = [
-                    self.e_tiempo_calibrado.get(),
-                    self.colores_canales[num_canal],
+                    datos.tiempo_calibrado,
+                    datos.colores_canales[num_canal],
                     metrica.get("olor",""),
-                    round(self.media(metrica.get("concentracion", 0)), 2),
-                    round(self.media(metrica.get("concentracion bruta", 0)),2),
-                    round(self.media(metrica.get("concentracion neta", 0)),2),
-                    round(self.media(metrica.get("flujo", 0)),2),
-                    round(self.media(metrica.get("velocidad",0)),1),
-                    round(self.media(metrica.get("latencia",0)),1)
+                    round(media(metrica.get("concentracion", 0)), 2),
+                    round(media(metrica.get("concentracion bruta", 0)),2),
+                    round(media(metrica.get("concentracion neta", 0)),2),
+                    round(media(metrica.get("flujo", 0)),2),
+                    round(media(metrica.get("velocidad",0)),1),
+                    round(media(metrica.get("latencia",0)),1)
                     ]
                 for columna, valor in enumerate(fila_datos, start=1):
                     hoja_resumen.cell(fila, columna).value = valor
@@ -310,18 +313,18 @@ def generar_excel(self,ruta):
         for columna, cabecera in enumerate(cabeceras_historial_datos,start=1):
             aplicar_estilo_cabecera(hoja_historial.cell(1,columna),cabecera)
 
-        for fila, metrica in enumerate(self.historial_sesion, start=2):
+        for fila, metrica in enumerate(datos.historial_sesion, start=2):
             fila_datos = [
                 datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),  
-                self.colores_canales[metrica["canal"]],
+                datos.colores_canales[metrica["canal"]],
                 metrica.get("olor",""),
                 metrica.get("estado",""),
-                round(self.media(metrica.get("flujo", 0)), 2),
-                round(self.media(metrica.get("velocidad_motor", 0)), 1),
-                round(self.media(metrica.get("concentracion", 0)), 2),
-                round(self.media(metrica.get("concentracion bruta", 0)), 2),
-                round(self.media(metrica.get("concentracion neta", 0)), 2),
-                round(self.media(metrica.get("latencia", 0)), 1),
+                round(media(metrica.get("flujo", 0)), 2),
+                round(media(metrica.get("velocidad_motor", 0)), 1),
+                round(media(metrica.get("concentracion", 0)), 2),
+                round(media(metrica.get("concentracion bruta", 0)), 2),
+                round(media(metrica.get("concentracion neta", 0)), 2),
+                round(media(metrica.get("latencia", 0)), 1),
             ]
 
             for columna, valor in enumerate(fila_datos, start=1):
@@ -338,18 +341,18 @@ def generar_excel(self,ruta):
         hoja_graficas.title = "Gráficas de Calibrado"
         hoja_graficas['A1'].font = estilo_titulo
 
-        if self.metricas_calibracion:
+        if datos.metricas_calibracion:
             fila = 3
             archivos_temporales = []
-            for num_canal, metricas in self.metricas_calibracion.items():
-                color_canal = self.colores_canales[num_canal]
+            for num_canal, metricas in datos.metricas_calibracion.items():
+                color_canal = datos.colores_canales[num_canal]
                 #muestras = metrica.get("muestras", {})
 
                 for parametro, valores in metricas.items():
                     #se generar grafícas mediante el paquetede matplotlib, y se guardan como imágenes temporales
                     figura, eje = plt.subplots(figsize=(8,3), dpi=80)
                     eje.plot(valores, color="#01bdce")
-                    eje.set_title(f'Canal {color_canal}/{self.cuadros_canales[num_canal].e_olor_canal.get()} - {parametro}', fontdict={'fontsize': 10, 'fontweight': 'bold'})
+                    eje.set_title(f'Canal {color_canal}/{datos.cuadros_canales[num_canal].e_olor_canal.get()} - {parametro}', fontdict={'fontsize': 10, 'fontweight': 'bold'})
                     eje.set_xlabel('Tiempo (s)')
                     eje.set_ylabel(parametro)
                     eje.grid(True, linestyle='--', alpha=0.5)
@@ -377,22 +380,15 @@ def generar_excel(self,ruta):
                     hoja_graficas.add_image(imagen)
                     fila += 18
 
-
-        try:
             #guardamos el workbook con el conjunto de las hojas y datos generados en la ruta seleccionada 
             # por el usuario
             workbook.save(ruta)
-            self.consola.registro("Excel guardado correctamente")
+            #self.consola.registro("Excel guardado correctamente")
             # Ahora sí eliminamos los archivos temporales usados para las imágenes
             for archivo in archivos_temporales:
-                try:
-                    if os.path.exists(archivo):
-                        os.unlink(archivo)
-                except Exception:
-                    self.consola.registro(f"Error al eliminar el archivo temporal: {archivo}", nivel="ERROR")
+                if os.path.exists(archivo):
+                    os.unlink(archivo)
 
-        except Exception as e:
-            self.consola.registro(f"Error al guardar Excel: {e}", nivel="ERROR")
 
 def generar_pdf(self, ruta):
         import statistics
