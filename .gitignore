@@ -1,3 +1,4 @@
+# Archivos de entorno virtual y dependencias a ignorar por el repositorio de Git
 # Entorno virtual
 venv/
 .venv/
