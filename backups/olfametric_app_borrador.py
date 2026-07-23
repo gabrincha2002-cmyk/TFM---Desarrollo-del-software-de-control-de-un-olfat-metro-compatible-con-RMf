@@ -38,7 +38,7 @@ import collections
 import numpy as np
 
 #conexión con simulación del ESP32
-from ws_client_entregable3 import WSClient
+from backups.ws_client_original import WSClient
 
 #para generar un hilo paralelo a la app
 import threading
@@ -260,9 +260,6 @@ class App(ctk.CTk):
         self.title("OlfaMetric")
         self.geometry("1920x1080")
         self.colores_canales = ["Verde Claro", "Negro", "Blanco", "Azul", "Amarillo", "Rojo"]  # Colores para cada cartucho
-        self.posicion_valvula = 0
-        # Diccionario para mapear los canales a sus posiciones en la gráfica
-        self.posiciones_canales ={2: 0, 0: 200, 1: 400, 3: 600, 4: 800, 5: 1000, -1: 1200, -2: 1400}
         self.tiempo_grafica_flujo = list(range(61))
         self.tiempo_grafica_concentracion = list(range(61))
         self.tiempo_grafica_latencia = list(range(61))
@@ -340,7 +337,8 @@ class App(ctk.CTk):
 
         #Cliente para establecer conexión con el controlador ESP32-WROOM (o simulador)
         self.ws_client = WSClient(
-        uri        = "ws://olfatometro.local:8765",   # o IP del ESP32
+        uri        = "ws://olfametro.local:8765",   # o IP del ESP32
+        on_datos   = self._on_datos_ws,
         on_estado  = self._on_estado_ws,
     )
 
@@ -363,32 +361,13 @@ class App(ctk.CTk):
     def _procesar_cola_ws(self):
         """Lee mensajes de la cola WS y los procesa en el hilo de Tkinter."""
         try:
-            # Recorre y procesa todos los mensajes pendientes en la cola de recepción
             while not self.ws_client._cola_rx.empty():
-                # Obtiene el siguiente mensaje sin esperar (get_nowait evita bloqueos)
                 datos = self.ws_client._cola_rx.get_nowait()
-
-                # Si es un mensaje de confirmación (ACK) o configuración, envía a su handler
-                if "ack" in datos or datos.get("tipo") == "config":
-                    self._datos_ack(datos)
-                    
-                # Si contiene datos de registro/log, procesa como entrada de log
-                elif "log" in datos:
-                    self._datos_log(datos)
-
-                # Si contiene información de canal y estado, trata como dato de telemetría
-                elif "canal" in datos and "estado" in datos:
-                    self._datos_telemetria(datos)
-                # Si no cumple ninguno de los formatos esperados, lo reporta como desconocido
-                else:
-                    self.consola.registro(f"[Ws_client] Mensaje recibido desconocido: {datos}")
+                self._on_datos_ws(datos)
         except Exception as e:
-            # Si ocurre un error durante el procesamiento, lo registra en la consola
-            self.consola.registro(f"Error procesando cola en el protocolo WebSocket: {e}", nivel="ERROR")
-        # El bloque finally se ejecuta siempre, incluso si hay error. Asegura que
-        # la función se reschedule cada 50ms para polling continuo de mensajes
+            self.consola.registro(f"Error procesando cola WS: {e}", nivel="ERROR")
         finally:
-            self.after(50, self._procesar_cola_ws)  # Verifica la cola cada 50 ms
+            self.after(50, self._procesar_cola_ws)  # revisar cada 50m
 
     #CONSTRUCCIÓN DE INTERFAZ DE USUARIO
     def crear_ui(self):
@@ -1644,7 +1623,7 @@ class App(ctk.CTk):
         #.local.       → dominio mDNS (siempre este, con el punto final)
         #El único propósito de la variable buscador es mantener vivo el objeto 
         # en memoria durante el bucle de espera.
-        buscador = zc.ServiceBrowser(zconf, "_olfatometro._tcp.local.", Oyente())
+        buscador = zc.ServiceBrowser(zconf, "_esp32._tcp.local.", Oyente())
         
 
         """
@@ -1974,9 +1953,6 @@ class App(ctk.CTk):
             self.iniciar_exposicion()
 
     def finalizar_protocolo(self):
-        pasos_home = self.posiciones_canales[2]-self.posicion_valvula
-        self.ws_client.enviar({"cmd": "rotar", "canal": 2, "pasos": pasos_home})
-        self.posicion_valvula = 0
         self.protocolo_activo = False
         self.protocolo_parado = False
         self.fase_actual = None
@@ -2630,19 +2606,12 @@ class App(ctk.CTk):
         for canal in self.cuadros_canales:
             self.olores.append(canal.e_olor_canal.get())
 
-    def calcular_posicion_valvula(self, num_canal_actual, num_canal_final):
-        movimiento = self.posiciones_canales[num_canal_final] - self.posiciones_canales[num_canal_actual]
-        self.posicion_valvula = self.posicion_valvula + movimiento
-        return movimiento
-        
+    #NO FUNCIONA LA FUNCIÓN
+    #HAY QUE VOLVER A IMPLEMENTAR EL MÉTODO
    
     def actualizar_canales(self,num_canal,accion):     
             if accion== "activar":
-                #se establece la posición de la válvula giratoria según el canal activo y el canal que se quiere activar.
-                pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else 2, num_canal)
-                
                 if self.canal_activo != None and self.canal_activo.num_canal != num_canal:
-                    self.consola.registro(f"Se ha activado el canal {num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ""}) mientras el canal {self.canal_activo.num_canal} ({self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() if self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() else ""}) estaba activo. Se detiene el canal {self.canal_activo.num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ""}).", nivel="AVISO")
                     self.canal_activo.parar_canal()
                 self.canal_activo = self.cuadros_canales[num_canal]
                 self.sv_canal_activo.set(f"Canal {self.canal_activo.e_olor_canal.get()}" if self.canal_activo.e_olor_canal.get() else "Canal Blanco")
@@ -2655,12 +2624,8 @@ class App(ctk.CTk):
                     else:
                         self.sv_canal_anterior.set(f"Canal Blanco" if self.indice_canal_protocolo - 1 >= 0 else "Ninguno")
                         self.sv_canal_siguiente.set(f"Canal Blanco" if self.indice_canal_protocolo + 1 <= len(self.canales_protocolo)  else "Ninguno")      
-                
-                #mensaje para mover la válvula giratoria  a la posición del canal activo.
-                self.ws_client.enviar({"cmd": "rotar", "canal": num_canal, "pasos": pasos})
-                #mensaje para activar el motor DC
-                self.ws_client.enviar({"cmd": "activar", "canal": num_canal, "velocidad_%": 14})
-
+                self.consola.registro(f"Canal {num_canal} SE ACTIVA")
+                self.ws_client.enviar({"cmd": "activar", "canal": num_canal, "velocidad_%": 100})
             
             if accion== "parar":
                 if self.canal_activo is not None and self.canal_activo.num_canal == num_canal:
@@ -2675,14 +2640,11 @@ class App(ctk.CTk):
                                 "concentracion" : 0.0,
                                 "latencia" : 0
                     })
-                    if not self.protocolo_activo:
-                        pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else 2, 2)
-                        self.ws_client.enviar({"cmd": "rotar", "canal": num_canal, "pasos": pasos})
                     self.canal_activo = None
                     self.sv_canal_activo.set("Ninguno")
 
                     #podrían establecerse como valor "Ninguno" a los canales anterior y siguiente.
-                #self.consola.registro(f"Canal {num_canal} SE PARA")
+                self.consola.registro(f"Canal {num_canal} SE PARA")
                 self.ws_client.enviar({"cmd": "parar", "canal": num_canal})
         
 
@@ -2690,7 +2652,9 @@ class App(ctk.CTk):
             
 
 #FUNCIONES NECESARIAS PARA LA CONCEXIÓN CON ESP32
-    def _datos_telemetria(self, datos: dict):
+    def _on_datos_ws(self, datos: dict):
+        if "ack" in datos or datos.get("tipo") == "config":
+            return
         # Llamado desde el hilo WS → usar after() para tocar la UI
         num_canal = datos.get("canal", -1)
         # Actualizar buffers de la gráfica correspondiente
@@ -2754,27 +2718,6 @@ class App(ctk.CTk):
                     self.sv_concentracion_canal.set(f"{datos['concentracion']:.1f} µg/m\u00B3")
                     self.sv_latencia_canal.set(f"{datos['latencia']} ms") #la latencia no hace falta aproximarla, se sabe su valor en cada momento
                     
-    def _datos_ack(self, datos: dict):
-        # Procesar ACK de datos si es necesario
-        accion = datos.get("ack", "desconocida")
-        canal_accion = datos.get("canal", "desconocido")
-        estado_accion = datos.get("ok", "desconocido")
-        estado_en_cola = datos.get("en_cola", "desconocido")
-        if estado_accion == True:
-            estado_accion = "correctamente"
-        else: 
-            estado_accion = "incorrectamente"
-        if canal_accion == 2:
-            self.consola.registro(f"[ESP32] Acción '{accion}' en canal {canal_accion} (Canal Blanco) recibida y {"en colada" if estado_en_cola else "ejecutada"} {estado_accion}.")
-        else:
-            self.consola.registro(f"[ESP32] Acción '{accion}' en canal {canal_accion} ({self.cuadros_canales[int(canal_accion)].e_olor_canal.get() if self.cuadros_canales[int(canal_accion)].e_olor_canal.get() else "Sin olor definido"}) recibida y {"en colada" if estado_en_cola else "ejecutada"} {estado_accion}.")
-
-    def _datos_log(self, datos: dict):
-        # Procesar log de datos si es necesario
-        nivel_mensaje = datos.get("nivel", "INFO").upper()
-        mensaje = datos.get("log", "(sin contenido)")
-        self.consola.registro(f"[ESP32] {mensaje}", nivel=nivel_mensaje)
-    
                 
 
     def _on_estado_ws(self, estado: str):

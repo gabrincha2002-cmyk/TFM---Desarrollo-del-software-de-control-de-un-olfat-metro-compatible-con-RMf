@@ -10,6 +10,7 @@
     from ws_client import WSClient
     self.ws_client = WSClient(
         uri        = "ws://localhost:8765",   # o IP del ESP32
+        on_datos   = self._on_datos_ws,
         on_estado  = self._on_estado_ws,
     )
     self.ws_client.iniciar()
@@ -62,10 +63,12 @@ class WSClient:
     def __init__(
         self,
         uri:           str,
+        on_datos:      Callable[[dict], None],
         on_estado:     Callable[[str], None],
         reconectar_s:  float = 0.5,
     ):
         self.uri          = uri
+        self._on_datos    = on_datos
         self._on_estado   = on_estado
         self._reconectar  = reconectar_s
 
@@ -150,7 +153,7 @@ class WSClient:
                     #se incluye el cálculo de la latencia
                     latencia_ms = (time.time() - datos["timestamp"]) * 1000
                     datos["latencia"] = round(latencia_ms,1)
-                # Mete en cola los datos recibidos para que el hilo principal los procese
+                # No llamar _on_datos directamente — meter en cola
                 self._cola_rx.put_nowait(datos)
             except json.JSONDecodeError as e:
                 logger.warning(f"Mensaje no parseable: {e}")
