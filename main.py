@@ -908,10 +908,10 @@ class App(ctk.CTk):
 
     def _construir_datos_informe(self):
         return reports.DatosInforme(
-                id_sesionc = self.e_id_sesion.get(),
+                id_sesion = self.e_id_sesion.get(),
                 id_paciente = self.e_id_paciente.get(),
-                duracion_sesion = self.e_duracion_sesion.get(),
-                tiempo_inicio_sesion = float(self.e_tiempo_inicio_sesion.get()),
+                duracion_sesion = self.duracion_sesion.get(),
+                tiempo_inicio_sesion = float(self.tiempo_inicio_sesion),
                 num_ciclos = self.e_num_ciclos.get(),
                 tiempo_exposicion = self.e_tiempo_exposicion.get(),
                 tiempo_desensibilizacion = self.e_tiempo_desensibilizacion.get(),
@@ -937,7 +937,9 @@ class App(ctk.CTk):
                 reports.generar_pdf(ruta, datos)
                 self.consola.registro(f"InformePDF generado correctamente en {ruta}")
             except Exception as e:
+                import traceback
                 self.consola.registro(f'Error al generar informe PDF: {e}', nivel = "ERROR")
+                self.consola.registro(traceback.format_exc(), nivel="ERROR")
 
         elif ruta.endswith('.xlsx'):
             try:
@@ -1887,24 +1889,6 @@ class App(ctk.CTk):
         self.parar_calibrado_flujo()
         self.parar_calibrado_concentracion()
         self.parar_calibrado_latencia()
-    
-    def media(self, lista):
-        # Acepta tanto listas/iterables como valores numéricos.
-        try:
-            if lista is None:
-                return 0
-            if isinstance(lista, (int, float)):
-                return lista
-            # Evitar calcular la media de strings
-            if isinstance(lista, str):
-                return 0
-            # Intentar iterar y calcular la media
-            seq = list(lista)
-            return statistics.mean(seq) if seq else 0
-        
-        except Exception as e:
-            self.consola.registro(f"Error al calcular la media: {e}", nivel="ERROR")
-            return None
 
     def protocolo_definido(self,protocolo):
         if protocolo != '------':

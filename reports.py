@@ -10,7 +10,6 @@ import datetime
 import statistics
 
 from widgets import Canal, Consola
-from main import media
 
 #Imports necesarios para la generación del informe:
 #se utilizan para generar el pdf:
@@ -56,6 +55,24 @@ class DatosInforme:
     historial_sesion: list[dict] 
     metricas_calibracion: dict[int, dict]
     colores_canales: list[str]
+
+
+def media(lista):
+    # Acepta tanto listas/iterables como valores numéricos.
+    try:
+        if lista is None:
+            return 0
+        if isinstance(lista, (int, float)):
+            return lista
+        # Evitar calcular la media de strings
+        if isinstance(lista, str):
+            return 0
+        # Intentar iterar y calcular la media
+        seq = list(lista)
+        return statistics.mean(seq) if seq else 0
+    
+    except TypeError:
+        return -1 
 
 """
 def generar_informe(self):
@@ -341,18 +358,20 @@ def generar_excel(ruta: str, datos: DatosInforme):
         hoja_graficas.title = "Gráficas de Calibrado"
         hoja_graficas['A1'].font = estilo_titulo
 
+        archivos_temporales = []
         if datos.metricas_calibracion:
             fila = 3
-            archivos_temporales = []
             for num_canal, metricas in datos.metricas_calibracion.items():
                 color_canal = datos.colores_canales[num_canal]
                 #muestras = metrica.get("muestras", {})
 
                 for parametro, valores in metricas.items():
+                    if parametro == "olor":
+                        continue
                     #se generar grafícas mediante el paquetede matplotlib, y se guardan como imágenes temporales
                     figura, eje = plt.subplots(figsize=(8,3), dpi=80)
                     eje.plot(valores, color="#01bdce")
-                    eje.set_title(f'Canal {color_canal}/{datos.cuadros_canales[num_canal].e_olor_canal.get()} - {parametro}', fontdict={'fontsize': 10, 'fontweight': 'bold'})
+                    eje.set_title(f'Canal {color_canal}/{metricas["olor"]} - {parametro}', fontdict={'fontsize': 10, 'fontweight': 'bold'})
                     eje.set_xlabel('Tiempo (s)')
                     eje.set_ylabel(parametro)
                     eje.grid(True, linestyle='--', alpha=0.5)
@@ -380,27 +399,23 @@ def generar_excel(ruta: str, datos: DatosInforme):
                     hoja_graficas.add_image(imagen)
                     fila += 18
 
-            #guardamos el workbook con el conjunto de las hojas y datos generados en la ruta seleccionada 
-            # por el usuario
-            workbook.save(ruta)
-            #self.consola.registro("Excel guardado correctamente")
-            # Ahora sí eliminamos los archivos temporales usados para las imágenes
-            for archivo in archivos_temporales:
-                if os.path.exists(archivo):
-                    os.unlink(archivo)
+        #guardamos el workbook con el conjunto de las hojas y datos generados en la ruta seleccionada
+        # por el usuario (siempre, haya o no datos de calibración)
+        workbook.save(ruta)
+        # Ahora sí eliminamos los archivos temporales usados para las imágenes
+        for archivo in archivos_temporales:
+            if os.path.exists(archivo):
+                os.unlink(archivo)
 
 
-def generar_pdf(self, ruta):
-        import statistics
-        from reportlab.lib.enums import TA_CENTER
-
+def generar_pdf(ruta: str, datos: DatosInforme):
 
         # Estilos
         estilos = getSampleStyleSheet()
         estilo_titulo = ParagraphStyle('Titulo',
                                     fontSize=25,
                                     textColor=colors.HexColor('#01BDCE'),
-                                    alignment=TA_CENTER,          # ✅ constante, no string
+                                    alignment=TA_CENTER,          
                                     spaceAfter=20,
                                     fontName='Helvetica-Bold')
 
@@ -417,7 +432,7 @@ def generar_pdf(self, ruta):
             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.HexColor('#EEEEEE'), colors.white]),  # ✅ ROWBACKGROUNDS con S
+            ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.HexColor('#EEEEEE'), colors.white]),  
             ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
             ('GRID', (0, 0), (-1, -1), 0.5, colors.gray),
             ('FONTSIZE', (0, 0), (-1, 0), 11),
@@ -427,16 +442,16 @@ def generar_pdf(self, ruta):
         historia = []
 
         # TÍTULO
-        historia.append(Paragraph("OlfaMetric - Informe de sesion", estilo_titulo))  # ✅ sin ó
+        historia.append(Paragraph("OlfaMetric - Informe de sesion", estilo_titulo)) 
         historia.append(Spacer(1, 4*mm))
 
         # DATOS DE SESIÓN
         historia.append(Paragraph("Datos de sesion", estilo_seccion))
         datos_sesion = [
-            ["ID sesion", self.e_id_sesion.get()],
-            ["ID paciente", self.e_id_paciente.get()],
+            ["ID sesion", datos.id_sesion],
+            ["ID paciente", datos.id_paciente],
             ["Fecha", datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
-            ["Duracion de sesion", self.duracion_sesion.get().replace("Duración de sesión: ", "")]
+            ["Duracion de sesion", datos.duracion_sesion]
         ]
         tabla_sesion = Table(datos_sesion, colWidths=(100*mm, 80*mm))
         tabla_sesion.setStyle(TableStyle([
@@ -456,10 +471,10 @@ def generar_pdf(self, ruta):
         # PARÁMETROS DEL PROTOCOLO
         historia.append(Paragraph("Parametros del protocolo", estilo_seccion))
         datos_protocolo = [
-            ["Numero de ciclos", self.e_num_ciclos.get()],
-            ["Tiempo de exposicion", f'{self.e_tiempo_exposicion.get()} s'],
-            ["Tiempo de desensibilizacion", f'{self.e_tiempo_desensibilizacion.get()} s'],
-            ["Tiempo de intervalo entre ciclos", f'{self.e_intervalo_ciclos.get()} s']
+            ["Numero de ciclos", datos.num_ciclos],
+            ["Tiempo de exposicion", f'{datos.tiempo_exposicion} s'],
+            ["Tiempo de desensibilizacion", f'{datos.tiempo_desensibilizacion} s'],
+            ["Tiempo de intervalo entre ciclos", f'{datos.intervalo_ciclos} s']
         ]
         tabla_protocolo = Table(datos_protocolo, colWidths=(100*mm, 80*mm))
         tabla_protocolo.setStyle(TableStyle([
@@ -477,23 +492,23 @@ def generar_pdf(self, ruta):
 
         # RESULTADOS DE CALIBRACIÓN
         historia.append(Paragraph("Resultados de calibracion", estilo_seccion))
-        cabeceras_calibracion = [[                                    # ✅ lista de listas
+        cabeceras_calibracion = [[                                    
         "Tiempo","Canal", "Olor", "Conc.(ug/m³)", "C.bruta(ug/m³)",
         "C.neta(ug/m³)", "Flujo(ml/min)", "Vel (rpm)", "Latencia(ms)"
         ]]
         datos_calibracion = []
-        if self.metricas_calibracion:
-            for num_canal, metrica in self.metricas_calibracion.items():
+        if datos.metricas_calibracion:
+            for num_canal, metrica in datos.metricas_calibracion.items():
                 datos_calibracion.append([
-                    self.e_tiempo_calibrado.get(),
-                    self.colores_canales[num_canal],
+                    datos.e_tiempo_calibrado.get(),
+                    datos.colores_canales[num_canal],
                     metrica.get("olor", ""),
-                    round(self.media(metrica.get("concentracion", [])), 2),
-                    round(self.media(metrica.get("concentracion bruta", [])), 2),
-                    round(self.media(metrica.get("concentracion neta", [])), 2),
-                    round(self.media(metrica.get("flujo", [])), 2),
-                    round(self.media(metrica.get("velocidad", [])), 1),
-                    round(self.media(metrica.get("latencia", [])), 1),
+                    round(media(metrica.get("concentracion", [])), 2),
+                    round(media(metrica.get("concentracion bruta", [])), 2),
+                    round(media(metrica.get("concentracion neta", [])), 2),
+                    round(media(metrica.get("flujo", [])), 2),
+                    round(media(metrica.get("velocidad", [])), 1),
+                    round(media(metrica.get("latencia", [])), 1),
                     ])
         tabla_calibracion = Table(cabeceras_calibracion + datos_calibracion,
                                colWidths=[10*mm,22*mm, 24*mm, 26*mm, 28*mm, 28*mm, 24*mm, 22*mm, 14*mm])
@@ -509,10 +524,10 @@ def generar_pdf(self, ruta):
         "C.neta(ug/m³)", "Latencia(ms)"
         ]]
         datos_historial = []
-        for metrica in self.historial_sesion:
+        for metrica in datos.historial_sesion:
             datos_historial.append([
                 datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),
-                self.colores_canales[metrica["canal"]],
+                datos.colores_canales[metrica["canal"]],
                 metrica.get("olor", ""),
                 #metrica.get("estado", ""),
                 round(metrica.get("flujo", 0), 2),
@@ -529,15 +544,11 @@ def generar_pdf(self, ruta):
         historia.append(tabla_historial)
 
         # GENERAR PDF
-        try:
-            documento = SimpleDocTemplate(ruta, pagesize=A4,
+        
+        documento = SimpleDocTemplate(ruta, pagesize=A4,
                                        rightMargin=15*mm, leftMargin=15*mm,
                                        topMargin=15*mm, bottomMargin=15*mm)
-            documento.build(historia)
-            self.consola.registro("PDF guardado correctamente")
-        except Exception as e:
-            import traceback
-            self.consola.registro(f"Error al guardar PDF: {e}", nivel="ERROR")
-            self.consola.registro(traceback.format_exc(), nivel="ERROR")
+        documento.build(historia)
+            
 
 
