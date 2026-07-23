@@ -3,10 +3,13 @@
 ###############################################################
 
 #imports genéricos
+from dataclasses import dataclass, field
+
 import customtkinter as ctk
 import datetime
 
 from widgets import Canal, Consola
+from main import media
 
 #Imports necesarios para la generación del informe:
 #se utilizan para generar el pdf:
@@ -24,7 +27,34 @@ import matplotlib.pyplot as plt
 import tempfile
 import os
 import csv #ya se encuentraya incluido en python
+from typing import Any
 import matplotlib as mpl #para poder exportar las gráficas como imágenes
+
+
+#------------------------------------------------------------
+#Contenedor de datos para la generación de informes
+#-----------------------------------------------------------
+#módulo estándar que sirve para crear clases destinadas principalmente a guardar datos
+
+@dataclass
+class DatosInforme:
+    #Identificación de la sesión
+    id_sesion: str
+    id_paciente: str
+    duracion_sesion: str
+    tiempo_inicio_sesion: float
+
+    #Parámetros del protocolo
+    num_ciclos: str
+    tiempo_exposicion: str
+    tiempo_desensibilizacion: str
+    intervalo_ciclos: str
+    tiempo_calibrado: str
+
+    #Datos de la sesión
+    historial_sesion: list[dict] 
+    metricas_calibracion: dict[int, dict]
+    colores_canales: list[str]
 
 
 def generar_informe(self):
@@ -48,60 +78,59 @@ def generar_informe(self):
 
         self.consola.registro(f'Informe generado en: {ruta}')
 
-def generar_csv(self,ruta):
+def generar_csv(ruta: str , datos: DatosInforme):
         seccion_sesion=[["OlfaMetric - Informe de sesión"],
-                         ["ID Sesión", self.e_id_sesion.get()],
-                         ["ID Paciente", self.e_id_paciente.get()],
+                         ["ID Sesión", datos.id_sesion],
+                         ["ID Paciente", datos.id_paciente],
                          ["Fecha",datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")],
-                         ["Duración sesión", self.duracion_sesion.get().replace("Duración de sesión: ","")],
+                         ["Duración sesión", datos.duracion_sesion.replace("Duración de sesión: ","")],
+                         [],
                          []]#fila vacía como separador
         
-        seccion_sesion.append([])
         
         seccion_protocolo=[["PARÁMETROS DEL PROTOCOLO"],
-                            ["Número de ciclos", self.e_num_ciclos.get()],
-                            ["Tiempo de exposición", self.e_tiempo_exposicion.get()],
-                            ["Tiempo de desensibilización", self.e_tiempo_desensibilizacion.get()],
-                            ["Tiempo de intervalo entre ciclos", self.e_intervalo_ciclos.get()],
+                            ["Número de ciclos", datos.num_ciclos],
+                            ["Tiempo de exposición", datos.tiempo_exposicion],
+                            ["Tiempo de desensibilización", datos.tiempo_desensibilizacion],
+                            ["Tiempo de intervalo entre ciclos", datos.intervalo_ciclos],
+                            [],
                             []
                             ]
-        
-        seccion_protocolo.append([])
 
-        seccion_calibrado = [["RESULTADOS CALIBRACIÓN"],["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración bruta (µg/m\u00B3)", 
+        seccion_calibrado: list[list[str]] = [["RESULTADOS CALIBRACIÓN"],["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración bruta (µg/m\u00B3)", 
                                    "Concentración neta (µg/m\u00B3)", 
                                    "Flujo (ml/min)","Velocidad (rpm)","Latencia (ms)"]]
 
         #si la variable metricas_calibracion existe ejecuta el siguiente código
-        if self.metricas_calibracion:
-            for num_canal, metrica in self.metricas_calibracion.items():
-                seccion_calibrado.append([self.e_tiempo_calibrado.get(),
-                                          self.colores_canales[num_canal],
+        if datos.metricas_calibracion:
+            for num_canal, metrica in datos.metricas_calibracion.items():
+                seccion_calibrado.append([datos.tiempo_calibrado,
+                                          datos.colores_canales[num_canal],
                                           metrica.get("olor",""),
                                           #redondea al segundo decimal la concentración bruta medida en la calibración del canal
                                           #si la concentración bruta no existe, devuelve 0 como valor por defecto
-                                          round(self.media(metrica.get("concentracion", 0)), 2),
-                                          round(self.media(metrica.get("concentracion bruta", 0)), 2),
-                                          round(self.media(metrica.get("concentracion neta", 0)), 2),
-                                          round(self.media(metrica.get("flujo", 0)), 2),
-                                          round(self.media(metrica.get("velocidad",0)), 1),
-                                          round(self.media(metrica.get("latencia",0)), 1)])
+                                          round(media(metrica.get("concentracion", 0)), 2),
+                                          round(media(metrica.get("concentracion bruta", 0)), 2),
+                                          round(media(metrica.get("concentracion neta", 0)), 2),
+                                          round(media(metrica.get("flujo", 0)), 2),
+                                          round(media(metrica.get("velocidad",0)), 1),
+                                          round(media(metrica.get("latencia",0)), 1)])
                 
         seccion_calibrado.append([])
 
         #historial completo de los datos
-        seccion_historial = [["HISTORIAL DE DATOS"],["Onset (s)","Hora","Canal", "Olor",
+        seccion_historial: list[list[str]] = [["HISTORIAL DE DATOS"],["Onset (s)","Hora","Canal", "Olor",
                                    "Estado","Flujo (ml/min)","Concentración (µg/m\u00B3)",
                                    "Concentración bruta (µg/m\u00B3),",
                                    "Concentración neta (µg/m\u00B3)", "Velocidad (rpm)","Latencia (ms)"]]
         
-        for metrica in self.historial_sesion :
+        for metrica in datos.historial_sesion :
             #las claves definidas deben coincidir con las del simulador
-            onset = round(metrica["timestamp"] - self.tiempo_inicio_sesion,3)
+            onset = round(metrica["timestamp"] - datos.tiempo_inicio_sesion,3)
             seccion_historial.append([
                 onset,
                 datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),
-                self.colores_canales[metrica["canal"]],
+                datos.colores_canales[metrica["canal"]],
                 metrica.get("olor",""),
                 metrica.get("estado",""),
                 metrica.get("flujo",0),
@@ -113,25 +142,21 @@ def generar_csv(self,ruta):
             ])
             
         ruta_eventos = ruta.replace(".csv", "_eventos.csv")
-        _generar_csv_eventos(ruta_eventos)
+        _generar_csv_eventos(ruta_eventos, datos)
         
-        try:
-            #Se añade el BOM de UTF-8 al principio del archivo. Sin esto Excel en Windows 
-            # no muestra correctamente los caracteres especiales como µ o ó.
-            with open(ruta, "w", newline="", encoding="utf-8-sig") as fila:
-                writer = csv.writer(fila, delimiter=";")
+        #Se añade el BOM de UTF-8 al principio del archivo. Sin esto Excel en Windows 
+        # no muestra correctamente los caracteres especiales como µ o ó.
+        with open(ruta, "w", newline="", encoding="utf-8-sig") as fila:
+            writer = csv.writer(fila, delimiter=";")
                 
-                writer.writerows(seccion_sesion)
-                writer.writerows(seccion_protocolo)
-                writer.writerows(seccion_calibrado)
-                writer.writerows(seccion_historial)
+            writer.writerows(seccion_sesion)
+            writer.writerows(seccion_protocolo)
+            writer.writerows(seccion_calibrado)
+            writer.writerows(seccion_historial)
 
-            self.consola.registro("CSV guardado correctamente")
-        
-        except Exception as e:
-            self.consola.registro(f"Error al guardar CSV: {e}", nivel= "ERROR")
 
-def _generar_csv_eventos(self,ruta):
+
+def _generar_csv_eventos(ruta: str, datos: DatosInforme):
         """
         CSV de eventos de estimulación compatible con neuroimagen.
         Columnas: onset, duration, trial_type
@@ -142,12 +167,12 @@ def _generar_csv_eventos(self,ruta):
 
         canal_inicio = {}
 
-        for metrica in self.historial_sesion:
+        for metrica in datos.historial_sesion:
             canal = metrica.get("canal", -1)
             estado = metrica.get("estado", "")
             olor = metrica.get("olor", "")
             timestamp = metrica.get ("timestamp", 0)
-            onset = round(timestamp - self.tiempo_inicio_sesion,3)
+            onset = round(timestamp - datos.tiempo_inicio_sesion,3)
             print(canal_inicio)
             print(estado)
             if estado == "activo" and canal not in canal_inicio:
@@ -164,17 +189,14 @@ def _generar_csv_eventos(self,ruta):
                     inicio["onset"],
                     duracion,
                     "estimulación" if canal != 2 else "desensibilización",
-                    self.colores_canales[canal],
+                    datos.colores_canales[canal],
                     inicio["olor"]
                 ])
-        try:
-            with open(ruta, "w", newline="", encoding="utf-8-sig") as fila:
-                writer = csv.writer(fila, delimiter=";")    
-                writer.writerows(eventos)
-            self.consola.registro("CSV de eventos guardado correctamente")
-        
-        except Exception as e:
-            self.consola.registro(f"Error al guardar CSV de eventos: {e}", nivel= "ERROR")
+
+        with open(ruta, "w", newline="", encoding="utf-8-sig") as fila:
+            writer = csv.writer(fila, delimiter=";")    
+            writer.writerows(eventos)
+
 
 def generar_excel(self,ruta):
         workbook = openpyxl.Workbook()

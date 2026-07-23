@@ -54,6 +54,9 @@ import random
 #Import de widgets personalizados
 from widgets import Canal, SpinboxCTk, Consola
 
+#Import de funciones para generar informes
+import reports
+
 
 
 
@@ -902,6 +905,32 @@ class App(ctk.CTk):
 
     def button_click(self):
         self.label.configure(text="Botón pulsado")
+
+    def _construir_datos_informe(self):
+        return reports.DatosInforme(
+                id_sesionc = self.e_id_sesion.get(),
+                id_paciente = self.e_id_paciente.get(),
+                duracion_sesion = self.e_duracion_sesion.get(),
+                tiempo_inicio_sesion = float(self.e_tiempo_inicio_sesion.get()),
+                num_ciclos = self.e_num_ciclos.get(),
+                tiempo_exposicion = self.e_tiempo_exposicion.get(),
+                tiempo_desensibilizacion = self.e_tiempo_desensibilizacion.get(),
+                intervalo_ciclos = self.e_intervalo_ciclos.get(),
+                tiempo_calibrado = self.e_tiempo_calibrado.get(),
+                historial_sesion = self.historial_sesion,
+                metricas_calibracion = self.metricas_calibracion,
+                colores_canales = self.colores_canales,
+        )
+    
+    def generar_csv(self, ruta):
+        #Extrae los datos de la UI, llama al módulo reports para generar el CSV y registra la acción en la consola
+        try:
+            datos = self._construir_datos_informe()
+            reports.generar_csv(ruta, datos)
+            self.consola.registro(f"CSV generado correctamente en {ruta}")
+
+        except Exception as e:
+            self.consola.registro(f"Error al generar CSV: {e}", nivel="ERROR")
 
     def b_buscar_dispositivos(self):
         if self.ws_client.conectado:
@@ -1828,7 +1857,6 @@ class App(ctk.CTk):
     
     def media(self, lista):
         # Acepta tanto listas/iterables como valores numéricos.
-        # Si `lista` es un número, lo devolvemos tal cual.
         try:
             if lista is None:
                 return 0
