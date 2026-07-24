@@ -60,6 +60,8 @@ import reports
 #Import de funciones para buscar dispositivos en la red local mediante mDNS
 import discovery
 
+#Import de constates de configuración del software
+import config
 
 
 
@@ -82,14 +84,14 @@ class App(ctk.CTk):
         super().__init__()
         self.title("OlfaMetric")
         self.geometry("1920x1080")
-        self.colores_canales = ["Verde Claro", "Negro", "Blanco", "Azul", "Amarillo", "Rojo"]  # Colores para cada cartucho
+        self.colores_canales = config.COLORES_CANALES  # Colores para cada cartucho
         self.posicion_valvula = 0
         # Diccionario para mapear los canales a sus posiciones en la gráfica
-        self.posiciones_canales ={2: 0, 0: 200, 1: 400, 3: 600, 4: 800, 5: 1000, -1: 1200, -2: 1400}
-        self.tiempo_grafica_flujo = list(range(61))
-        self.tiempo_grafica_concentracion = list(range(61))
-        self.tiempo_grafica_latencia = list(range(61))
-        self.tiempo_grafica_velocidad = list(range(61))
+        self.posiciones_canales = config.POSICIONES_CANALES
+        self.tiempo_grafica_flujo = list(range(config.TIEMPO_GRAFICAS))
+        self.tiempo_grafica_concentracion = list(range(config.TIEMPO_GRAFICAS))
+        self.tiempo_grafica_latencia = list(range(config.TIEMPO_GRAFICAS))
+        self.tiempo_grafica_velocidad = list(range(config.TIEMPO_GRAFICAS))
 
         #buffers termporales
         self.olores = []
@@ -98,10 +100,10 @@ class App(ctk.CTk):
         # Los widgets de UI (p. ej. `e_tiempo_calibrado`) se crean en `crear_ui()` más abajo,
         # por eso no debemos usar `self.e_tiempo_calibrado.get()` aquí (aún no existe).
         # Usar el tamaño por defecto de las gráficas (`self.tiempo_grafica_flujo`) para inicializar buffers.
-        self.buffer_flujo = collections.deque([np.nan]*61, maxlen=61)
-        self.buffer_concentracion = collections.deque([np.nan]*61,maxlen=61)
-        self.buffer_latencia = collections.deque([np.nan]*61,maxlen=61)
-        self.buffer_velocidad = collections.deque([np.nan]*61,maxlen=61)
+        self.buffer_flujo = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
+        self.buffer_concentracion = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
+        self.buffer_latencia = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
+        self.buffer_velocidad = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
 
     
         #buffers históricos
@@ -163,7 +165,7 @@ class App(ctk.CTk):
 
         #Cliente para establecer conexión con el controlador ESP32-WROOM (o simulador)
         self.ws_client = WSClient(
-        uri        = "ws://olfatometro.local:8765",   # o IP del ESP32
+        uri        = config.URI_WEBSOCKET_DEFECTO,   # o IP del ESP32
         on_estado  = self._on_estado_ws,
     )
 
@@ -211,7 +213,7 @@ class App(ctk.CTk):
         # El bloque finally se ejecuta siempre, incluso si hay error. Asegura que
         # la función se reschedule cada 50ms para polling continuo de mensajes
         finally:
-            self.after(50, self._procesar_cola_ws)  # Verifica la cola cada 50 ms
+            self.after(config.INTERVALO_SONDEO_COLA_WS_MS, self._procesar_cola_ws)  # Verifica la cola cada 50 ms
 
     #CONSTRUCCIÓN DE INTERFAZ DE USUARIO
     def crear_ui(self):
@@ -819,7 +821,7 @@ class App(ctk.CTk):
         #self.l_titulo_estado= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Estado", text_color="#458B8D", font=ctk.CTkFont(size=22, weight="bold"))
         #self.l_titulo_estado.grid(row=0, column=0, padx=10, pady=(10,5), sticky="n")
 
-        self.l_fecha = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text=f"Fecha y hora: {time.strftime('%d-%m-%Y %H:%M:%S', time.localtime())}", font=ctk.CTkFont(size=14, weight="bold"))
+        self.l_fecha = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text=f"Fecha y hora: {time.strftime(config.FORMATO_TIMESTAMP, time.localtime())}", font=ctk.CTkFont(size=14, weight="bold"))
         self.l_fecha.grid(row=0, column=0, padx=10, pady=(20,5), sticky="n")
 
         
@@ -1023,7 +1025,7 @@ class App(ctk.CTk):
 
         
     def tiempo_sesion(self):    
-        tiempo = time.strftime("%H:%M:%S", time.gmtime(time.time()-self.tiempo_inicio_sesion))
+        tiempo = time.strftime(config.FORMATO_HORA, time.gmtime(time.time()-self.tiempo_inicio_sesion))
         self.duracion_sesion.set(f"Duración de sesión: {tiempo}")
         self.after(1000, self.tiempo_sesion)
 
@@ -1315,7 +1317,7 @@ class App(ctk.CTk):
 
     def finalizar_protocolo(self):
         pasos_home = self.posiciones_canales[2]-self.posicion_valvula
-        self.ws_client.enviar({"cmd": "rotar", "canal": 2, "pasos": pasos_home})
+        self.ws_client.enviar({"cmd": "rotar", "canal": config.CANAL_BLANCO, "pasos": pasos_home})
         self.posicion_valvula = 0
         self.protocolo_activo = False
         self.protocolo_parado = False
@@ -1354,7 +1356,7 @@ class App(ctk.CTk):
         self.b_iniciar_protocolo.configure(state="normal")
         self.b_reiniciar_protocolo.configure(state="normal")
         if self.fase_actual == "Exposición" or self.fase_actual == "Desensibilización":
-            self.tiempo_guardado = datetime.datetime.strptime(self.canal_activo.sv_tiempo_activo.get().split()[2], "%H:%M:%S")
+            self.tiempo_guardado = datetime.datetime.strptime(self.canal_activo.sv_tiempo_activo.get().split()[2], config.FORMATO_HORA)
         #self.consola.registro(self.canal_activo)
         for canal in self.cuadros_canales:
             canal.parar_canal()
@@ -1567,8 +1569,8 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo.", nivel="AVISO")
 
         self.buffer_historico_calibrado_flujo.clear()
-        self.buffer_flujo = collections.deque([np.nan]*61, maxlen=61)
-        self.tiempo_grafica_flujo = collections.deque(list(range(0,61)), maxlen=61)
+        self.buffer_flujo = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
+        self.tiempo_grafica_flujo = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
 
         self.ax_flujo.clear()
         self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
@@ -1677,8 +1679,8 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración.", nivel="AVISO")
 
         self.buffer_historico_calibrado_concentracion.clear()
-        self.buffer_concentracion = collections.deque([np.nan]*61, maxlen=61)
-        self.tiempo_graficas_concentracion = collections.deque(list(range(0,61)), maxlen=61)
+        self.buffer_concentracion = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
+        self.tiempo_graficas_concentracion = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
 
         self.ax_concentracion.clear()
         self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
@@ -1788,8 +1790,8 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia.", nivel="AVISO")
 
         self.buffer_historico_calibrado_latencia.clear()
-        self.buffer_latencia = collections.deque([np.nan]*61, maxlen=61)
-        self.tiempo_grafica_latencia = collections.deque(list(range(0,61)), maxlen=61)
+        self.buffer_latencia = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
+        self.tiempo_grafica_latencia = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
 
         self.ax_latencia.clear()
         self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
@@ -1943,7 +1945,7 @@ class App(ctk.CTk):
             self.ax_latencia.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_latencia.draw()
             
-        self.after_actualizar_graficas = self.after(100, self.actualizar_graficas)
+        self.after_actualizar_graficas = self.after(config.INTERVALO_DE_ACTUALIZACION_UI_MS, self.actualizar_graficas)
     
 
 
@@ -1960,7 +1962,7 @@ class App(ctk.CTk):
     def actualizar_canales(self,num_canal,accion):     
             if accion== "activar":
                 #se establece la posición de la válvula giratoria según el canal activo y el canal que se quiere activar.
-                pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else 2, num_canal)
+                pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else config.CANAL_BLANCO, num_canal)
                 
                 if self.canal_activo != None and self.canal_activo.num_canal != num_canal:
                     self.consola.registro(f"Se ha activado el canal {num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ""}) mientras el canal {self.canal_activo.num_canal} ({self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() if self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() else ""}) estaba activo. Se detiene el canal {self.canal_activo.num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ""}).", nivel="AVISO")
@@ -1997,7 +1999,7 @@ class App(ctk.CTk):
                                 "latencia" : 0
                     })
                     if not self.protocolo_activo:
-                        pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else 2, 2)
+                        pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else config.CANAL_BLANCO, config.CANAL_BLANCO)
                         self.ws_client.enviar({"cmd": "rotar", "canal": num_canal, "pasos": pasos})
                     self.canal_activo = None
                     self.sv_canal_activo.set("Ninguno")
@@ -2085,7 +2087,7 @@ class App(ctk.CTk):
             estado_accion = "correctamente"
         else: 
             estado_accion = "incorrectamente"
-        if canal_accion == 2:
+        if canal_accion == config.CANAL_BLANCO:
             self.consola.registro(f"[ESP32] Acción '{accion}' en canal {canal_accion} (Canal Blanco) recibida y {"en colada" if estado_en_cola else "ejecutada"} {estado_accion}.")
         else:
             self.consola.registro(f"[ESP32] Acción '{accion}' en canal {canal_accion} ({self.cuadros_canales[int(canal_accion)].e_olor_canal.get() if self.cuadros_canales[int(canal_accion)].e_olor_canal.get() else "Sin olor definido"}) recibida y {"en colada" if estado_en_cola else "ejecutada"} {estado_accion}.")
@@ -2101,10 +2103,10 @@ class App(ctk.CTk):
     def _on_estado_ws(self, estado: str):
         # Actualizar el indicador de conexión en la cabecera
         textos = {
-            "conectando":    ("◌ Conectando…",  "#f0c060"),
-            "conectado":     ("● Conectado",    "#7DEB7D"),
-            "desconectado":  ("○ Desconectado", "#fa8989"),
-            "error":         ("✕ Error",        "#fa8989"),
+            "conectando":    ("◌ Conectando…",  config.COLOR_ESTADO_CONECTANDO),
+            "conectado":     ("● Conectado",    config.COLOR_ESTADO_OK),
+            "desconectado":  ("○ Desconectado", config.COLOR_ESTADO_DESCONECTADO),
+            "error":         ("✕ Error",       config.COLOR_ESTADO_ERROR),
         }
         texto, color = textos.get(estado, ("○ Desconectado", "#fa8989"))
         self.after(0, lambda: self.l_estado_conexion.configure(text=texto, text_color=color))
