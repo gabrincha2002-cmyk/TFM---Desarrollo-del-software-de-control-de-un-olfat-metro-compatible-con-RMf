@@ -57,6 +57,9 @@ from widgets import Canal, SpinboxCTk, Consola
 #Import de funciones para generar informes
 import reports
 
+#Import de funciones para buscar dispositivos en la red local mediante mDNS
+import discovery
+
 
 
 
@@ -233,11 +236,12 @@ class App(ctk.CTk):
         self.l_estado_conexion = ctk.CTkLabel(self.f_cabecera,text="○ Desconectado",fg_color="#1e1e1e",text_color="#fa8989",
                                      font=ctk.CTkFont(size=18,weight="bold"))
         self.l_estado_conexion.grid(row=0, column=1,padx=30, pady=10, sticky="en") 
-
+        """
         self.b_buscar_dispositivos = ctk.CTkButton(self.f_cabecera, text="Buscar dispositivos", fg_color="#1e1e1e",
                                                  text_color="#828282",corner_radius=10,border_width=1,
                                                   command=self.b_buscar_dispositivos,font=ctk.CTkFont(size=14, weight="bold"))
         self.b_buscar_dispositivos.grid(row=0, column=1, padx=10, pady=(0,5), sticky="es")
+        """
 
         #CONSOLA
         #La creo antes que canales para que la creación de estos no me den ningún problema (están relacionados por
@@ -966,7 +970,7 @@ class App(ctk.CTk):
         except Exception as e:
             self.consola.registro(f"Error al generar CSV: {e}", nivel="ERROR")
     """
-
+    """
     def b_buscar_dispositivos(self):
         if self.ws_client.conectado:
             self.consola.registro("Dispositivo ya conectado")
@@ -975,6 +979,7 @@ class App(ctk.CTk):
         self.ws_client.detener()
         self.ws_client.uri = "ws://localhost:8765"
         self.ws_client.iniciar()
+    """
     """
     ###OJO ESTA FUNCION PARA CUANDO TENGA EL ESP32 REAL!!!!
     def b_buscar_dispositivos(self):
@@ -989,61 +994,22 @@ class App(ctk.CTk):
 
         #else:
     """
-    def buscar_mdns(self):
 
-        #se trata de un diccinario que podrá ser modificado por la clase oyente, y guarda la
-        #información relacionada
-        direccion_controlador = {"ip": None, "puerto" : None}
+    def iniciar_busqueda_mdns(self):
+        self.consola.registro("Buscando dispositivos en la red...")
 
-        class Oyente:
-            #la funcion add_service se dispara automáticamente cuendo encuentra un dispositivo en la
-            #red que coincide con el tipo de servicio que se busca
-            def add_service(self, zconf, tipo, nombre):
-                info =zconf.get_service_info(tipo,nombre)
-                if info:
-                        direccion_controlador["ip"] = info.parsed_addresses()[0]
-                        direccion_controlador["puerto"] = info.port
-                pass
+        def _hilo_busqueda_mdns():
+            uri = discovery.buscar_mdns()
+            if uri:
+                self.after(0,self.conectar_dispositivo_encontrado, uri)
+            else:
+                self.after(0, self._informar_no_encontrado)
 
-            def remove_service(self):
-                pass
+        threading.Thread(target=_hilo_busqueda_mdns, daemon=True).start()
 
-            def update_service(self):
-                pass
-
-        zconf = zc.Zeroconf()
-        #OJO: "_esp32._tcp.local." tiene una estructura fija
-        #_esp32   → nombre del servicio (debe coincidir con el ESP32)
-        #._tcp         → protocolo de transporte
-        #.local.       → dominio mDNS (siempre este, con el punto final)
-        #El único propósito de la variable buscador es mantener vivo el objeto 
-        # en memoria durante el bucle de espera.
-        buscador = zc.ServiceBrowser(zconf, "_olfatometro._tcp.local.", Oyente())
-        
-
-        """
-        Como ServiceBrowser es asíncrono (trabaja en su propio hilo interno), necesitas 
-        esperar a que encuentre algo. El bucle comprueba cada 100ms si ya se encontró la IP.
-        Si pasan 5 segundos sin resultado, sale del bucle. zconf.close() libera el socket,
-        siempre hay que cerrarlo.
-        """
-        tiempo_limite = 5
-        tiempo_inicio = time.time()
-        while direccion_controlador["ip"] is None and time.time() - tiempo_inicio < tiempo_limite:
-            time.sleep(0.1)
-
-        zconf.close()
-
-        if direccion_controlador["ip"]:
-            #Uniform Resource Identifier, un identificador único que señala la dirección de un recurso.
-            #ws (WebSocket) ip y puerto
-            uri = f'ws://{direccion_controlador["ip"]}:{direccion_controlador["puerto"]}' 
-            self.after(0,self.conectar_dispositivo_encontrado, uri)
-
-        else:
-            self.after(0,lambda: self.consola.registro(f'No se encontró ningún dispositivo', nivel = "AVISO"))
-            self.l_estado_conexion.configure(text="✕ Error",text_color="#fa8989")
-
+    def _informar_no_encontrado(self):
+        self.consola.registro(f'No se encontró ningún dispositivo', nivel = "AVISO")
+        self.l_estado_conexion.configure(text="✕ Error",text_color="#fa8989")
 
     def conectar_dispositivo_encontrado(self,uri):
             #imprime/registra en la consola que se ha encontrado un dispositivo
@@ -1069,7 +1035,7 @@ class App(ctk.CTk):
     def bloquear_botones(self,bloquear):
         if bloquear:
             #cabecera
-            self.b_buscar_dispositivos.configure(state="disabled")
+            #self.b_buscar_dispositivos.configure(state="disabled")
 
             #protocolo
             self.e_num_ciclos.b_decrementar.configure(state="disabled")
@@ -1124,7 +1090,7 @@ class App(ctk.CTk):
         else:
 
             #cabecera
-            self.b_buscar_dispositivos.configure(state="normal")
+            #self.b_buscar_dispositivos.configure(state="normal")
 
             #protocolo
             self.e_num_ciclos.b_decrementar.configure(state="normal")
