@@ -160,7 +160,7 @@ def generar_csv(ruta: str , datos: DatosInforme):
                 metrica.get("latencia",0)
             ])
             
-        ruta_eventos = ruta.replace(".csv", "_eventos.csv")
+        ruta_eventos = ruta.replace(".csv", "_eventos.tsv")
         _generar_csv_eventos(ruta_eventos, datos)
         
         #Se añade el BOM de UTF-8 al principio del archivo. Sin esto Excel en Windows 
@@ -213,7 +213,7 @@ def _generar_csv_eventos(ruta: str, datos: DatosInforme):
                 ])
 
         with open(ruta, "w", newline="", encoding="utf-8-sig") as fila:
-            writer = csv.writer(fila, delimiter=";")    
+            writer = csv.writer(fila, delimiter="\t")    
             writer.writerows(eventos)
 
 
