@@ -1,6 +1,6 @@
-###############################################################
-#Funciones para la generación de informes en PDF, Excel y CSV #
-###############################################################
+#####################################################################################################
+#Funciones para la generación de informes en PDF, Excel y CSV, y archivo de eventos en formato .tsv #
+#####################################################################################################
 
 #imports genéricos
 from dataclasses import dataclass, field
