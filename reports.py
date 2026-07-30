@@ -182,7 +182,7 @@ def _generar_csv_eventos(ruta: str, datos: DatosInforme):
         Formato compatible con BIDS (Brain Imaging Data Structure),
         estándar creciente en neuroimagen.
         """
-        eventos = [["onset","duration","trial_type","canal","olor"]]
+        eventos = [["onset","duration","trial_type","channel","odor"]]
 
         canal_inicio = {}
 
@@ -192,14 +192,14 @@ def _generar_csv_eventos(ruta: str, datos: DatosInforme):
             olor = metrica.get("olor", "")
             timestamp = metrica.get ("timestamp", 0)
             onset = round(timestamp - datos.tiempo_inicio_sesion,3)
-            print(canal_inicio)
-            print(estado)
+            #print(canal_inicio)
+            #print(estado)
             if estado == "activo" and canal not in canal_inicio:
                 #se registra el inicio de la estimulación
                 canal_inicio[canal]= {
                     "onset": onset,
                     "timestamp": timestamp,
-                    "olor": olor
+                    "odor": olor
                 }
             elif estado == "inactivo" and canal in canal_inicio:
                 inicio = canal_inicio.pop(canal)
@@ -209,7 +209,7 @@ def _generar_csv_eventos(ruta: str, datos: DatosInforme):
                     duracion,
                     "estimulación" if canal != 2 else "desensibilización",
                     datos.colores_canales[canal],
-                    inicio["olor"]
+                    inicio["odor"]
                 ])
 
         with open(ruta, "w", newline="", encoding="utf-8-sig") as fila:
