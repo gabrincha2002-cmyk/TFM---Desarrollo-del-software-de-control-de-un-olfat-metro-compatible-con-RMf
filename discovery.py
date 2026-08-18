@@ -49,6 +49,7 @@ def buscar_mdns():
     while direccion_controlador["ip"] is None and time.time() - tiempo_inicio < TIMEOUT_SEGUNDOS:
         time.sleep(0.1)
 
+    _buscador.cancel()  # Detiene el ServiceBrowser
     zconf.close()
 
     if direccion_controlador["ip"]:

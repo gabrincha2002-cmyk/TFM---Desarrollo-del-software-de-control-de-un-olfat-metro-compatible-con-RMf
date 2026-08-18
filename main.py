@@ -122,6 +122,7 @@ class App(ctk.CTk):
         self.tiempo_guardado = None
 
         #protocolo 
+        self.canales_protocolo = []
         self.after_activo = None
         self.canal_activo= None
         self.canal_anterior= None
@@ -238,12 +239,12 @@ class App(ctk.CTk):
         self.l_estado_conexion = ctk.CTkLabel(self.f_cabecera,text="○ Desconectado",fg_color="#1e1e1e",text_color="#fa8989",
                                      font=ctk.CTkFont(size=18,weight="bold"))
         self.l_estado_conexion.grid(row=0, column=1,padx=30, pady=10, sticky="en") 
-        """
+        
         self.b_buscar_dispositivos = ctk.CTkButton(self.f_cabecera, text="Buscar dispositivos", fg_color="#1e1e1e",
                                                  text_color="#828282",corner_radius=10,border_width=1,
-                                                  command=self.b_buscar_dispositivos,font=ctk.CTkFont(size=14, weight="bold"))
+                                                  command=self.iniciar_busqueda_mdns,font=ctk.CTkFont(size=14, weight="bold"))
         self.b_buscar_dispositivos.grid(row=0, column=1, padx=10, pady=(0,5), sticky="es")
-        """
+        
 
         #CONSOLA
         #La creo antes que canales para que la creación de estos no me den ningún problema (están relacionados por
@@ -1037,7 +1038,7 @@ class App(ctk.CTk):
     def bloquear_botones(self,bloquear):
         if bloquear:
             #cabecera
-            #self.b_buscar_dispositivos.configure(state="disabled")
+            self.b_buscar_dispositivos.configure(state="disabled")
 
             #protocolo
             self.e_num_ciclos.b_decrementar.configure(state="disabled")
@@ -1092,7 +1093,7 @@ class App(ctk.CTk):
         else:
 
             #cabecera
-            #self.b_buscar_dispositivos.configure(state="normal")
+            self.b_buscar_dispositivos.configure(state="normal")
 
             #protocolo
             self.e_num_ciclos.b_decrementar.configure(state="normal")
@@ -1190,18 +1191,18 @@ class App(ctk.CTk):
             self.protocolo_activo= False
             return
         self.consola.registro(f"{self.e_num_ciclos.get()}")
-        if self.e_num_ciclos.get() == 0:
-            self.consola.registro("El número de ciclos no está definido. Defina al menos un ciclo para iniciar el protocolo", nivel="AVISO")
+        if self.e_num_ciclos.get() == 0 or self.e_num_ciclos.get() == "" or self.e_num_ciclos.get() < 0:
+            self.consola.registro("El número de ciclos no está definido o es negativo. Defina al menos un ciclo para iniciar el protocolo", nivel="AVISO")
             self.protocolo_activo= False
             return
 
-        if self.e_tiempo_exposicion.get() == 0:
-            self.consola.registro("El tiempo de exposición no está definido. Introduzca la duración del periodo de exposición para iniciar el protocolo", nivel="AVISO")
+        if self.e_tiempo_exposicion.get() == 0 or self.e_tiempo_exposicion.get() == "" or self.e_tiempo_exposicion.get() < 0:
+            self.consola.registro("El tiempo de exposición no está definido o es negativo. Introduzca la duración del periodo de exposición para iniciar el protocolo", nivel="AVISO")
             self.protocolo_activo= False
             return
 
-        if self.e_tiempo_desensibilizacion.get() == 0:
-            self.consola.registro("El tiempo de desensibilización no está definido. Introduzca la duración del periodo de desensibilización para iniciar el protocolo", nivel="AVISO")
+        if self.e_tiempo_desensibilizacion.get() == 0 or self.e_tiempo_desensibilizacion.get() == "" or self.e_tiempo_desensibilizacion.get() < 0:
+            self.consola.registro("El tiempo de desensibilización no está definido o es negativo. Introduzca la duración del periodo de desensibilización para iniciar el protocolo", nivel="AVISO")
             self.protocolo_activo= False
             return
 
@@ -1212,6 +1213,11 @@ class App(ctk.CTk):
 
         if self.cb_aleatorio.get() == 1 and self.cb_secuencial.get() == 1:
             self.consola.registro("No se pueden seleccionar ambos órdenes de canal a la vez. Seleccione un orden para iniciar el protocolo", nivel="AVISO")
+            self.protocolo_activo= False
+            return
+
+        if self.e_intervalo_ciclos.get() < 0 or self.e_intervalo_ciclos.get() == "":
+            self.consola.registro("El intervalo entre ciclos no está definido o es negativo. Introduzca la duración del intervalo entre ciclos para iniciar el protocolo", nivel="AVISO")
             self.protocolo_activo= False
             return
 
@@ -1337,6 +1343,9 @@ class App(ctk.CTk):
 
         self.protocolo_activo = False
         self.protocolo_parado = False
+        pasos_home = self.posiciones_canales[2]-self.posicion_valvula
+        self.ws_client.enviar({"cmd": "rotar", "canal": config.CANAL_BLANCO, "pasos": pasos_home})
+        self.posicion_valvula = 0
         self.canal_activo = None
         self.fase_actual = None
         self.segundos_restantes_protocolo = 0
