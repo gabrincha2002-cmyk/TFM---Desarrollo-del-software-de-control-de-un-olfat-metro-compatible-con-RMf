@@ -100,7 +100,8 @@ class Canal(ctk.CTkFrame):
             #self.canal_anterior.set(f"Canal {self.color_canal} ({self.e_olor_canal.get()})")
             #print(f"Canal {self.color_canal} ({self.e_olor_canal.get()}")
             if self.registro:
-                self.registro(f"Canal {self.color_canal} ({self.e_olor_canal.get()}) DETENIDO")
+                olor = self.e_olor_canal.get() if self.e_olor_canal.winfo_exists() else ""
+                self.registro(f"Canal {self.color_canal} ({olor}) DETENIDO")
             
             if self.actualizar_canal:
                 self.actualizar_canal(self.num_canal,"parar")

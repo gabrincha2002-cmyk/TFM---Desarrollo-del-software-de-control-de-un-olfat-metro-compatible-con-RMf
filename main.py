@@ -1028,6 +1028,8 @@ class App(ctk.CTk):
     def tiempo_sesion(self):    
         tiempo = time.strftime(config.FORMATO_HORA, time.gmtime(time.time()-self.tiempo_inicio_sesion))
         self.duracion_sesion.set(f"Duración de sesión: {tiempo}")
+        tiempo_local = time.strftime(config.FORMATO_TIMESTAMP, time.localtime())
+        self.l_fecha.configure(text=f"Fecha y hora: {tiempo_local}")
         self.after(1000, self.tiempo_sesion)
 
     def actualizar_comb_canales_calibrados(self):
