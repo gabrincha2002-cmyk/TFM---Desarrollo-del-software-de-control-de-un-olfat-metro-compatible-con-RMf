@@ -350,7 +350,7 @@ class App(ctk.CTk):
         fig_velocidad = Figure(figsize=(10,5),dpi=60)
         self.ax_velocidad = fig_velocidad.add_subplot(111)
         self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_velocidad.set_ylim(self.limitesy["velocidad"][0],self.limitesy["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_velocidad.set_ylim(config.LIMITESY["velocidad"][0],config.LIMITESY["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_velocidad.set_xlabel("Tiempo (s)")
         self.ax_velocidad.set_ylabel("Velocidad (m/s)")
         #fig_velocidad.set_facecolor("#222526")  # Fondo de la figura transparente
@@ -399,7 +399,7 @@ class App(ctk.CTk):
         fig_flujo = Figure(figsize=(10,5),dpi=60)
         self.ax_flujo = fig_flujo.add_subplot(111)
         self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_flujo.set_ylim(self.limitesy["flujo"][0],self.limitesy["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_flujo.set_ylim(config.LIMITESY["flujo"][0],config.LIMITESY["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_flujo.set_xlabel("Tiempo (s)")
         self.ax_flujo.set_ylabel("Flujo (ml/min)")
         self.ax_flujo.plot(self.tiempo_grafica_flujo,self.buffer_flujo)
@@ -446,7 +446,7 @@ class App(ctk.CTk):
         fig_concentracion = Figure(figsize=(10,5),dpi=60)
         self.ax_concentracion = fig_concentracion.add_subplot(111)
         self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_concentracion.set_ylim(self.limitesy["concentracion"][0],self.limitesy["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_concentracion.set_xlabel("Tiempo (s)")
         self.ax_concentracion.set_ylabel("Concentracion (µg/m\u00B3)")
         self.ax_concentracion.plot(self.tiempo_grafica_concentracion,self.buffer_concentracion)
@@ -494,7 +494,7 @@ class App(ctk.CTk):
         fig_latencia = Figure(figsize=(10,5),dpi=60)
         self.ax_latencia = fig_latencia.add_subplot(111)
         self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_latencia.set_ylim(self.limitesy["latencia"][0],self.limitesy["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_latencia.set_ylim(config.LIMITESY["latencia"][0],config.LIMITESY["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_latencia.set_xlabel("Tiempo (s)")
         self.ax_latencia.set_ylabel("Latencia (ms)")
         self.ax_latencia.plot(self.tiempo_grafica_latencia,self.buffer_latencia)
@@ -1403,12 +1403,6 @@ class App(ctk.CTk):
             self.consola.registro()
         if protocolo_activo and 
         """
-    
-    limitesy = {"velocidad": [0,10000],
-                "flujo": [0,500],
-                "concentracion": [0,500],
-                "latencia": [0,1000]
-                }
 
     #CALIBRADO VELOCIDAD
     def iniciar_calibrado_velocidad(self):
@@ -1421,7 +1415,8 @@ class App(ctk.CTk):
                 self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
                 self.b_iniciar_calibrado_velocidad.configure(state="disabled")
                 self.b_reiniciar_calibrado_velocidad.configure(state="disabled")
-                self.canal_calibrado.activar_canal()
+                if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia: 
+                    self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_velocidad(self.canal_calibrado, self.e_tiempo_calibrado.get())
             else:
                 self.calibrado_velocidad_parado = False
@@ -1476,7 +1471,7 @@ class App(ctk.CTk):
         self.ax_velocidad.set_xlabel("Tiempo (s)")
         self.ax_velocidad.set_ylabel("Velocidad (m/s)")
         self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_velocidad.set_ylim(self.limitesy["velocidad"][0],self.limitesy["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_velocidad.set_ylim(config.LIMITESY["velocidad"][0],config.LIMITESY["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_velocidad.tick_params(colors = "#ffffff") 
         self.ax_velocidad.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
         self.ax_velocidad.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
@@ -1497,7 +1492,9 @@ class App(ctk.CTk):
                 self.after_cancel(self.after_calibrado_velocidad)
                 self.after_calibrado_velocidad = None
             if self.canal_calibrado is not None:
-                self.canal_calibrado.parar_canal()
+                #if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia:
+                if not self.calibrado_flujo_parado and not self.calibrado_concentracion_parado and not self.calibrado_latencia_parado:
+                    self.canal_calibrado.parar_canal()
             else:
                 self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de velocidad.", nivel="AVISO")
             self.b_iniciar_calibrado_velocidad.configure(state="normal")
@@ -1516,8 +1513,6 @@ class App(ctk.CTk):
                     self.calibrando_velocidad = False
                     self.calibrado_velocidad_parado = False
                     self.consola.registro("Calibrado de velocidad finalizado")
-            
-
                 else:
                     self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
         else:
@@ -1535,7 +1530,8 @@ class App(ctk.CTk):
                 self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
                 self.b_iniciar_calibrado_flujo.configure(state="disabled")
                 self.b_reiniciar_calibrado_flujo.configure(state="disabled")
-                self.canal_calibrado.activar_canal()
+                if not self.calibrando_velocidad and not self.calibrando_concentracion and not self.calibrando_latencia:
+                    self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_flujo(self.canal_calibrado, self.e_tiempo_calibrado.get())
             else:
                 self.calibrado_flujo_parado = False
@@ -1585,7 +1581,7 @@ class App(ctk.CTk):
 
         self.ax_flujo.clear()
         self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_flujo.set_ylim(self.limitesy["flujo"][0],self.limitesy["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_flujo.set_ylim(config.LIMITESY["flujo"][0],config.LIMITESY["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_flujo.set_xlabel("Tiempo (s)")
         self.ax_flujo.set_ylabel("Flujo (l/min)")
         self.ax_flujo.tick_params(colors = "#ffffff") 
@@ -1608,7 +1604,8 @@ class App(ctk.CTk):
                 self.after_cancel(self.after_calibrado_flujo)
                 self.after_calibrado_flujo = None
             if self.canal_calibrado is not None:
-                self.canal_calibrado.parar_canal()
+                if not self.calibrado_velocidad_parado and not self.calibrado_concentracion_parado and not self.calibrado_latencia_parado:
+                    self.canal_calibrado.parar_canal()
             else:
                 self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo.", nivel="AVISO")
             self.b_iniciar_calibrado_flujo.configure(state="normal")
@@ -1630,7 +1627,7 @@ class App(ctk.CTk):
                     self.calibrado_flujo_parado = False
                     self.consola.registro("Calibrado de flujo finalizado")
                 else:
-                    self.consola.registro("No se pudieron guardar métricas: No hay ningún canal seleccionado para calibrar. ", nivel="AVISO")
+                    self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
         else:
             self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de flujo.", nivel="AVISO")
     
@@ -1645,7 +1642,8 @@ class App(ctk.CTk):
                 self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
                 self.b_iniciar_calibrado_concentracion.configure(state="disabled")
                 self.b_reiniciar_calibrado_concentracion.configure(state="disabled")
-                self.canal_calibrado.activar_canal()
+                if not self.calibrando_flujo and not self.calibrando_velocidad and not self.calibrando_latencia:
+                    self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_concentracion(self.canal_calibrado, self.e_tiempo_calibrado.get())
             else:
                 self.calibrado_concentracion_parado = False
@@ -1691,11 +1689,11 @@ class App(ctk.CTk):
 
         self.buffer_historico_calibrado_concentracion.clear()
         self.buffer_concentracion = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
-        self.tiempo_graficas_concentracion = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
+        self.tiempo_grafica_concentracion = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
 
         self.ax_concentracion.clear()
         self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_concentracion.set_ylim(self.limitesy["concentracion"][0],self.limitesy["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_concentracion.set_xlabel("Tiempo (s)")
         self.ax_concentracion.set_ylabel("Concentración (ppm)")
         self.ax_concentracion.tick_params(colors = "#ffffff") 
@@ -1718,7 +1716,8 @@ class App(ctk.CTk):
                 self.after_cancel(self.after_calibrado_concentracion)
                 self.after_calibrado_concentracion = None
             if self.canal_calibrado is not None:
-                self.canal_calibrado.parar_canal()
+                if not self.calibrado_flujo_parado and not self.calibrado_velocidad_parado and not self.calibrado_latencia_parado:
+                    self.canal_calibrado.parar_canal()
             else:
                 self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración.", nivel="AVISO")
             self.b_iniciar_calibrado_concentracion.configure(state="normal")
@@ -1741,7 +1740,7 @@ class App(ctk.CTk):
                     self.calibrado_concentracion_parado = False
                     self.consola.registro("Calibrado de concentración finalizado")
                 else:
-                    self.consola.registro("No se pudieron guardar métricas: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+                    self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
         else:
             self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de concentración.", nivel="AVISO")
 
@@ -1756,7 +1755,8 @@ class App(ctk.CTk):
                 self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
                 self.b_iniciar_calibrado_latencia.configure(state="disabled")
                 self.b_reiniciar_calibrado_latencia.configure(state="disabled")
-                self.canal_calibrado.activar_canal()
+                if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_velocidad:
+                    self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_latencia(self.canal_calibrado, self.e_tiempo_calibrado.get())
             else:
                 self.calibrado_latencia_parado = False
@@ -1806,7 +1806,7 @@ class App(ctk.CTk):
 
         self.ax_latencia.clear()
         self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-        self.ax_latencia.set_ylim(self.limitesy["latencia"][0],self.limitesy["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
+        self.ax_latencia.set_ylim(config.LIMITESY["latencia"][0],config.LIMITESY["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_latencia.set_xlabel("Tiempo (s)")
         self.ax_latencia.set_ylabel("Latencia (ms)")
         self.ax_latencia.tick_params(colors = "#ffffff") 
@@ -1829,7 +1829,8 @@ class App(ctk.CTk):
                 self.after_cancel(self.after_calibrado_latencia)
                 self.after_calibrado_latencia = None
             if self.canal_calibrado is not None:
-                self.canal_calibrado.parar_canal()
+                if not self.calibrado_flujo_parado and not self.calibrado_concentracion_parado and not self.calibrado_velocidad_parado:
+                    self.canal_calibrado.parar_canal()
             else:
                 self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia.", nivel="AVISO")
             self.b_iniciar_calibrado_latencia.configure(state="normal")
@@ -1841,14 +1842,17 @@ class App(ctk.CTk):
                 self.consola.registro(f"Calibrado de latencia parado con {self.segundos_restantes_latencia} segundos restantes")
         
             else:
-                num_canal = self.canal_calibrado.num_canal
-                if num_canal not in self.metricas_calibracion:
-                    self.metricas_calibracion[num_canal] = {}
-                    self.metricas_calibracion[num_canal]["olor"] = self.canal_calibrado.e_olor_canal.get() or self.canal_calibrado.color_canal
-                self.metricas_calibracion[num_canal]["latencia"] = list(self.buffer_historico_calibrado_latencia)
-                self.calibrando_latencia = False
-                self.calibrado_latencia_parado = False
-                self.consola.registro("Calibrado de latencia finalizado")
+                if self.canal_calibrado is not None:
+                    num_canal = self.canal_calibrado.num_canal
+                    if num_canal not in self.metricas_calibracion:
+                        self.metricas_calibracion[num_canal] = {}
+                        self.metricas_calibracion[num_canal]["olor"] = self.canal_calibrado.e_olor_canal.get() or self.canal_calibrado.color_canal
+                    self.metricas_calibracion[num_canal]["latencia"] = list(self.buffer_historico_calibrado_latencia)
+                    self.calibrando_latencia = False
+                    self.calibrado_latencia_parado = False
+                    self.consola.registro("Calibrado de latencia finalizado")
+                else:
+                    self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
         else:
             self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de latencia.", nivel="AVISO")
 
@@ -1905,7 +1909,7 @@ class App(ctk.CTk):
             else: 
                 self.ax_velocidad.lines[0].set_data(self.tiempo_grafica_velocidad, self.buffer_velocidad)
             self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-            self.ax_velocidad.set_ylim(self.limitesy["velocidad"][0],self.limitesy["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
+            self.ax_velocidad.set_ylim(config.LIMITESY["velocidad"][0],config.LIMITESY["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
             #self.ax_velocidad.plot(self.tiempo_grafica_velocidad, self.buffer_velocidad)
             self.ax_velocidad.set_xlabel("Tiempo (s)")
             self.ax_velocidad.set_ylabel("Velocidad (m/s)")
@@ -1920,7 +1924,7 @@ class App(ctk.CTk):
             else: 
                 self.ax_flujo.lines[0].set_data(self.tiempo_grafica_flujo, self.buffer_flujo)
             self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-            self.ax_flujo.set_ylim(self.limitesy["flujo"][0],self.limitesy["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
+            self.ax_flujo.set_ylim(config.LIMITESY["flujo"][0],config.LIMITESY["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_flujo.set_xlabel("Tiempo (s)")
             self.ax_flujo.set_ylabel("Flujo (ml/min)")
             self.ax_flujo.tick_params(colors = "#ffffff") 
@@ -1934,7 +1938,7 @@ class App(ctk.CTk):
             else: 
                 self.ax_concentracion.lines[0].set_data(self.tiempo_grafica_concentracion, self.buffer_concentracion)
             self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-            self.ax_concentracion.set_ylim(self.limitesy["concentracion"][0],self.limitesy["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
+            self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_concentracion.set_xlabel("Tiempo (s)")
             self.ax_concentracion.set_ylabel("Concentración (µg/m\u00B3)")
             self.ax_concentracion.tick_params(colors = "#ffffff") 
@@ -1948,7 +1952,7 @@ class App(ctk.CTk):
             else: 
                 self.ax_latencia.lines[0].set_data(self.tiempo_grafica_latencia, self.buffer_latencia)
             self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
-            self.ax_latencia.set_ylim(self.limitesy["latencia"][0],self.limitesy["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
+            self.ax_latencia.set_ylim(config.LIMITESY["latencia"][0],config.LIMITESY["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_latencia.set_xlabel("Tiempo (s)")
             self.ax_latencia.set_ylabel("Latencia (ms)")
             self.ax_latencia.tick_params(colors = "#ffffff") 

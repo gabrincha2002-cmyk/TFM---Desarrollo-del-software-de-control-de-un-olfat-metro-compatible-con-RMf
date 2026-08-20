@@ -19,6 +19,11 @@ PASOS_POR_CANAL = 200
 #-----GRÁFICAS Y BUFFERS----------------------------
 TAMANO_BUFFER_GRAFICAS = 61
 TIEMPO_GRAFICAS = 61
+LIMITESY = {"velocidad": [0,10000],
+            "flujo": [0,500],
+            "concentracion": [0,500],
+            "latencia": [0,1000]
+            }
 
 
 #-----COLORES DE LA UI------------------------------
