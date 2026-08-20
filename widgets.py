@@ -182,7 +182,7 @@ class Consola(ctk.CTkTextbox):
         self.logger.propagate = False  #Se evita que los mensajes se propaguen a la raíz del logger
 
         if not self.logger.handlers:
-            archivo_handler = logging.FileHandler(os.path.join(config.DIRECTORIO_HISTORIAL, "consola.log"), mode="a", encoding="utf-8")
+            archivo_handler = logging.FileHandler(os.path.join(config.DIRECTORIO_ARCHIVOS_TEMPORALES, "consola.log"), mode="a", encoding="utf-8")
             self.logger.addHandler(archivo_handler)
 
 

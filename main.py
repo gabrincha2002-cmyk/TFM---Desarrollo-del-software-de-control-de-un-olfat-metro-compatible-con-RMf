@@ -348,7 +348,7 @@ class App(ctk.CTk):
 
         self.l_tiempo_calibrado = ctk.CTkLabel(self.f_calibracion_canales_tiempo, text="Tiempo:", text_color="#458B8D", font=ctk.CTkFont(size=14, weight="bold"))
         self.l_tiempo_calibrado.grid(row=0, column=1, padx=0, pady=5, sticky="e")
-        self.e_tiempo_calibrado = SpinboxCTk(self.f_calibracion_canales_tiempo, valor=30, valor_min=1, valor_max=9999999, escalon=1, width=60, height=15)
+        self.e_tiempo_calibrado = SpinboxCTk(self.f_calibracion_canales_tiempo, valor=30, valor_min=1, valor_max=config.VALOR_MAXIMO_TIEMPO_CALIBRACION, escalon=1, width=60, height=15)
         self.e_tiempo_calibrado.grid(row=0, column=2, padx=0, pady=5, sticky="w")
         self.asignar_tooltip_spinbox(self.e_tiempo_calibrado, mensaje_entry="Introduzca el tiempo de la duración (en segundos) de la fase de calibración (tanto induvidual como general)")
 
@@ -630,14 +630,14 @@ class App(ctk.CTk):
         #Número de Ciclos
         self.l_num_ciclos = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Número de ciclos", font=ctk.CTkFont(size=14,weight="bold"))
         self.l_num_ciclos.grid(row=0, column=0, padx=10, pady=(10,2), sticky="we", rowspan=1)
-        self.e_num_ciclos =SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor= 3)
+        self.e_num_ciclos =SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor= 3, valor_max=config.VALOR_MAX_CICLOS, valor_min=config.VALOR_MIN_CICLOS)
         self.e_num_ciclos.grid(row=1, column=0, padx=5, pady=(4,2), sticky="n")
         self.asignar_tooltip_spinbox(self.e_num_ciclos, mensaje_entry="Introduzca el número de ciclos de exposición y desensibilización que se realizarán durante el protocolo.\nCada ciclo consiste en un período de exposición seguido de un período de desensibilización.")
 
         #Intervalo entreciclos
         self.l_intervalo_ciclos = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Intervalo entre ciclos (en sec)", font=ctk.CTkFont(size=14,weight="bold"))
         self.l_intervalo_ciclos.grid(row=2, column=0, padx=10, pady=(4,2), sticky="we", rowspan=1)
-        self.e_intervalo_ciclos =SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor= 60)
+        self.e_intervalo_ciclos =SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor= 60, valor_max=config.VALOR_MAX_INTERVALO_CICLOS, valor_min=config.VALOR_MIN_INTERVALO_CICLOS)
         self.e_intervalo_ciclos.grid(row=3, column=0, padx=5, pady=(4,2), sticky="n")
         self.asignar_tooltip_spinbox(self.e_intervalo_ciclos, mensaje_entry="Introduzca el intervalo entre ciclos del protocolo (en segundos).")
 
@@ -645,7 +645,7 @@ class App(ctk.CTk):
         #Tiempo de Exposición
         self.l_tiempo_exposicion = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Exposición (en sec)", font=ctk.CTkFont(size=14,weight="bold"))
         self.l_tiempo_exposicion.grid(row=4, column=0, padx=10, pady=(4,2), sticky="we")
-        self.e_tiempo_exposicion = SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor=3)
+        self.e_tiempo_exposicion = SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor=3, valor_max=config.VALOR_MAX_TIEMPO_EXPOSICION, valor_min=config.VALOR_MIN_TIEMPO_EXPOSICION)
         self.e_tiempo_exposicion.grid(row=5, column=0, padx=5, pady=(4,2), sticky="n")
         self.asignar_tooltip_spinbox(self.e_tiempo_exposicion, mensaje_entry="Introduzca el tiempo de exposición (en segundos) de los odorantes introducidos en el protocolo.")
 
@@ -653,7 +653,7 @@ class App(ctk.CTk):
         #Tiempo de Desensibilización
         self.l_tiempo_desensibilizacion = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Desensibilización (en sec)", font=ctk.CTkFont(size=14,weight="bold"))
         self.l_tiempo_desensibilizacion.grid(row=6, column=0, padx=10, pady=(4,2), sticky="we")
-        self.e_tiempo_desensibilizacion = SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor=30)
+        self.e_tiempo_desensibilizacion = SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor=30, valor_max=config.VALOR_MAX_TIEMPO_DESENSIBILIZACION, valor_min=config.VALOR_MIN_TIEMPO_DESENSIBILIZACION)
         self.e_tiempo_desensibilizacion.grid(row=7, column=0, padx=5, pady=(4,2), sticky="n")
         self.asignar_tooltip_spinbox(self.e_tiempo_desensibilizacion, mensaje_entry="Introduzca el tiempo de desensibilización (en segundos) entre los odorantes introducidos en el protocolo para la limpieza de los canales y reposo del paciente.")
 
@@ -2250,7 +2250,10 @@ class App(ctk.CTk):
             self.consola.registro("Conexión establecida con el ESP32", nivel="INFO")
         elif estado == "desconectado":
             self.consola.registro(f"Sin conexión con el ESP32. Reintentando en {config.RECONEXION_AUTOMATICA_S} s…", nivel="ERROR")
-
+            if (self.protocolo_activo and not self.protocolo_parado) or self.calibrado_activo() or self.canal_activo is not None:
+                #Intento de parada de todos los canales como medida de seguridad en caso de que el sistema estuviera activo y se pierda la conexión con el ESP32. 
+                self.ws_client.enviar({"cmd": "parar_todos"})
+                self.consola.registro("COMPRUEBE QUE EL SISTEMA ESTÁ APAGADO. SI NO ES ASÍ, PULSE LA SETA DE EMERGENCIA.", nivel="AVISO")
         texto, color = textos.get(estado, ("○ Desconectado", "#fa8989"))
         self.after(0, lambda: self.l_estado_conexion.configure(text=texto, text_color=color))
 
