@@ -3,6 +3,7 @@
 ###################################################################
 
 import customtkinter as ctk 
+from CTkToolTip import CTkToolTip
 import datetime
 
 class Canal(ctk.CTkFrame):
@@ -27,6 +28,7 @@ class Canal(ctk.CTkFrame):
         # Olor del canal
         self.e_olor_canal = ctk.CTkEntry(self, placeholder_text="Olor del canal", font=ctk.CTkFont(size=20))
         self.e_olor_canal.grid(row=0, column=0, padx=10, pady=10, sticky="e")
+        CTkToolTip(self.e_olor_canal, message="Introduce el nombre del olor que se va a utilizar en este canal.\nEste nombre se mostrará en los informes de sesión.", delay=0.5, justify="left", wraplength=300)
 
         #Tiempo activo del canal
         self.sv_tiempo_activo=ctk.StringVar(value="Tiempo activo: 00:00:00")  # Variable para almacenar el tiempo activo del canal
@@ -48,6 +50,7 @@ class Canal(ctk.CTkFrame):
                                              hover_color="#488f51",corner_radius=10,border_color="#006400",border_width=1,
                                              font=ctk.CTkFont(size=16, weight="bold"), command=self.activar_canal)
         self.b_activar_canal.grid(row=5, column=0, padx=10, pady=(5,10), sticky="w")
+
 
         self.b_parar_canal = ctk.CTkButton(self, text="Parar", fg_color="#f56a6a",text_color="#ffffff",
                                              hover_color="#ee4242",corner_radius=10,border_color="#ff0000",border_width=1,

@@ -52,7 +52,7 @@ Lista con enlaces: customtkinter, websockets, matplotlib, reportlab, etc.
 
 Gabriel Collado Santamaría (email VIU) - Estudiante  
 Directora TFT - Lilibeth Zambrano Martinez  
-Asesor Externo - Eduardo Fernández Jóver
+Asesor Externo - Eduardo Fernández Jover
 
 ## Licencia
 Todos los derechos reservados (PENDIENTE DE DECIDIR CON UMH)

@@ -66,6 +66,7 @@ class WSClient:
         on_estado:     Callable[[str], None],
         reconectar_s:  float = config.RECONEXION_AUTOMATICA_S,
     ):
+        self._ws = None
         self.uri          = uri
         self._on_estado   = on_estado
         self._reconectar  = reconectar_s
@@ -89,8 +90,10 @@ class WSClient:
     def detener(self):
         """Para la conexión y el hilo de fondo."""
         self._activo = False
-        if self._loop:
-            self._loop.call_soon_threadsafe(self._loop.stop)
+        self.conectado = False
+        if self._loop and self._loop.is_running() and self._ws:
+            #self._loop.call_soon_threadsafe(self._loop.stop)
+            asyncio.run_coroutine_threadsafe(self._ws.close(), self._loop)
         logger.info("WSClient detenido.")
 
     def enviar(self, datos: dict):
@@ -115,6 +118,7 @@ class WSClient:
             self._on_estado("conectando")
             try:
                 async with websockets.connect(self.uri, ping_interval=15 , ping_timeout=15) as ws:
+                    self._ws = ws
                     self.conectado = True
                     self._on_estado("conectado")
                     logger.info(f"Conectado a {self.uri}")
@@ -130,6 +134,9 @@ class WSClient:
                 logger.warning(f"Sin conexión ({e}). Reintentando en {self._reconectar} s…")
                 self.conectado = False
                 self._on_estado("desconectado")
+
+            finally:
+                self._ws = None
 
             if self._activo:
                 await asyncio.sleep(self._reconectar)

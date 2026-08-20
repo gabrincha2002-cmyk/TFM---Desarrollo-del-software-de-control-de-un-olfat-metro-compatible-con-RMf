@@ -6,7 +6,9 @@
 =============================================================
 """
 
+from CTkToolTip import CTkToolTip
 import customtkinter as ctk
+from tkinter import messagebox
 import time
 
 import datetime
@@ -84,6 +86,7 @@ class App(ctk.CTk):
         super().__init__()
         self.title("OlfaMetric")
         self.geometry("1920x1080")
+        self.protocol("WM_DELETE_WINDOW", self._cerrar_aplicacion)
         self.colores_canales = config.COLORES_CANALES  # Colores para cada cartucho
         self.posicion_valvula = 0
         # Diccionario para mapear los canales a sus posiciones en la gráfica
@@ -185,6 +188,23 @@ class App(ctk.CTk):
         self.crear_ui()
         self.tiempo_sesion()
 
+
+
+    def _cerrar_aplicacion(self):
+        """Cierra la aplicación de manera segura, deteniendo el cliente WebSocket y liberando recursos."""
+        if messagebox.askokcancel("Cerrar OlfaMetric", "¿Está seguro de que desea salir de la aplicación?"):
+            #Detener el cliente WebSocket
+            self.ws_client.detener()
+            #Cerrar la ventana principal
+            self.destroy()
+
+    def asignar_tooltip_spinbox(self, spinbox: SpinboxCTk, mensaje_entry: str, mensaje_incrementar: str = "Incrementar valor", mensaje_decrementar: str = "Decrementar valor"):
+        """Asigna un tooltip a un SpinboxCTk con el mensaje proporcionado."""
+        spinbox._tooltip =[
+        CTkToolTip(spinbox.e_spinbox, message=mensaje_entry, delay=0.5, font=ctk.CTkFont(size=12)),
+        CTkToolTip(spinbox.b_decrementar, message=mensaje_decrementar, delay=0.5, font=ctk.CTkFont(size=12)),
+        CTkToolTip(spinbox.b_incrementar, message=mensaje_incrementar, delay=0.5, font=ctk.CTkFont(size=12)),
+        ]
 
     def _procesar_cola_ws(self):
         """Lee mensajes de la cola WS y los procesa en el hilo de Tkinter."""
@@ -314,15 +334,19 @@ class App(ctk.CTk):
         self.f_calibracion_canales_tiempo = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
         self.f_calibracion_canales_tiempo.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
 
-        sv_canales_calibrado = ctk.StringVar(value="Seleccionar canal a calibrar")
+        sv_canales_calibrado = ctk.StringVar(value="Canal a calibrar")
         self.comb_canales_calibrados = ctk.CTkComboBox(self.f_calibracion_canales_tiempo, values=[],
                                              width=180, height=36, text_color="#ffffff",command=self.seleccionar_calibrado,dropdown_fg_color="#0a5f70", variable=sv_canales_calibrado)
         self.comb_canales_calibrados.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        CTkToolTip(self.comb_canales_calibrados, message="Seleccione una canal con olor predefinido para calibrar", delay=0.5, font=ctk.CTkFont(size=12))
+
+
 
         self.l_tiempo_calibrado = ctk.CTkLabel(self.f_calibracion_canales_tiempo, text="Tiempo:", text_color="#458B8D", font=ctk.CTkFont(size=14, weight="bold"))
         self.l_tiempo_calibrado.grid(row=0, column=1, padx=0, pady=5, sticky="e")
         self.e_tiempo_calibrado = SpinboxCTk(self.f_calibracion_canales_tiempo, valor=30, valor_min=1, valor_max=9999999, escalon=1, width=60, height=15)
         self.e_tiempo_calibrado.grid(row=0, column=2, padx=0, pady=5, sticky="w")
+        self.asignar_tooltip_spinbox(self.e_tiempo_calibrado, mensaje_entry="Introduzca el tiempo de la duración (en segundos) de la fase de calibración (tanto induvidual como general)")
 
 
         self.f_botones_calibrado_general = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
@@ -334,12 +358,12 @@ class App(ctk.CTk):
 
         #reiniciar calibrado general
         self.b_reiniciar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Reinicio General", text_color="#ffffff", fg_color= "#C7BE19" , width=10, height=15,
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width= 1, corner_radius=10,command=self.reiniciar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width= 1, corner_radius=10,command=self._consultar_reiniciar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
         self.b_reiniciar_calibrado_general.grid(row=0, column=1, ipadx=0, padx=5, pady=5, sticky="wsne")
 
         #parar calibrado general
         self.b_parar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Parada General", text_color="#ffffff", fg_color= "#f56a6a", width=10, height=15,
-                                                   hover_color="#ee4242", border_color="#ff0000", border_width= 1, corner_radius=10,command=self.parar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
+                                                   hover_color="#ee4242", border_color="#ff0000", border_width= 1, corner_radius=10,command=self._consultar_parar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
         self.b_parar_calibrado_general.grid(row=0, column=2, ipadx=0 ,padx=5, pady=5, sticky="wsne")
 
         #Calibración Velocidad
@@ -380,15 +404,19 @@ class App(ctk.CTk):
         self.b_iniciar_calibrado_velocidad = ctk.CTkButton(self.f_botones_calibrado_velocidad, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
         hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_iniciar_calibrado_velocidad.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_calibrado_velocidad, message="Iniciar calibrado de velocidad", delay=0.5, font=ctk.CTkFont(size=12))
+
        
 
         self.b_reiniciar_calibrado_velocidad = ctk.CTkButton(self.f_botones_calibrado_velocidad, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
                                                    hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_reiniciar_calibrado_velocidad.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_calibrado_velocidad, message="Reiniciar calibrado de velocidad", delay=0.5, font=ctk.CTkFont(size=12))
 
         self.b_parar_calibrado_velocidad = ctk.CTkButton(self.f_botones_calibrado_velocidad, text="◼", text_color = "#ffffff",width=25, height=15, 
         fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_parar_calibrado_velocidad.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_calibrado_velocidad, message="Detener el calibrado de velocidad ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
 
 
         #Calibración Flujo
@@ -426,15 +454,20 @@ class App(ctk.CTk):
         self.b_iniciar_calibrado_flujo = ctk.CTkButton(self.f_botones_calibrado_flujo, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
         hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_iniciar_calibrado_flujo.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_calibrado_flujo, message="Iniciar calibrado de flujo", delay=0.5, font=ctk.CTkFont(size=12))
        
 
         self.b_reiniciar_calibrado_flujo = ctk.CTkButton(self.f_botones_calibrado_flujo, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
                                                    hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_reiniciar_calibrado_flujo.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_calibrado_flujo, message="Reiniciar calibrado de flujo", delay=0.5, font=ctk.CTkFont(size=12))
+
 
         self.b_parar_calibrado_flujo = ctk.CTkButton(self.f_botones_calibrado_flujo, text="◼", text_color = "#ffffff",width=25, height=15, 
         fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_parar_calibrado_flujo.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_calibrado_flujo, message="Detener el calibrado de flujo ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
+        
 
 
 
@@ -473,15 +506,19 @@ class App(ctk.CTk):
         self.b_iniciar_calibrado_concentracion = ctk.CTkButton(self.f_botones_calibrado_concentracion, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
         hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_iniciar_calibrado_concentracion.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_calibrado_concentracion, message="Iniciar calibrado de concentración", delay=0.5, font=ctk.CTkFont(size=12))
        
 
         self.b_reiniciar_calibrado_concentracion = ctk.CTkButton(self.f_botones_calibrado_concentracion, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
                                                    hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_reiniciar_calibrado_concentracion.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_calibrado_concentracion, message="Reiniciar calibrado de concentración", delay=0.5, font=ctk.CTkFont(size=12))
+
 
         self.b_parar_calibrado_concentracion = ctk.CTkButton(self.f_botones_calibrado_concentracion, text="◼", text_color = "#ffffff",width=25, height=15, 
         fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_parar_calibrado_concentracion.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_calibrado_concentracion, message="Detener el calibrado de concentración ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
 
 
 
@@ -521,15 +558,18 @@ class App(ctk.CTk):
         self.b_iniciar_calibrado_latencia = ctk.CTkButton(self.f_botones_calibrado_latencia, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
         hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_iniciar_calibrado_latencia.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_calibrado_latencia, message="Iniciar calibrado de latencia", delay=0.5, font=ctk.CTkFont(size=12))
        
 
         self.b_reiniciar_calibrado_latencia = ctk.CTkButton(self.f_botones_calibrado_latencia, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
                                                    hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_reiniciar_calibrado_latencia.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_calibrado_latencia, message="Reiniciar calibrado de latencia", delay=0.5, font=ctk.CTkFont(size=12))
 
         self.b_parar_calibrado_latencia = ctk.CTkButton(self.f_botones_calibrado_latencia, text="◼", text_color = "#ffffff",width=25, height=15, 
         fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
         self.b_parar_calibrado_latencia.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_calibrado_latencia, message="Detener el calibrado de latencia ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
 
 
 
@@ -588,24 +628,31 @@ class App(ctk.CTk):
         self.l_num_ciclos.grid(row=0, column=0, padx=10, pady=(10,2), sticky="we", rowspan=1)
         self.e_num_ciclos =SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor= 3)
         self.e_num_ciclos.grid(row=1, column=0, padx=5, pady=(4,2), sticky="n")
+        self.asignar_tooltip_spinbox(self.e_num_ciclos, mensaje_entry="Introduzca el número de ciclos de exposición y desensibilización que se realizarán durante el protocolo.\nCada ciclo consiste en un período de exposición seguido de un período de desensibilización.")
 
         #Intervalo entreciclos
         self.l_intervalo_ciclos = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Intervalo entre ciclos (en sec)", font=ctk.CTkFont(size=14,weight="bold"))
         self.l_intervalo_ciclos.grid(row=2, column=0, padx=10, pady=(4,2), sticky="we", rowspan=1)
         self.e_intervalo_ciclos =SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor= 60)
         self.e_intervalo_ciclos.grid(row=3, column=0, padx=5, pady=(4,2), sticky="n")
+        self.asignar_tooltip_spinbox(self.e_intervalo_ciclos, mensaje_entry="Introduzca el intervalo entre ciclos del protocolo (en segundos).")
+
 
         #Tiempo de Exposición
         self.l_tiempo_exposicion = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Exposición (en sec)", font=ctk.CTkFont(size=14,weight="bold"))
         self.l_tiempo_exposicion.grid(row=4, column=0, padx=10, pady=(4,2), sticky="we")
         self.e_tiempo_exposicion = SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor=3)
         self.e_tiempo_exposicion.grid(row=5, column=0, padx=5, pady=(4,2), sticky="n")
+        self.asignar_tooltip_spinbox(self.e_tiempo_exposicion, mensaje_entry="Introduzca el tiempo de exposición (en segundos) de los odorantes introducidos en el protocolo.")
+
 
         #Tiempo de Desensibilización
         self.l_tiempo_desensibilizacion = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Desensibilización (en sec)", font=ctk.CTkFont(size=14,weight="bold"))
         self.l_tiempo_desensibilizacion.grid(row=6, column=0, padx=10, pady=(4,2), sticky="we")
         self.e_tiempo_desensibilizacion = SpinboxCTk(self.tv_prot_cal_est.tab("Protocolo"), valor=30)
         self.e_tiempo_desensibilizacion.grid(row=7, column=0, padx=5, pady=(4,2), sticky="n")
+        self.asignar_tooltip_spinbox(self.e_tiempo_desensibilizacion, mensaje_entry="Introduzca el tiempo de desensibilización (en segundos) entre los odorantes introducidos en el protocolo para la limpieza de los canales y reposo del paciente.")
+
 
         #Orden de los canales
         self.l_orden_canales = ctk.CTkLabel(self.tv_prot_cal_est.tab("Protocolo"), text="Orden de los canales", font=ctk.CTkFont(size=14,weight="bold"))
@@ -615,6 +662,10 @@ class App(ctk.CTk):
         self.cb_secuencial.select()  # Por defecto, el orden de los canales es secuencial
         self.cb_aleatorio = ctk.CTkCheckBox(self.tv_prot_cal_est.tab("Protocolo"), text="Aleatorio", font=ctk.CTkFont(size=14))
         self.cb_aleatorio.grid(row=9, column=0, padx=40, pady=(4,2), sticky="e")
+        CTkToolTip(self.cb_aleatorio, message="Seleccione esta opción para que los odorantes se presenten en un orden aleatorio durante el protocolo.", delay=0.5, font=ctk.CTkFont(size=12))
+        CTkToolTip(self.cb_secuencial, message="Seleccione esta opción para que los odorantes se presenten en un orden secuencial durante el protocolo.", delay=0.5, font=ctk.CTkFont(size=12))
+
+
 
 
 
@@ -638,17 +689,21 @@ class App(ctk.CTk):
         self.b_iniciar_protocolo = ctk.CTkButton(self.tv_prot_cal_est.tab("Protocolo"), text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
         hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_protocolo,font=ctk.CTkFont(size=34, weight="bold"))
         self.b_iniciar_protocolo.grid(row=18, column=0, padx=50, pady=(60,5), sticky="w")
+        CTkToolTip(self.b_iniciar_protocolo, message="Inicio del protocolo configurado", delay=0.5, font=ctk.CTkFont(size=12))
+
         
         #Reiniciar protocolo
         self.b_reiniciar_protocolo = ctk.CTkButton(self.tv_prot_cal_est.tab("Protocolo"), text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20, 
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_protocolo,font=ctk.CTkFont(size=34, weight="bold"))
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self._consulta_reiniciar_protocolo,font=ctk.CTkFont(size=34, weight="bold"))
         self.b_reiniciar_protocolo.grid(row=18, column=0, padx=10, pady=(60,5), sticky="n")
+        CTkToolTip(self.b_reiniciar_protocolo, message="Reinicio del protocolo configurado", delay=0.5, font=ctk.CTkFont(size=12))
 
 
         #Parar protocolo
         self.b_parar_protocolo = ctk.CTkButton(self.tv_prot_cal_est.tab("Protocolo"), text="◼", text_color = "#ffffff",width=15, height=20, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_protocolo,font=ctk.CTkFont(size=34, weight="bold"))
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self._consulta_parar_protocolo,font=ctk.CTkFont(size=34, weight="bold"))
         self.b_parar_protocolo.grid(row=18, column=0, padx=50, pady=(60,5), sticky="e")
+        CTkToolTip(self.b_parar_protocolo, message="Parada del protocolo configurado ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
         
 
         #FALTAN INLCUIR PROTOCOLOS ESTANDARIZADOS DE OLFATOMETRÍA (Sniffin' Sticks, etc) Y LA POSIBILIDAD DE CREAR 
@@ -1337,6 +1392,14 @@ class App(ctk.CTk):
         #self.sv_cuenta_atras.set("")
         self.bloquear_botones(bloquear=False)
         self.consola.registro("Protocolo finalizado")
+
+    def _consulta_reiniciar_protocolo(self):
+        respuesta = messagebox.askyesno("Reiniciar protocolo", "¿Está seguro de que desea reiniciar el protocolo? Se perderá el progreso de la actual sesion experimental.")
+        if respuesta:
+            self.reiniciar_protocolo()
+            self.consola.registro("Reiniciando protocolo...")
+        else:
+            self.consola.registro("Reinicio de protocolo cancelado")
     
     def reiniciar_protocolo(self):
 
@@ -1365,7 +1428,14 @@ class App(ctk.CTk):
         self.sv_canal_siguiente.set("Ninguno")
         self.consola.registro("Protocolo reiniciado")
 
-    
+    def _consulta_parar_protocolo(self):
+        respuesta = messagebox.askyesno("Parar protocolo", "¿Está seguro de que desea parar el protocolo? Se pausará el actual progreso de la sesión experimental y podrá reanudarlo posteriormente.")
+        if respuesta:
+            self.consola.registro("Parando protocolo...")
+            self.parar_protocolo()
+        else:
+            self.consola.registro("Parada de protocolo cancelada")
+
     def parar_protocolo(self):
         self.protocolo_parado = True
         self.b_iniciar_protocolo.configure(state="normal")
@@ -1873,11 +1943,36 @@ class App(ctk.CTk):
         self.iniciar_calibrado_flujo()
         self.iniciar_calibrado_concentracion()
         self.iniciar_calibrado_latencia()
+
+    def _consultar_reiniciar_calibrado_general(self):
+        if self.calibrando_velocidad or self.calibrando_flujo or self.calibrando_concentracion or self.calibrando_latencia:
+            respuesta = messagebox.askyesno("Reiniciar calibrado general", "¿Está seguro de que desea reiniciar el calibrado general? Se reiniciará el calibrado de todos los canales y se perderán los datos de la actual sesión experimental.")
+            if respuesta:
+                self.consola.registro("Reiniciando calibrado general...")
+                self.reiniciar_calibrado_general()
+                self.consola.registro("Calibrado general reiniciado.")
+            else:
+                self.consola.registro("Reinicio de calibrado general cancelado.")
+        else:
+            self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado.", nivel="AVISO")
     def reiniciar_calibrado_general(self):
         self.reiniciar_calibrado_velocidad()
         self.reiniciar_calibrado_flujo()
         self.reiniciar_calibrado_concentracion()
         self.reiniciar_calibrado_latencia()
+
+    def _consultar_parar_calibrado_general(self):
+        if self.calibrando_velocidad or self.calibrando_flujo or self.calibrando_concentracion or self.calibrando_latencia:
+            respuesta = messagebox.askyesno("Parar calibrado general", "¿Está seguro de que desea parar el calibrado general? Se pausará el calibrado de todos los canales y se podrá reanudar más tarde.")
+            if respuesta:
+                self.consola.registro("Parando calibrado general...")
+                self.parar_calibrado_general()
+                self.consola.registro("Calibrado general parado.")
+            else:
+                self.consola.registro("Parada de calibrado general cancelada.")
+        else:
+            self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado.", nivel="AVISO")
+
     def parar_calibrado_general(self):
         self.parar_calibrado_velocidad()
         self.parar_calibrado_flujo()
@@ -1991,7 +2086,7 @@ class App(ctk.CTk):
                 pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else config.CANAL_BLANCO, num_canal)
                 
                 if self.canal_activo != None and self.canal_activo.num_canal != num_canal:
-                    self.consola.registro(f"Se ha activado el canal {num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ""}) mientras el canal {self.canal_activo.num_canal} ({self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() if self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() else ""}) estaba activo. Se detiene el canal {self.canal_activo.num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ""}).", nivel="AVISO")
+                    self.consola.registro(f"Se ha activado el canal {num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ''}) mientras el canal {self.canal_activo.num_canal} ({self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() if self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() else ''}) estaba activo. Se detiene el canal {self.canal_activo.num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ''}).", nivel="AVISO")
                     self.canal_activo.parar_canal()
                 self.canal_activo = self.cuadros_canales[num_canal]
                 self.sv_canal_activo.set(f"Canal {self.canal_activo.e_olor_canal.get()}" if self.canal_activo.e_olor_canal.get() else "Canal Blanco")
