@@ -1410,7 +1410,7 @@ class App(ctk.CTk):
             if not self.calibrado_velocidad_parado and not self.calibrando_velocidad:
                 self.calibrando_velocidad = True
                 self.consola.registro("Iniciando calibrado de velocidad...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
                 self.tiempo_grafica_velocidad = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
                 self.b_iniciar_calibrado_velocidad.configure(state="disabled")
@@ -1461,7 +1461,7 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de velocidad.", nivel="AVISO")
 
         self.buffer_historico_calibrado_velocidad.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
         self.tiempo_grafica_velocidad = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
         self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
         #self.buffer_velocidad = collections.deque([np.nan]*61, maxlen=61)
@@ -1525,7 +1525,7 @@ class App(ctk.CTk):
             if not self.calibrado_flujo_parado and not self.calibrando_flujo:
                 self.calibrando_flujo = True
                 self.consola.registro("Iniciando calibrado de flujo...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
                 self.tiempo_grafica_flujo = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
                 self.b_iniciar_calibrado_flujo.configure(state="disabled")
@@ -1575,9 +1575,11 @@ class App(ctk.CTk):
         else:
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo.", nivel="AVISO")
 
+
         self.buffer_historico_calibrado_flujo.clear()
-        self.buffer_flujo = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
-        self.tiempo_grafica_flujo = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
+        self.tiempo_grafica_flujo = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
 
         self.ax_flujo.clear()
         self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
@@ -1637,7 +1639,7 @@ class App(ctk.CTk):
             if not self.calibrado_concentracion_parado and not self.calibrando_concentracion:
                 self.calibrando_concentracion = True
                 self.consola.registro("Iniciando calibrado de concentración...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
                 self.tiempo_grafica_concentracion = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
                 self.b_iniciar_calibrado_concentracion.configure(state="disabled")
@@ -1687,9 +1689,12 @@ class App(ctk.CTk):
         else:
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración.", nivel="AVISO")
 
+
+
         self.buffer_historico_calibrado_concentracion.clear()
-        self.buffer_concentracion = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
-        self.tiempo_grafica_concentracion = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
+        self.tiempo_grafica_concentracion = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
 
         self.ax_concentracion.clear()
         self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
@@ -1750,7 +1755,7 @@ class App(ctk.CTk):
             if not self.calibrado_latencia_parado and not self.calibrando_latencia:
                 self.calibrando_latencia = True
                 self.consola.registro("Iniciando calibrado de latencia...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
                 self.tiempo_grafica_latencia = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
                 self.b_iniciar_calibrado_latencia.configure(state="disabled")
@@ -1800,9 +1805,11 @@ class App(ctk.CTk):
         else:
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia.", nivel="AVISO")
 
+
         self.buffer_historico_calibrado_latencia.clear()
-        self.buffer_latencia = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
-        self.tiempo_grafica_latencia = collections.deque(list(range(0,config.TIEMPO_GRAFICAS)), maxlen=config.TIEMPO_GRAFICAS)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
+        self.tiempo_grafica_latencia = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
 
         self.ax_latencia.clear()
         self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
