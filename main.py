@@ -2085,7 +2085,8 @@ class App(ctk.CTk):
                 self.buffer_historico_calibrado_velocidad.append(datos["velocidad_motor"])
 
         # Actualizar labels de Estado
-        self.after(100, self._actualizar_labels_estado, datos)
+        #self.after(100, self._actualizar_labels_estado, datos)
+        self._actualizar_labels_estado(datos)
 
 
     def _actualizar_labels_estado(self, datos):
