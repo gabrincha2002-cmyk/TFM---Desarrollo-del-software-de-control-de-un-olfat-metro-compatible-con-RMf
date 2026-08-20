@@ -25,7 +25,7 @@ LIMITESY = {"velocidad": [0,10000],
             "concentracion": [0,500],
             "latencia": [0,1000]
             }
-
+DIRECTORIO_ARCHIVOS_TEMPORALES = 'C:\\Users\\Usuario\\Desktop\\TFM Olfatometro\\AplicacionOlfatometro\\OlfaMetric_v2\\archivos_temporales_sesion'
 
 #-----COLORES DE LA UI------------------------------
 COLOR_ESTADO_OK = "#7deb7d"

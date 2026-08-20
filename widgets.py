@@ -2,9 +2,12 @@
 #Creación de widgets personalizados para la aplicación OlfaMetric #
 ###################################################################
 
+import os
 import customtkinter as ctk 
 from CTkToolTip import CTkToolTip
 import datetime
+import logging
+import config
 
 class Canal(ctk.CTkFrame):
     def __init__(self, master, color_canal, num_canal, registro=None, actualizar_canal=None):
@@ -173,7 +176,20 @@ class FrameDeslizante(ctk.CTkScrollableFrame):
 class Consola(ctk.CTkTextbox):
     def __init__(self, master):
         super().__init__(master)
+
+        self.logger = logging.getLogger("olfametric.consola")
+        self.logger.setLevel(logging.INFO)
+        self.logger.propagate = False  #Se evita que los mensajes se propaguen a la raíz del logger
+
+        if not self.logger.handlers:
+            archivo_handler = logging.FileHandler(os.path.join(config.DIRECTORIO_HISTORIAL, "consola.log"), mode="a", encoding="utf-8")
+            self.logger.addHandler(archivo_handler)
+
+
+
+
         self.crear()
+        
 
     def crear(self):
         self.grid_columnconfigure(0, weight=1)
@@ -190,6 +206,14 @@ class Consola(ctk.CTkTextbox):
         mensaje_final = f"{hora}- {nivel}- {mensaje}\n"
         self.t_registro.insert(index="end", text=mensaje_final)
         self.t_registro.see("end")
+
+        #Se asigna el nivel de logging correspondiente según el nivel proporcionado
+        if nivel.upper() == 'AVISO':
+            nivel_logging = logging.WARNING
+        else:
+            nivel_logging = getattr(logging, nivel.upper(), logging.INFO)
+        #Se registra el mensaje en el logger de la consola, que a su vez lo escribirá en el archivo de log
+        self.logger.log(nivel_logging, mensaje_final)
 
     def limpiar_registro(self):
         self.t_registro.delete("1.0","end")  

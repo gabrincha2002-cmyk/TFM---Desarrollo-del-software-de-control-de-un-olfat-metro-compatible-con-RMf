@@ -6,6 +6,8 @@
 =============================================================
 """
 
+import json
+
 from CTkToolTip import CTkToolTip
 import customtkinter as ctk
 from tkinter import messagebox
@@ -193,6 +195,8 @@ class App(ctk.CTk):
     def _cerrar_aplicacion(self):
         """Cierra la aplicación de manera segura, deteniendo el cliente WebSocket y liberando recursos."""
         if messagebox.askokcancel("Cerrar OlfaMetric", "¿Está seguro de que desea salir de la aplicación?"):
+            self.ws_client.enviar({"cmd": "parar_todos"})  #todos los canales se detienen antes de cerrar
+            self.ws_client.enviar({"cmd": "rotar", "canal": config.CANAL_BLANCO, "pasos": -self.posicion_valvula})  #se retorna al punto de origen (canal blanco) antes de cerrar
             #Detener el cliente WebSocket
             self.ws_client.detener()
             #Cerrar la ventana principal
@@ -1002,6 +1006,8 @@ class App(ctk.CTk):
             try:
                 reports.generar_pdf(ruta, datos)
                 self.consola.registro(f"InformePDF generado correctamente en {ruta}")
+                os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
+                self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
             except Exception as e:
                 import traceback
                 self.consola.registro(f'Error al generar informe PDF: {e}', nivel = "ERROR")
@@ -1011,6 +1017,8 @@ class App(ctk.CTk):
             try:
                 reports.generar_excel(ruta, datos)
                 self.consola.registro(f"Informe Excel generado correctamente en {ruta}")
+                os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
+                self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
             except Exception as e:
                 self.consola.registro(f'Error al generar informe Excel: {e}', nivel = "ERROR")
 
@@ -1018,6 +1026,8 @@ class App(ctk.CTk):
             try:
                 reports.generar_csv(ruta, datos)
                 self.consola.registro(f"Informe CSV generado correctamente en {ruta}")
+                os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
+                self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
             except Exception as e:
                 self.consola.registro(f'Error al generar informe CSV: {e}', nivel = "ERROR")
 
@@ -2114,6 +2124,7 @@ class App(ctk.CTk):
                                 "olor" : self.canal_activo.e_olor_canal.get()
                                 if self.canal_activo.e_olor_canal.winfo_exists() else "",
                                 "estado" : "inactivo" ,
+                                #PENDIENTE DE MODIFICAR, DEBE MOSTRAR LOS ULTIMOS DATOS DE TELEMETRÍA DEL CANAL ANTES DE PARARLO, NO 0.0
                                 "flujo" : 0.0,
                                 "velocidad_motor" : 0.0,
                                 "concentracion" : 0.0,
@@ -2154,6 +2165,10 @@ class App(ctk.CTk):
             datos_con_hist = dict(datos)
             datos_con_hist["olor"] = olor
             self.historial_sesion.append(datos_con_hist)
+            with tempfile.NamedTemporaryFile(mode='a', delete=False, suffix='.json', prefix='historial_sesion_', dir=config.DIRECTORIO_ARCHIVOS_TEMPORALES, encoding='utf-8') as archivo_temp:
+                json.dump(datos_con_hist, archivo_temp, ensure_ascii=False)
+            self.ruta_archivo_temporal = archivo_temp.name
+                
         
         
         if self.canal_calibrado is not None and num_canal == self.canal_calibrado.num_canal:
