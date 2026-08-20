@@ -934,7 +934,11 @@ class App(ctk.CTk):
         formatos = [('PDF','*.pdf'),('Excel', '*.xlsx'),('CSV','*.csv')]
         ruta = ctk.filedialog.asksaveasfilename(title='Guardar informe de sesión',
                                                 filetypes=formatos, defaultextension=".pdf",
-                                                  initialfile=f'informe_{self.e_id_sesion.get()}_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}')
+                                                  initialfile=f'Informe_OlfaMetric_{self.e_id_sesion.get()}_{datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")}')
+        if not ruta:
+            self.consola.registro("Generación de informe cancelada. No se ha seleccionado ninguna ruta de guardado.", nivel="AVISO")
+            return
+        
         datos= self._construir_datos_informe()
 
         self.consola.registro(f'Generando informe en {ruta}....')

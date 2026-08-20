@@ -500,7 +500,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         if datos.metricas_calibracion:
             for num_canal, metrica in datos.metricas_calibracion.items():
                 datos_calibracion.append([
-                    datos.e_tiempo_calibrado.get(),
+                    datos.tiempo_calibrado,
                     datos.colores_canales[num_canal],
                     metrica.get("olor", ""),
                     round(media(metrica.get("concentracion", [])), 2),
