@@ -2134,6 +2134,12 @@ class App(ctk.CTk):
             "desconectado":  ("○ Desconectado", config.COLOR_ESTADO_DESCONECTADO),
             "error":         ("✕ Error",       config.COLOR_ESTADO_ERROR),
         }
+
+        if estado == "conectado":
+            self.consola.registro("Conexión establecida con el ESP32", nivel="INFO")
+        elif estado == "desconectado":
+            self.consola.registro(f"Sin conexión con el ESP32. Reintentando en {config.RECONEXION_AUTOMATICA_S} s…", nivel="ERROR")
+
         texto, color = textos.get(estado, ("○ Desconectado", "#fa8989"))
         self.after(0, lambda: self.l_estado_conexion.configure(text=texto, text_color=color))
 

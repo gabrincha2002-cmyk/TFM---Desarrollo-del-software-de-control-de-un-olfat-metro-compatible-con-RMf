@@ -32,6 +32,7 @@ import logging
 import time
 import queue
 from typing import Callable, Optional
+import config
 
 logger = logging.getLogger(__name__)
 
@@ -63,7 +64,7 @@ class WSClient:
         self,
         uri:           str,
         on_estado:     Callable[[str], None],
-        reconectar_s:  float = 0.5,
+        reconectar_s:  float = config.RECONEXION_AUTOMATICA_S,
     ):
         self.uri          = uri
         self._on_estado   = on_estado
@@ -113,10 +114,11 @@ class WSClient:
         while self._activo:
             self._on_estado("conectando")
             try:
-                async with websockets.connect(self.uri, ping_interval=20 , ping_timeout=15) as ws:
+                async with websockets.connect(self.uri, ping_interval=15 , ping_timeout=15) as ws:
                     self.conectado = True
                     self._on_estado("conectado")
                     logger.info(f"Conectado a {self.uri}")
+
 
                     # Dos corutinas en paralelo: recibir y enviar
                     await asyncio.gather(
