@@ -575,7 +575,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                     round(media(metrica.get("latencia", [])), 1),
                     ])
         tabla_calibracion = Table(cabeceras_calibracion + datos_calibracion,
-                               colWidths=[20*mm,22*mm, 20*mm, 20*mm, 20*mm, 24*mm, 22*mm, 22*mm, 20*mm])
+                               colWidths=[20*mm,16*mm, 16*mm, 24*mm, 24*mm, 24*mm, 22*mm, 22*mm, 24*mm])
         tabla_calibracion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_calibracion)
         historia.append(PageBreak())
@@ -599,7 +599,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 round(muestra["latencia"], 1),
                 ])
         tabla_historial_calibracion = Table(cabeceras_historial_calibrado + datos_historial_calibrado, 
-                                          colWidths=[16*mm, 20*mm, 22*mm, 24*mm, 20*mm, 24*mm, 20*mm, 20*mm, 20*mm])
+                                          colWidths=[14*mm, 20*mm, 16*mm, 16*mm, 24*mm, 24*mm, 24*mm, 24*mm, 24*mm])
         
         tabla_historial_calibracion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_calibracion)
@@ -607,7 +607,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
 
 
         #HISTORIAL DE PROTOCOLO
-        historia.append(Paragraph("Historial de datos", estilo_seccion))
+        historia.append(Paragraph("Historial de Protocolo", estilo_seccion))
         cabeceras_historial_protocolo = [[
             "Onset (s)","Hora", "Canal", "Olor","Estado","Velocidad(rpm)", "Latencia(ms)"
         ]]
@@ -624,7 +624,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 round(metrica.get("latencia", 0), 1),
                 ])
         tabla_historial_protocolo = Table(cabeceras_historial_protocolo + datos_historial_protocolo, 
-                                          colWidths=[20*mm, 20*mm, 22*mm, 22*mm, 20*mm, 22*mm, 20*mm])
+                                          colWidths=[20*mm, 16*mm, 16*mm, 16*mm, 20*mm, 26*mm, 24*mm])
         
         tabla_historial_protocolo.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_protocolo)

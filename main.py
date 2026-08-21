@@ -110,6 +110,7 @@ class App(ctk.CTk):
         self.buffer_concentracion = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
         self.buffer_latencia = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
         self.buffer_velocidad = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
+        self.ruta_archivo_temporal = None
 
     
         #buffers históricos
@@ -1007,8 +1008,10 @@ class App(ctk.CTk):
             try:
                 reports.generar_pdf(ruta, datos)
                 self.consola.registro(f"InformePDF generado correctamente en {ruta}")
-                os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
-                self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
+                if self.ruta_archivo_temporal and os.path.exists(self.ruta_archivo_temporal):
+                    self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
+                    os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
+                    self.ruta_archivo_temporal = None
             except Exception as e:
                 import traceback
                 self.consola.registro(f'Error al generar informe PDF: {e}', nivel = "ERROR")
@@ -1018,8 +1021,10 @@ class App(ctk.CTk):
             try:
                 reports.generar_excel(ruta, datos)
                 self.consola.registro(f"Informe Excel generado correctamente en {ruta}")
-                os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
-                self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
+                if self.ruta_archivo_temporal and os.path.exists(self.ruta_archivo_temporal):
+                    self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
+                    os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
+                    self.ruta_archivo_temporal = None
             except Exception as e:
                 self.consola.registro(f'Error al generar informe Excel: {e}', nivel = "ERROR")
 
@@ -1027,8 +1032,10 @@ class App(ctk.CTk):
             try:
                 reports.generar_csv(ruta, datos)
                 self.consola.registro(f"Informe CSV generado correctamente en {ruta}")
-                os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
-                self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
+                if self.ruta_archivo_temporal and os.path.exists(self.ruta_archivo_temporal):
+                    self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
+                    os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
+                    self.ruta_archivo_temporal = None
             except Exception as e:
                 self.consola.registro(f'Error al generar informe CSV: {e}', nivel = "ERROR")
 
