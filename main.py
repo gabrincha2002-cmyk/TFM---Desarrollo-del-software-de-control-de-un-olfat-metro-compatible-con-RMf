@@ -101,6 +101,7 @@ class App(ctk.CTk):
         #buffers termporales
         self.olores = []
         self.historial_sesion= []
+        self.ultimos_datos_telemetria = {}
         self.metricas_calibracion = {}
         # Los widgets de UI (p. ej. `e_tiempo_calibrado`) se crean en `crear_ui()` más abajo,
         # por eso no debemos usar `self.e_tiempo_calibrado.get()` aquí (aún no existe).
@@ -891,53 +892,53 @@ class App(ctk.CTk):
         self.l_duracion_sesion.grid(row=1, column=0, padx=10, pady=(20,5), sticky="n")
 
         self.l_id_sesion = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="ID de sesión: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_id_sesion.grid(row=2, column=0, padx=71, pady=(20,5), sticky="w")
+        self.l_id_sesion.grid(row=4, column=0, padx=71, pady=(20,5), sticky="w")
         self.e_id_sesion= ctk.CTkEntry(self.tv_prot_cal_est.tab("Estado"), placeholder_text="introduzca identificador", font=ctk.CTkFont(size=14))
-        self.e_id_sesion.grid(row=2, column=0, padx=71, pady=(20,5), sticky="e")
+        self.e_id_sesion.grid(row=4, column=0, padx=71, pady=(20,5), sticky="e")
 
         self.l_id_paciente = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="ID de paciente: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_id_paciente.grid(row=3, column=0, padx=65, pady=(20,5), sticky="w")
+        self.l_id_paciente.grid(row=5, column=0, padx=65, pady=(20,5), sticky="w")
         self.e_id_paciente= ctk.CTkEntry(self.tv_prot_cal_est.tab("Estado"), placeholder_text="introduzca identificador", font=ctk.CTkFont(size=14))
-        self.e_id_paciente.grid(row=3, column=0, padx=65, pady=(20,5), sticky="e")
+        self.e_id_paciente.grid(row=5, column=0, padx=65, pady=(20,5), sticky="e")
 
 
         #self.actualizar_canales()
 
         self.l_canal_anterior= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Canal anterior: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_canal_anterior.grid(row=4, column=0, padx=110, pady=(20,5), sticky="w")
+        self.l_canal_anterior.grid(row=7, column=0, padx=110, pady=(20,5), sticky="w")
         #self.canal_anterior = ctk.StringVar(value="Ninguno")
         self.l_canal_anterior_valor = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_canal_anterior, font=ctk.CTkFont(size=14))
-        self.l_canal_anterior_valor.grid(row=4, column=0, padx=110, pady=(20,5), sticky="e")
+        self.l_canal_anterior_valor.grid(row=7, column=0, padx=110, pady=(20,5), sticky="e")
 
         self.l_canal_activo= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Canal activo: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_canal_activo.grid(row=5, column=0, padx=115, pady=(20,5), sticky="w")
+        self.l_canal_activo.grid(row=8, column=0, padx=115, pady=(20,5), sticky="w")
 
         self.l_canal_activo_valor = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_canal_activo, font=ctk.CTkFont(size=14))
-        self.l_canal_activo_valor.grid(row=5, column=0, padx=115, pady=(20,5), sticky="e")
+        self.l_canal_activo_valor.grid(row=8, column=0, padx=115, pady=(20,5), sticky="e")
 
         self.l_canal_siguiente= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Canal siguiente: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_canal_siguiente.grid(row=6, column=0, padx=105, pady=(20,5), sticky="w")
+        self.l_canal_siguiente.grid(row=9, column=0, padx=105, pady=(20,5), sticky="w")
 
         self.l_canal_siguiente_valor = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_canal_siguiente, font=ctk.CTkFont(size=14))
-        self.l_canal_siguiente_valor.grid(row=6, column=0, padx=105, pady=(20,5), sticky="e")
+        self.l_canal_siguiente_valor.grid(row=9, column=0, padx=105, pady=(20,5), sticky="e")
 
         self.l_latencia_canal= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Latencia: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_latencia_canal.grid(row=7, column=0, padx=140, pady=(20,5), sticky="w")
+        self.l_latencia_canal.grid(row=11, column=0, padx=140, pady=(20,5), sticky="w")
         self.sv_latencia_canal= ctk.StringVar(value="0 ms")
         self.l_valor_latencia_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_latencia_canal, font=ctk.CTkFont(size=14))
-        self.l_valor_latencia_canal.grid(row=7, column=0, padx=140, pady=(20,5), sticky="e")
+        self.l_valor_latencia_canal.grid(row=11, column=0, padx=140, pady=(20,5), sticky="e")
 
-        self.l_flujo_aire_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Flujo de aire estimado: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_flujo_aire_canal.grid(row=8, column=0, padx=80, pady=(20,5), sticky="w")
-        self.sv_flujo_aire_canal= ctk.StringVar(value="0 ml/min")
-        self.l_valor_flujo_aire_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_flujo_aire_canal, font=ctk.CTkFont(size=14))
-        self.l_valor_flujo_aire_canal.grid(row=8, column=0, padx=80, pady=(20,5), sticky="e")
+        #self.l_flujo_aire_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Flujo de aire estimado: ", font=ctk.CTkFont(size=14, weight="bold"))
+        #self.l_flujo_aire_canal.grid(row=8, column=0, padx=80, pady=(20,5), sticky="w")
+        #self.sv_flujo_aire_canal= ctk.StringVar(value="0 ml/min")
+        #self.l_valor_flujo_aire_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_flujo_aire_canal, font=ctk.CTkFont(size=14))
+        #self.l_valor_flujo_aire_canal.grid(row=8, column=0, padx=80, pady=(20,5), sticky="e")
 
-        self.l_concentracion_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Concentración estimada: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_concentracion_canal.grid(row=9, column=0, padx=75, pady=(20,5), sticky="w")
-        self.sv_concentracion_canal= ctk.StringVar(value="0 µg/m\u00B3")
-        self.l_valor_concentracion_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_concentracion_canal, font=ctk.CTkFont(size=14))
-        self.l_valor_concentracion_canal.grid(row=9, column=0, padx=75, pady=(20,5), sticky="e")   
+        #self.l_concentracion_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Concentración estimada: ", font=ctk.CTkFont(size=14, weight="bold"))
+        #self.l_concentracion_canal.grid(row=9, column=0, padx=75, pady=(20,5), sticky="w")
+        #self.sv_concentracion_canal= ctk.StringVar(value="0 µg/m\u00B3")
+        #self.l_valor_concentracion_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_concentracion_canal, font=ctk.CTkFont(size=14))
+        #self.l_valor_concentracion_canal.grid(row=9, column=0, padx=75, pady=(20,5), sticky="e")   
 
         """
         self.l_velocidad_motor_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Velocidad motor: ", font=ctk.CTkFont(size=14, weight="bold"))
@@ -951,7 +952,7 @@ class App(ctk.CTk):
         self.b_generar_informe = ctk.CTkButton(self.tv_prot_cal_est.tab("Estado"), text="Generar informe de sesión", fg_color="#5172a4",text_color="#ffffff",
                                        corner_radius=10,border_width=1, border_color="#6ba2f4",command=self.generar_informe,
                                        font=ctk.CTkFont(size=18, weight="bold"))
-        self.b_generar_informe.grid(row=10, column=0, padx=31, pady=(30,5), sticky="n")
+        self.b_generar_informe.grid(row=13, column=0, padx=31, pady=(30,5), sticky="n")
 
         #self.l_dispositivo_conectado?
 
@@ -1494,8 +1495,8 @@ class App(ctk.CTk):
             if not self.calibrado_velocidad_parado and not self.calibrando_velocidad:
                 self.calibrando_velocidad = True
                 self.consola.registro("Iniciando calibrado de velocidad...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-                self.tiempo_grafica_velocidad = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+                self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
                 self.b_iniciar_calibrado_velocidad.configure(state="disabled")
                 self.b_reiniciar_calibrado_velocidad.configure(state="disabled")
@@ -1545,8 +1546,8 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de velocidad.", nivel="AVISO")
 
         self.buffer_historico_calibrado_velocidad.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-        self.tiempo_grafica_velocidad = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+        self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
         self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
         #self.buffer_velocidad = collections.deque([np.nan]*61, maxlen=61)
         #self.tiempo_grafica_velocidad = collections.deque(list(range(0,61)), maxlen=61)
@@ -1609,8 +1610,8 @@ class App(ctk.CTk):
             if not self.calibrado_flujo_parado and not self.calibrando_flujo:
                 self.calibrando_flujo = True
                 self.consola.registro("Iniciando calibrado de flujo...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-                self.tiempo_grafica_flujo = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+                self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
                 self.b_iniciar_calibrado_flujo.configure(state="disabled")
                 self.b_reiniciar_calibrado_flujo.configure(state="disabled")
@@ -1661,8 +1662,8 @@ class App(ctk.CTk):
 
 
         self.buffer_historico_calibrado_flujo.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-        self.tiempo_grafica_flujo = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+        self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
         self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
 
         self.ax_flujo.clear()
@@ -1723,8 +1724,8 @@ class App(ctk.CTk):
             if not self.calibrado_concentracion_parado and not self.calibrando_concentracion:
                 self.calibrando_concentracion = True
                 self.consola.registro("Iniciando calibrado de concentración...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-                self.tiempo_grafica_concentracion = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+                self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
                 self.b_iniciar_calibrado_concentracion.configure(state="disabled")
                 self.b_reiniciar_calibrado_concentracion.configure(state="disabled")
@@ -1776,8 +1777,8 @@ class App(ctk.CTk):
 
 
         self.buffer_historico_calibrado_concentracion.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-        self.tiempo_grafica_concentracion = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+        self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
         self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
 
         self.ax_concentracion.clear()
@@ -1839,8 +1840,8 @@ class App(ctk.CTk):
             if not self.calibrado_latencia_parado and not self.calibrando_latencia:
                 self.calibrando_latencia = True
                 self.consola.registro("Iniciando calibrado de latencia...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-                self.tiempo_grafica_latencia = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+                self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
                 self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
                 self.b_iniciar_calibrado_latencia.configure(state="disabled")
                 self.b_reiniciar_calibrado_latencia.configure(state="disabled")
@@ -1891,8 +1892,8 @@ class App(ctk.CTk):
 
 
         self.buffer_historico_calibrado_latencia.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*10
-        self.tiempo_grafica_latencia = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
+        self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
         self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
 
         self.ax_latencia.clear()
@@ -2118,6 +2119,7 @@ class App(ctk.CTk):
             
             if accion== "parar":
                 if self.canal_activo is not None and self.canal_activo.num_canal == num_canal:
+                    ultima_telemetria = self.ultimos_datos_telemetria.get(num_canal, {})
                     self.historial_sesion.append({
                                 "timestamp" : time.time(),
                                 "canal" : self.canal_activo.num_canal,
@@ -2125,10 +2127,10 @@ class App(ctk.CTk):
                                 if self.canal_activo.e_olor_canal.winfo_exists() else "",
                                 "estado" : "inactivo" ,
                                 #PENDIENTE DE MODIFICAR, DEBE MOSTRAR LOS ULTIMOS DATOS DE TELEMETRÍA DEL CANAL ANTES DE PARARLO, NO 0.0
-                                "flujo" : 0.0,
-                                "velocidad_motor" : 0.0,
-                                "concentracion" : 0.0,
-                                "latencia" : 0
+                                "flujo" :ultima_telemetria.get("flujo", 0.0),
+                                "velocidad_motor" : ultima_telemetria.get("velocidad_motor", 0.0),
+                                "concentracion" : ultima_telemetria.get("concentracion", 0.0),
+                                "latencia" : ultima_telemetria.get("latencia", 0)
                     })
                     if not self.protocolo_activo:
                         pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else config.CANAL_BLANCO, config.CANAL_BLANCO)
@@ -2148,6 +2150,10 @@ class App(ctk.CTk):
     def _datos_telemetria(self, datos: dict):
         # Llamado desde el hilo WS → usar after() para tocar la UI
         num_canal = datos.get("canal", -1)
+        #actualizo la varible con los últimos datos de telemetría recibidos del canal activo
+        if num_canal >= 0:
+            self.ultimos_datos_telemetria[num_canal] = dict(datos)
+
         # Actualizar buffers de la gráfica correspondiente
         if self.canal_activo is not None and num_canal == self.canal_activo.num_canal:
 
@@ -2204,15 +2210,15 @@ class App(ctk.CTk):
             if datos.get("canal") == self.canal_activo.num_canal:
                 if self.calibrado_activo():
                     #self.sv_velocidad_motor.set(f"{datos['velocidad_motor']:.1f} m/s")
-                    self.sv_flujo_aire_canal.set(f"{datos.get('flujo',0.0):.1f} ml/min")
-                    self.sv_concentracion_canal.set(f"{datos.get('concentracion',0.0):.1f} µg/m\u00B3")
+                    #self.sv_flujo_aire_canal.set(f"{datos.get('flujo',0.0):.1f} ml/min")
+                    #self.sv_concentracion_canal.set(f"{datos.get('concentracion',0.0):.1f} µg/m\u00B3")
                     self.sv_latencia_canal.set(f"{datos.get('latencia',0)} ms")
                 #Quiero calcular una estimación
-                else:
+                #else:
                     #añadir por cada parámetro una fórmula de estimación
-                    self.sv_flujo_aire_canal.set(f"{datos.get('flujo',0.0):.1f} ml/min")
-                    self.sv_concentracion_canal.set(f"{datos.get('concentracion',0.0):.1f} µg/m\u00B3")
-                    self.sv_latencia_canal.set(f"{datos.get('latencia',0):.1f} ms") #la latencia no hace falta aproximarla, se sabe su valor en cada momento
+                    #self.sv_flujo_aire_canal.set(f"{datos.get('flujo',0.0):.1f} ml/min")
+                    #self.sv_concentracion_canal.set(f"{datos.get('concentracion',0.0):.1f} µg/m\u00B3")
+                    #self.sv_latencia_canal.set(f"{datos.get('latencia',0):.1f} ms") #la latencia no hace falta aproximarla, se sabe su valor en cada momento
                     
     def _datos_ack(self, datos: dict):
         # Procesar ACK de datos si es necesario
