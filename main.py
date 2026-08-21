@@ -1500,6 +1500,11 @@ class App(ctk.CTk):
                 self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
                 self.b_iniciar_calibrado_velocidad.configure(state="disabled")
                 self.b_reiniciar_calibrado_velocidad.configure(state="disabled")
+                num_canal = self.canal_calibrado.num_canal
+                if num_canal not in self.metricas_calibracion:
+                    self.metricas_calibracion[num_canal] = {}
+                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia: 
                     self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_velocidad(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -1615,6 +1620,11 @@ class App(ctk.CTk):
                 self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
                 self.b_iniciar_calibrado_flujo.configure(state="disabled")
                 self.b_reiniciar_calibrado_flujo.configure(state="disabled")
+                num_canal = self.canal_calibrado.num_canal
+                if num_canal not in self.metricas_calibracion:
+                    self.metricas_calibracion[num_canal] = {}
+                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_velocidad and not self.calibrando_concentracion and not self.calibrando_latencia:
                     self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_flujo(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -1729,6 +1739,11 @@ class App(ctk.CTk):
                 self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
                 self.b_iniciar_calibrado_concentracion.configure(state="disabled")
                 self.b_reiniciar_calibrado_concentracion.configure(state="disabled")
+                num_canal = self.canal_calibrado.num_canal
+                if num_canal not in self.metricas_calibracion:
+                    self.metricas_calibracion[num_canal] = {}
+                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_velocidad and not self.calibrando_latencia:
                     self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_concentracion(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -1845,6 +1860,11 @@ class App(ctk.CTk):
                 self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
                 self.b_iniciar_calibrado_latencia.configure(state="disabled")
                 self.b_reiniciar_calibrado_latencia.configure(state="disabled")
+                num_canal = self.canal_calibrado.num_canal
+                if num_canal not in self.metricas_calibracion:
+                    self.metricas_calibracion[num_canal] = {}
+                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_velocidad:
                     self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_latencia(self.canal_calibrado, self.e_tiempo_calibrado.get())

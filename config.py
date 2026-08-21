@@ -26,13 +26,13 @@ VALOR_MIN_INTERVALO_CICLOS = 10
 #-----CONFIGURACIÓN DEL CALIBRADO-------------------
 VALOR_MAXIMO_TIEMPO_CALIBRACION = 300
 MUESTRAS_POR_SEGUNDO_CALIBRACION = 10
-PARAMETROS_CALIBRACION = {
+PARAMETROS_CALIBRACION = [
     ("flujo", "Flujo (ml/min)"),
-    ("concentración", "Concentración (µg/m³)"),
+    ("concentracion", "Concentración (µg/m³)"),
     ("velocidad", "Velocidad (rpm)"),
     ("latencia", "Latencia (ms)")
-}
-MUESTREO_CALIBRACIÓN= 1/MUESTRAS_POR_SEGUNDO_CALIBRACION
+]
+MUESTREO_CALIBRACION= 1 / MUESTRAS_POR_SEGUNDO_CALIBRACION
 #-----CONFIGURACIÓN HARDWARE------------------------
 POSICIONES_CANALES = {2: 0, 0: 200, 1: 400, 3: 600, 4: 800, 5: 1000, -1: 1200, -2: 1400}
 PASOS_POR_CANAL = 200

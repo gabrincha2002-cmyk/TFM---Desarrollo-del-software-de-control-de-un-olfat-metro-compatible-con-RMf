@@ -75,9 +75,44 @@ def media(lista):
     except TypeError:
         return -1 
 
+def _calculo_max_min(lista):
+    if not lista:
+        return 0,0
+    try:
+        return max(lista), min(lista)
+    except (TypeError, ValueError):
+        return 0,0
 
-def _datos_calibracion_canal():
-    return
+def _conversor_list_muestras_calibracion(datos: DatosInforme):
+    muestras_calibracion = []
+
+    if not datos.metricas_calibracion:
+        return []
+    for num_canal, metrica in datos.metricas_calibracion.items():
+        
+        tiempo_inicial_calibracion = metrica.get("tiempo_inicio", datos.tiempo_inicio_sesion)
+        lista_flujo = list(metrica.get("flujo", []) or [])
+        lista_concentracion = list(metrica.get("concentracion", []) or [])
+        lista_velocidad = list(metrica.get("velocidad", []) or [])
+        lista_latencia = list(metrica.get("latencia", []) or [])
+
+        #en caso de que las muestras de los parámetros de interés sean diferentes
+        for i in range(max(len(lista_flujo),len(lista_concentracion),len(lista_latencia),len(lista_velocidad))):
+            muestras_calibracion.append({
+                "timestamp" : tiempo_inicial_calibracion + i*config.MUESTREO_CALIBRACION,
+                "onset": round(i*config.MUESTREO_CALIBRACION, 3),
+                "canal": num_canal,
+                "olor": metrica.get("olor",""),
+                "estado": "activo",
+                "flujo": lista_flujo[i] if i< len(lista_flujo) else 0.0,
+                "concentracion": lista_concentracion[i] if i< len(lista_concentracion) else 0.0,
+                "velocidad_motor": lista_velocidad[i] if i< len(lista_velocidad) else 0.0,
+                "latencia": lista_latencia[i] if i< len(lista_latencia) else 0,
+            })
+
+    return muestras_calibracion
+
+
 
 ##############################
 # CSV y _eventos.tsv
@@ -101,8 +136,8 @@ def generar_csv(ruta: str , datos: DatosInforme):
                             []
                             ]
 
-        #RESULTADOS CALIBRADO
-        seccion_calibrado_resultados: list[list[str]] = [["RESULTADOS CALIBRACIÓN"],["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración máxima (µg/m\u00B3)", 
+        #RESULTADOS CALIBRACIÓN
+        seccion_calibrado_resultados = [["RESULTADOS CALIBRACIÓN"],["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración máxima (µg/m\u00B3)", 
                                    "Concentración mínima (µg/m\u00B3)", 
                                    "Flujo (ml/min)","Velocidad (rpm)","Latencia (ms)"]]
 
@@ -110,13 +145,11 @@ def generar_csv(ruta: str , datos: DatosInforme):
         if datos.metricas_calibracion:
             for num_canal, metrica in datos.metricas_calibracion.items():
                 seccion_calibrado_resultados.append([datos.tiempo_calibrado,
-                                          datos.colores_canales[num_canal],
-                                          metrica.get("olor",""),
-                                          #redondea al segundo decimal la concentración bruta medida en la calibración del canal
-                                          #si la concentración bruta no existe, devuelve 0 como valor por defecto
-                                          round(media(metrica.get("concentracion", 0)), 2),
-                                          max(metrica.get("concentracion", 0)),
-                                          min(metrica.get("concentracion min", 0)),
+                                        datos.colores_canales[num_canal],
+                                        metrica.get("olor",""),
+                                        round(media(metrica.get("concentracion", 0)), 2),
+                                        round(_calculo_max_min(metrica.get("concentracion", 0))[0],2),
+                                        round(_calculo_max_min(metrica.get("concentracion", 0))[1],2),
                                           round(media(metrica.get("flujo", 0)), 2),
                                           round(media(metrica.get("velocidad",0)), 1),
                                           round(media(metrica.get("latencia",0)), 1)])
@@ -125,24 +158,26 @@ def generar_csv(ruta: str , datos: DatosInforme):
         seccion_calibrado_resultados.append([])
 
         #HISTORIAL DE CALIBRADO
-        seccion_calibrado_historial: list[list[str]] = [["HISTORIAL DE CALIBRACIÓN"],["Hora","Canal", "Olor", "Concentración (µg/m\u00B3)", 
+        seccion_calibrado_historial = [["HISTORIAL DE CALIBRACIÓN"],["Hora","Onset (s)","Canal", "Olor","Concentración (µg/m\u00B3)", 
                                    "Flujo (ml/min)","Velocidad (rpm)","Latencia (ms)"]]
-        if datos.metricas_calibracion:
-            for num_canal, metrica in datos.metricas_calibracion.items():
+        for muestra in _conversor_list_muestras_calibracion(datos):
                 seccion_calibrado_historial.append([
-                    datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),
-                    datos.colores_canales[num_canal],
-                    metrica.get("olor",""),                
-                    metrica.get("concentracion", 0),
-                    metrica.get("velocidad_motor",0),
-                    metrica.get("latencia",0)
+                    datetime.datetime.fromtimestamp(muestra["timestamp"]).strftime("%H:%M:%S"),
+                    muestra["onset"],
+                    datos.colores_canales[muestra["canal"]],
+                    muestra.get("olor",""),  
+                    round(muestra.get("concentracion", 0),2),              
+                    round(muestra.get("flujo", 0),2),
+                    round(muestra.get("velocidad_motor",0),1),
+                    round(muestra.get("latencia",0),1)
                     ])
 
-
+        seccion_calibrado_historial.append([])
+        seccion_calibrado_historial.append([])
 
 
         #HISTORIAL DE PROTOCOLO
-        seccion_protocolo_historial: list[list[str]] = [["HISTORIAL DEL PROTOCOLO"],["Onset (s)","Hora","Canal", "Olor",
+        seccion_protocolo_historial = [["HISTORIAL DEL PROTOCOLO"],["Onset (s)","Hora","Canal", "Olor",
                                    "Estado", "Velocidad (rpm)","Latencia (ms)"]]
         
         for metrica in datos.historial_sesion :
@@ -236,7 +271,7 @@ def generar_excel(ruta: str, datos: DatosInforme):
         def ajustar_ancho_columnas(hoja):
             for columna in hoja.columns:
                 max_ancho = max(len(str(celda.value or "")) for celda in columna)
-                hoja.colum_dimensions[columna[0].column_letter].widht= max_ancho + 4
+                hoja.column_dimensions[columna[0].column_letter].widht= max_ancho + 4
 
         ##HOJA 1: RESUMEN DE SESIÓN-----------------------------------------
         hoja_resumen = workbook.active
@@ -304,8 +339,8 @@ def generar_excel(ruta: str, datos: DatosInforme):
                     datos.colores_canales[num_canal],
                     metrica.get("olor",""),
                     round(media(metrica.get("concentracion", 0)), 2),
-                    max(metrica.get("concentracion", 0)),
-                    min(metrica.get("concentracion ", 0)),
+                    round(_calculo_max_min(metrica.get("concentracion", 0))[0],2),
+                    round(_calculo_max_min(metrica.get("concentracion", 0))[1],2),
                     round(media(metrica.get("flujo", 0)),2),
                     round(media(metrica.get("velocidad",0)),1),
                     round(media(metrica.get("latencia",0)),1)
@@ -323,29 +358,29 @@ def generar_excel(ruta: str, datos: DatosInforme):
         ##HOJA 2: HISTORIAL DE CALIBRACIÓN--------------------------------
         hoja_historial_calibrado = workbook.create_sheet("Historial Calibración")
 
-        cabeceras_historial_calibracion = ["Hora","Canal", "Olor", "Estado","Concentración (µg/m\u00B3)", "Flujo (ml/min)",
+        cabeceras_historial_calibracion = ["Hora", "Onset(s)","Canal", "Olor", "Estado","Concentración (µg/m\u00B3)", "Flujo (ml/min)",
                                      "Velocidad (rpm)", "Latencia (ms)"]
         
         for columna, cabecera in enumerate(cabeceras_historial_calibracion,start=1):
             aplicar_estilo_cabecera(hoja_historial_calibrado.cell(1,columna),cabecera)
             
-        if datos.metricas_calibracion:
-            for num_canal, metrica in datos.metricas_calibracion.items():
-                fila_datos = [
-                datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),  
-                datos.colores_canales[metrica["canal"]],
-                metrica.get("olor",""),
-                metrica.get("estado",""),
-                metrica.get("concentracion", 0),
-                metrica.get("flujo", 0),
-                metrica.get("velocidad_motor", 0),
-                metrica.get("latencia", 0),
-                ]
-                for columna, valor in enumerate(fila_datos, start=1):
-                    hoja_historial_calibrado.cell(fila, columna).value = valor
+        for fila, muestra in enumerate(_conversor_list_muestras_calibracion(datos),start = 2):
+            fila_datos = [
+            datetime.datetime.fromtimestamp(muestra["timestamp"]).strftime("%H:%M:%S"),
+            muestra["onset"],  
+            datos.colores_canales[muestra["canal"]],
+            muestra["olor"],
+            muestra["estado"],
+            round(muestra["concentracion"],2),
+            round(muestra["flujo"], 2),
+            round(muestra["velocidad_motor"], 1),
+            round(muestra["latencia"], 1),
+            ]
+            for columna, valor in enumerate(fila_datos, start=1):
+                hoja_historial_calibrado.cell(fila, columna).value = valor
 
 
-        ajustar_ancho_columnas(hoja_historial_protocolo)
+        ajustar_ancho_columnas(hoja_historial_calibrado)
 
                 
 
@@ -390,12 +425,15 @@ def generar_excel(ruta: str, datos: DatosInforme):
                 #muestras = metrica.get("muestras", {})
 
                 for parametro, valores in metricas.items():
-                    if parametro == "olor":
+                    if parametro == "olor" or parametro == "tiempo_inicio":
+                        continue
+                    if not valores:
                         continue
                     #se generar grafícas mediante el paquetede matplotlib, y se guardan como imágenes temporales
                     figura, eje = plt.subplots(figsize=(8,3), dpi=80)
-                    eje.plot(valores, color="#01bdce")
-                    eje.set_title(f'Canal {color_canal}/{metricas["olor"]} - {parametro}', fontdict={'fontsize': 10, 'fontweight': 'bold'})
+                    tiempo = [i * config.MUESTREO_CALIBRACION for i in range(len(valores))]
+                    eje.plot(tiempo,valores, color="#01bdce")
+                    eje.set_title(f'Canal {color_canal}/{metricas.get("olor","")} - {parametro}', fontdict={'fontsize': 10, 'fontweight': 'bold'})
                     eje.set_xlabel('Tiempo (s)')
                     eje.set_ylabel(parametro)
                     eje.grid(True, linestyle='--', alpha=0.5)
@@ -519,8 +557,8 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #RESULTADOS DE CALIBRACIÓN
         historia.append(Paragraph("Resultados de calibracion", estilo_seccion))
         cabeceras_calibracion = [[                                    
-        "Tiempo","Canal", "Olor", "Conc.(ug/m³)", "Conc.max(ug/m³)",
-        "Conc.min(ug/m³)", "Flujo(ml/min)", "Vel (rpm)", "Latencia(ms)"
+        "Tiempo (s)","Canal", "Olor", "Conc. med(ug/m³)", "Conc.max(ug/m³)",
+        "Conc.min(ug/m³)", "Flujo med(ml/min)", "Vel. med (rpm)", "Latencia med(ms)"
         ]]
         datos_calibracion = []
         if datos.metricas_calibracion:
@@ -529,15 +567,15 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                     datos.tiempo_calibrado,
                     datos.colores_canales[num_canal],
                     metrica.get("olor", ""),
-                    round(media(metrica.get("concentracion", [])), 2),
-                    max(metrica.get("concentracion", [])),
-                    min(metrica.get("concentracion", [])),
+                    round(media(metrica.get("concentracion", [])),2),
+                    round(_calculo_max_min(metrica.get("concentracion", []))[0], 2),
+                    round(_calculo_max_min(metrica.get("concentracion", []))[1], 2),
                     round(media(metrica.get("flujo", [])), 2),
                     round(media(metrica.get("velocidad", [])), 1),
                     round(media(metrica.get("latencia", [])), 1),
                     ])
         tabla_calibracion = Table(cabeceras_calibracion + datos_calibracion,
-                               colWidths=[10*mm,22*mm, 24*mm, 26*mm, 28*mm, 28*mm, 24*mm, 22*mm, 14*mm])
+                               colWidths=[20*mm,22*mm, 20*mm, 20*mm, 20*mm, 24*mm, 22*mm, 22*mm, 20*mm])
         tabla_calibracion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_calibracion)
         historia.append(PageBreak())
@@ -545,32 +583,33 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #HISTORIAL DE CALIBRACIÓN
         historia.append(Paragraph("Historial Calibración", estilo_seccion))
         cabeceras_historial_calibrado = [[
-            "Hora", "Canal", "Olor","Estado","Concentración (µg/m\u00B3)", "Flujo (ml/min)","Velocidad(rpm)", "Latencia(ms)"
+            "Hora", "Onset (s)","Canal", "Olor","Estado","Concentración (µg/m\u00B3)", "Flujo (ml/min)","Velocidad(rpm)", "Latencia(ms)"
         ]]
         datos_historial_calibrado = []
-        for num_canal, metrica in datos.metricas_calibracion.items():
+        for muestra in _conversor_list_muestras_calibracion(datos):
             datos_historial_calibrado.append([
-                datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),
-                datos.colores_canales[metrica["canal"]],
-                metrica.get("olor", ""),
-                metrica.get("estado", ""),
-                round(metrica.get("concentracion", 0), 1),
-                round(metrica.get("flujo", 0), 1),
-                round(metrica.get("velocidad_motor", 0), 1),
-                round(metrica.get("latencia", 0), 1),
+                datetime.datetime.fromtimestamp(muestra["timestamp"]).strftime("%H:%M:%S"),
+                muestra["onset"],
+                datos.colores_canales[muestra["canal"]],
+                muestra["olor"],
+                muestra["estado"],
+                round(muestra["concentracion"], 2),
+                round(muestra["flujo"], 2),
+                round(muestra["velocidad_motor"], 1),
+                round(muestra["latencia"], 1),
                 ])
-        tabla_historial_protocolo = Table(cabeceras_historial_calibrado + datos_historial_calibrado, 
-                                          colWidths=[16*mm, 20*mm, 22*mm, 24*mm, 20*mm, 24*mm, 20*mm, 20*mm])
+        tabla_historial_calibracion = Table(cabeceras_historial_calibrado + datos_historial_calibrado, 
+                                          colWidths=[16*mm, 20*mm, 22*mm, 24*mm, 20*mm, 24*mm, 20*mm, 20*mm, 20*mm])
         
-        tabla_historial_protocolo.setStyle(estilo_tabla_cabecera)
-        historia.append(tabla_historial_protocolo)
-
+        tabla_historial_calibracion.setStyle(estilo_tabla_cabecera)
+        historia.append(tabla_historial_calibracion)
+        historia.append(PageBreak())
 
 
         #HISTORIAL DE PROTOCOLO
         historia.append(Paragraph("Historial de datos", estilo_seccion))
         cabeceras_historial_protocolo = [[
-            "Onset (s)","Hora", "Canal", "Olor","Velocidad(rpm)", "Latencia(ms)"
+            "Onset (s)","Hora", "Canal", "Olor","Estado","Velocidad(rpm)", "Latencia(ms)"
         ]]
         datos_historial_protocolo = []
         for metrica in datos.historial_sesion:
@@ -585,7 +624,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 round(metrica.get("latencia", 0), 1),
                 ])
         tabla_historial_protocolo = Table(cabeceras_historial_protocolo + datos_historial_protocolo, 
-                                          colWidths=[16*mm, 20*mm, 22*mm, 24*mm, 20*mm, 24*mm, 20*mm])
+                                          colWidths=[20*mm, 20*mm, 22*mm, 22*mm, 20*mm, 22*mm, 20*mm])
         
         tabla_historial_protocolo.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_protocolo)
