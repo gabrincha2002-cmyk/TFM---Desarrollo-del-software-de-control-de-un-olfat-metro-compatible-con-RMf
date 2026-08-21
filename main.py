@@ -2204,15 +2204,15 @@ class App(ctk.CTk):
             if datos.get("canal") == self.canal_activo.num_canal:
                 if self.calibrado_activo():
                     #self.sv_velocidad_motor.set(f"{datos['velocidad_motor']:.1f} m/s")
-                    self.sv_flujo_aire_canal.set(f"{datos['flujo']:.1f} ml/min")
-                    self.sv_concentracion_canal.set(f"{datos['concentracion']:.1f} µg/m\u00B3")
-                    self.sv_latencia_canal.set(f"{datos['latencia']} ms")
+                    self.sv_flujo_aire_canal.set(f"{datos.get('flujo',0.0):.1f} ml/min")
+                    self.sv_concentracion_canal.set(f"{datos.get('concentracion',0.0):.1f} µg/m\u00B3")
+                    self.sv_latencia_canal.set(f"{datos.get('latencia',0)} ms")
                 #Quiero calcular una estimación
                 else:
                     #añadir por cada parámetro una fórmula de estimación
-                    self.sv_flujo_aire_canal.set(f"{datos['flujo']:.1f} ml/min")
-                    self.sv_concentracion_canal.set(f"{datos['concentracion']:.1f} µg/m\u00B3")
-                    self.sv_latencia_canal.set(f"{datos['latencia']} ms") #la latencia no hace falta aproximarla, se sabe su valor en cada momento
+                    self.sv_flujo_aire_canal.set(f"{datos.get('flujo',0.0):.1f} ml/min")
+                    self.sv_concentracion_canal.set(f"{datos.get('concentracion',0.0):.1f} µg/m\u00B3")
+                    self.sv_latencia_canal.set(f"{datos.get('latencia',0):.1f} ms") #la latencia no hace falta aproximarla, se sabe su valor en cada momento
                     
     def _datos_ack(self, datos: dict):
         # Procesar ACK de datos si es necesario
