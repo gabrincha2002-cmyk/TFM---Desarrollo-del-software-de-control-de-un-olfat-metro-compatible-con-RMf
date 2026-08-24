@@ -110,7 +110,12 @@ class App(ctk.CTk):
         self.buffer_concentracion = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
         self.buffer_latencia = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
         self.buffer_velocidad = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
-        self.ruta_archivo_temporal = None
+
+        os.makedirs(config.DIRECTORIO_ARCHIVOS_TEMPORALES, exist_ok=True)
+        self.ruta_archivo_temporal = os.path.join(config.DIRECTORIO_ARCHIVOS_TEMPORALES, "historial_sesion_.jsonl")
+
+        with open(self.ruta_archivo_temporal, "w", encoding = "utf-8"):
+            pass
 
     
         #buffers históricos
@@ -1011,7 +1016,7 @@ class App(ctk.CTk):
                 if self.ruta_archivo_temporal and os.path.exists(self.ruta_archivo_temporal):
                     self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
                     os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
-                    self.ruta_archivo_temporal = None
+                    #self.ruta_archivo_temporal = None
             except Exception as e:
                 import traceback
                 self.consola.registro(f'Error al generar informe PDF: {e}', nivel = "ERROR")
@@ -1024,7 +1029,7 @@ class App(ctk.CTk):
                 if self.ruta_archivo_temporal and os.path.exists(self.ruta_archivo_temporal):
                     self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
                     os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
-                    self.ruta_archivo_temporal = None
+                    #self.ruta_archivo_temporal = None
             except Exception as e:
                 self.consola.registro(f'Error al generar informe Excel: {e}', nivel = "ERROR")
 
@@ -1035,7 +1040,7 @@ class App(ctk.CTk):
                 if self.ruta_archivo_temporal and os.path.exists(self.ruta_archivo_temporal):
                     self.consola.registro(f"Archivo temporal eliminado de: {self.ruta_archivo_temporal}")
                     os.remove(self.ruta_archivo_temporal)  #Se elimina el archivo temporal después de generar el informe
-                    self.ruta_archivo_temporal = None
+                    #self.ruta_archivo_temporal = None
             except Exception as e:
                 self.consola.registro(f'Error al generar informe CSV: {e}', nivel = "ERROR")
 
@@ -1510,7 +1515,7 @@ class App(ctk.CTk):
                 num_canal = self.canal_calibrado.num_canal
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia: 
                     self.canal_calibrado.activar_canal()
@@ -1630,7 +1635,7 @@ class App(ctk.CTk):
                 num_canal = self.canal_calibrado.num_canal
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_velocidad and not self.calibrando_concentracion and not self.calibrando_latencia:
                     self.canal_calibrado.activar_canal()
@@ -1749,7 +1754,7 @@ class App(ctk.CTk):
                 num_canal = self.canal_calibrado.num_canal
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_velocidad and not self.calibrando_latencia:
                     self.canal_calibrado.activar_canal()
@@ -1870,7 +1875,7 @@ class App(ctk.CTk):
                 num_canal = self.canal_calibrado.num_canal
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_velocidad:
                     self.canal_calibrado.activar_canal()
@@ -2196,11 +2201,13 @@ class App(ctk.CTk):
                 olor = ""
             self.buffer_historico_olores.append(olor)
             datos_con_hist = dict(datos)
+            datos_con_hist["timestamp"] = time.time()
             datos_con_hist["olor"] = olor
             self.historial_sesion.append(datos_con_hist)
-            with tempfile.NamedTemporaryFile(mode='a', delete=False, suffix='.json', prefix='historial_sesion_', dir=config.DIRECTORIO_ARCHIVOS_TEMPORALES, encoding='utf-8') as archivo_temp:
-                json.dump(datos_con_hist, archivo_temp, ensure_ascii=False)
-            self.ruta_archivo_temporal = archivo_temp.name
+   
+            with open(self.ruta_archivo_temporal, "a", encoding="utf-8") as archivo_temporal:
+                json.dump(datos_con_hist, archivo_temporal, ensure_ascii=False)
+                archivo_temporal.write("\n")
                 
         
         
@@ -2258,7 +2265,7 @@ class App(ctk.CTk):
         else: 
             estado_accion = "incorrectamente"
         if canal_accion == config.CANAL_BLANCO:
-            self.consola.registro(f"[ESP32] Acción '{accion}' en canal {canal_accion} (Canal Blanco) recibida y {"en colada" if estado_en_cola else "ejecutada"} {estado_accion}.")
+            self.consola.registro(f"[ESP32] Acción '{accion}' en canal {canal_accion} (Canal Blanco) recibida y {'en colada' if estado_en_cola else 'ejecutada'} {estado_accion}.")
         else:
             self.consola.registro(f"[ESP32] Acción '{accion}' en canal {canal_accion} ({self.cuadros_canales[int(canal_accion)].e_olor_canal.get() if self.cuadros_canales[int(canal_accion)].e_olor_canal.get() else "Sin olor definido"}) recibida y {"en colada" if estado_en_cola else "ejecutada"} {estado_accion}.")
 

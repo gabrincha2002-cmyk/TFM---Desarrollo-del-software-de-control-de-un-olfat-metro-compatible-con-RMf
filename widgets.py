@@ -181,12 +181,14 @@ class Consola(ctk.CTkTextbox):
         self.logger.setLevel(logging.INFO)
         self.logger.propagate = False  #Se evita que los mensajes se propaguen a la raíz del logger
 
+        self.ruta_log_consola = os.path.join(config.DIRECTORIO_ARCHIVOS_TEMPORALES, "historial_consola.log")
+
+        with open(self.ruta_log_consola, "w", encoding = "utf-8"):
+            pass
+
         if not self.logger.handlers:
-            archivo_handler = logging.FileHandler(os.path.join(config.DIRECTORIO_ARCHIVOS_TEMPORALES, "consola.log"), mode="a", encoding="utf-8")
+            archivo_handler = logging.FileHandler(os.path.join(config.DIRECTORIO_ARCHIVOS_TEMPORALES, "historial_consola.log"), mode="a", encoding="utf-8")
             self.logger.addHandler(archivo_handler)
-
-
-
 
         self.crear()
         

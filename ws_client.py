@@ -155,10 +155,7 @@ class WSClient:
         async for mensaje in ws:
             try:
                 datos = json.loads(mensaje)
-                if "timestamp" in datos:
-                    #se incluye el cálculo de la latencia
-                    latencia_ms = (time.time() - datos["timestamp"]) * 1000
-                    datos["latencia"] = round(latencia_ms,1)
+                datos["latencia"] = await self.calcular_latencia(ws)
                 # Mete en cola los datos recibidos para que el hilo principal los procese
                 self._cola_rx.put_nowait(datos)
             except json.JSONDecodeError as e:
@@ -177,3 +174,10 @@ class WSClient:
                     return
                 except Exception as e:
                     logger.warning(f"Error enviando: {e}")
+
+    async def calcular_latencia(self, ws):
+            tiempo_ping = time.perf_counter()
+            espera_pong = await ws.ping()
+            await espera_pong
+            tiempo_pong = time.perf_counter()
+            return round((tiempo_pong - tiempo_ping)*1000,1)

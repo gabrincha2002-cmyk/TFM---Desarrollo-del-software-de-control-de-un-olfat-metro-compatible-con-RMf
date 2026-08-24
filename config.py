@@ -1,7 +1,7 @@
 ####################################################################
 # Constantes globales de la configuración deL software (OLFAMETRIC)#
 ####################################################################
-
+import os 
 #-----COMUNICACIÓN---------------------------------
 URI_WEBSOCKET_DEFECTO = "ws://olfatometro.local:8765"
 INTERVALO_DE_ACTUALIZACION_UI_MS = 100
@@ -45,7 +45,10 @@ LIMITESY = {"velocidad": [0,10000],
             "concentracion": [0,500],
             "latencia": [0,1000]
             }
-DIRECTORIO_ARCHIVOS_TEMPORALES = 'C:\\Users\\Usuario\\Desktop\\TFM Olfatometro\\AplicacionOlfatometro\\OlfaMetric_v2\\archivos_temporales_sesion'
+
+
+DIRECTORIO_DEL_PROYECTO = os.path.dirname(os.path.abspath(__file__))
+DIRECTORIO_ARCHIVOS_TEMPORALES = os.path.join(DIRECTORIO_DEL_PROYECTO, "archivos_generados")
 
 #-----COLORES DE LA UI------------------------------
 COLOR_ESTADO_OK = "#7deb7d"
