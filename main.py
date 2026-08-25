@@ -2295,7 +2295,8 @@ class App(ctk.CTk):
                                 "flujo" :ultima_telemetria.get("flujo", 0.0),
                                 "velocidad_motor" : ultima_telemetria.get("velocidad_motor", 0.0),
                                 "concentracion" : ultima_telemetria.get("concentracion", 0.0),
-                                "latencia" : ultima_telemetria.get("latencia", 0)
+                                "latencia" : ultima_telemetria.get("latencia", 0),
+                                "modo": ultima_telemetria.get("modo","----")
                     })
                     if not self.protocolo_activo:
                         pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else config.CANAL_BLANCO, config.CANAL_BLANCO)
@@ -2336,6 +2337,7 @@ class App(ctk.CTk):
             datos_con_hist = dict(datos)
             datos_con_hist["timestamp"] = time.time()
             datos_con_hist["olor"] = olor
+            datos_con_hist["modo"] = "Protocolo" if self.protocolo_activo else "Calibrado" if self.calibrado_activo() else "Manual"
             self.historial_sesion.append(datos_con_hist)
    
             with open(self.ruta_archivo_temporal, "a", encoding="utf-8") as archivo_temporal:

@@ -1,757 +1,159 @@
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666866.722268, "latencia": 101.9, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666866.8507273, "latencia": 102.9, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666866.9140997, "latencia": 101.9, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.0419698, "latencia": 102.4, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.1061044, "latencia": 103.1, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.2340255, "latencia": 102.3, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.2345989, "latencia": 8.6, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.410014, "latencia": 112.8, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.4104512, "latencia": 10.4, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.5370858, "latencia": 9.0, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.729183, "latencia": 161.3, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.8566444, "latencia": 102.4, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666867.9832075, "latencia": 117.4, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.1107373, "latencia": 109.8, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.1111913, "latencia": 19.5, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.1750276, "latencia": 60.3, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.3025675, "latencia": 70.9, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.366692, "latencia": 74.6, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.5561209, "latencia": 105.9, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.6838279, "latencia": 140.2, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666868.7946336, "latencia": 107.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666871.9605138, "latencia": 47.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.0246167, "latencia": 7.9, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.1507838, "latencia": 13.5, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.268711, "latencia": 82.1, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.4849415, "latencia": 125.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.4855008, "latencia": 47.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.5486097, "latencia": 22.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.6761572, "latencia": 63.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.7400246, "latencia": 53.7, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666872.963494, "latencia": 143.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.0266273, "latencia": 80.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.153336, "latencia": 114.8, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.2174346, "latencia": 47.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.218096, "latencia": 13.8, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.394581, "latencia": 94.1, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.3951435, "latencia": 8.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.6088014, "latencia": 19.1, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.715062, "latencia": 98.0, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.7728953, "latencia": 98.8, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.923893, "latencia": 112.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666873.9242878, "latencia": 14.0, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666874.0308352, "latencia": 14.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666874.318764, "latencia": 128.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666874.4933372, "latencia": 194.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666874.6211495, "latencia": 102.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666874.6839728, "latencia": 102.4, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666878.91896, "latencia": 8.4, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666878.9700508, "latencia": 47.4, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.0983732, "latencia": 104.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.0989168, "latencia": 13.2, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.3375452, "latencia": 102.4, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.4010894, "latencia": 106.9, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.5290163, "latencia": 98.2, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.7193062, "latencia": 202.8, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.719827, "latencia": 13.3, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.8481646, "latencia": 117.2, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666879.9121237, "latencia": 76.1, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.0403638, "latencia": 102.4, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.0408862, "latencia": 7.5, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.1458895, "latencia": 45.9, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.197913, "latencia": 7.4, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.3534102, "latencia": 7.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.4685495, "latencia": 64.6, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.596121, "latencia": 32.9, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.6584785, "latencia": 71.8, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.8871312, "latencia": 109.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666880.9507532, "latencia": 122.0, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.0157046, "latencia": 57.9, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.1909163, "latencia": 126.8, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.2534146, "latencia": 102.2, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.382022, "latencia": 113.0, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.493527, "latencia": 91.8, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.5556533, "latencia": 104.5, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.6769733, "latencia": 120.1, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.7790666, "latencia": 85.0, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.7794366, "latencia": 13.1, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.906496, "latencia": 102.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666881.9707239, "latencia": 87.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.16178, "latencia": 140.5, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.226761, "latencia": 38.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.227364, "latencia": 8.0, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.4177542, "latencia": 80.1, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.4810617, "latencia": 106.0, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.5455527, "latencia": 10.9, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.8003333, "latencia": 89.2, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666882.9287376, "latencia": 99.4, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666888.790169, "latencia": 45.7, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666888.7906032, "latencia": 37.3, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666888.853124, "latencia": 54.1, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666888.9166765, "latencia": 39.6, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666888.9170408, "latencia": 47.2, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666888.979658, "latencia": 38.3, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666889.0431798, "latencia": 37.7, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666889.043686, "latencia": 51.8, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666889.169989, "latencia": 33.9, "olor": ""}
-{"canal": 5, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 0, "timestamp": 1787666889.2346506, "latencia": 42.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666898.792939, "latencia": 101.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666898.9103854, "latencia": 119.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666899.030439, "latencia": 113.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666899.0923991, "latencia": 86.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666899.09287, "latencia": 9.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666899.193851, "latencia": 107.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666899.2943027, "latencia": 75.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666899.2946055, "latencia": 15.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 5, "timestamp": 1787666899.5073457, "latencia": 105.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 7, "timestamp": 1787666899.5077474, "latencia": 11.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 7, "timestamp": 1787666899.7636704, "latencia": 69.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 7, "timestamp": 1787666899.9554148, "latencia": 153.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 9, "timestamp": 1787666901.5280194, "latencia": 113.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 10, "timestamp": 1787666902.2220335, "latencia": 36.1, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666911.88331, "latencia": 20.3, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666912.009595, "latencia": 17.7, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666912.0732477, "latencia": 9.1, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666912.1914477, "latencia": 35.5, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666912.311947, "latencia": 49.2, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666912.3757133, "latencia": 23.5, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666912.695227, "latencia": 243.8, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 26, "timestamp": 1787666912.822561, "latencia": 94.6, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666912.823031, "latencia": 15.0, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666912.9502752, "latencia": 108.6, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.0147254, "latencia": 80.2, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.0783021, "latencia": 41.0, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.2068207, "latencia": 94.1, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.2072852, "latencia": 7.6, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.3991017, "latencia": 141.8, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.528015, "latencia": 110.2, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.6564972, "latencia": 92.2, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 27, "timestamp": 1787666913.7205133, "latencia": 121.0, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666913.8488302, "latencia": 84.0, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666913.9758587, "latencia": 124.3, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.0396929, "latencia": 88.8, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.1676393, "latencia": 94.0, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.2310221, "latencia": 90.1, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.2947586, "latencia": 59.7, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.295313, "latencia": 15.6, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.3575642, "latencia": 7.3, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.4854417, "latencia": 11.5, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 29, "timestamp": 1787666914.590288, "latencia": 13.2, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666914.7167928, "latencia": 15.7, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666914.7806058, "latencia": 21.4, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666914.9075172, "latencia": 8.2, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666914.970822, "latencia": 7.6, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666915.0993574, "latencia": 23.8, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666915.163166, "latencia": 13.4, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666915.2911334, "latencia": 23.5, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666915.419169, "latencia": 18.5, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666915.482772, "latencia": 15.8, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 30, "timestamp": 1787666915.596239, "latencia": 27.5, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 31, "timestamp": 1787666915.7230568, "latencia": 24.3, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 31, "timestamp": 1787666915.7876725, "latencia": 18.3, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 31, "timestamp": 1787666915.9141645, "latencia": 24.6, "olor": ""}
-{"canal": 1, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 31, "timestamp": 1787666915.9769614, "latencia": 22.6, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.094083, "latencia": 49.4, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.1581435, "latencia": 52.9, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.2209208, "latencia": 9.8, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.2787812, "latencia": 11.0, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.4793618, "latencia": 93.5, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.5853891, "latencia": 100.8, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.5857117, "latencia": 13.0, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.770947, "latencia": 17.4, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.8879051, "latencia": 86.1, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666919.9517522, "latencia": 59.0, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 33, "timestamp": 1787666920.0658321, "latencia": 88.5, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.3688645, "latencia": 94.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.4759, "latencia": 125.8, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.476347, "latencia": 19.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.533907, "latencia": 8.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.5881314, "latencia": 72.5, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.6514735, "latencia": 85.0, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.7660246, "latencia": 111.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666923.890347, "latencia": 83.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.0822194, "latencia": 139.1, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.145645, "latencia": 101.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.2573304, "latencia": 103.5, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.3842368, "latencia": 119.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.5749013, "latencia": 188.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.702887, "latencia": 129.8, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.8311908, "latencia": 94.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 35, "timestamp": 1787666924.8954418, "latencia": 104.5, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.0197027, "latencia": 80.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.020226, "latencia": 9.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.0710063, "latencia": 93.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.19896, "latencia": 101.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.326539, "latencia": 107.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.3270006, "latencia": 46.9, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.4544802, "latencia": 75.8, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.5181854, "latencia": 77.0, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.582473, "latencia": 103.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.7093506, "latencia": 124.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.8363185, "latencia": 79.8, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666925.9003844, "latencia": 102.3, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 36, "timestamp": 1787666926.0915017, "latencia": 205.1, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.016033, "latencia": 90.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.1438425, "latencia": 104.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.208518, "latencia": 81.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.3360639, "latencia": 119.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.3993833, "latencia": 60.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.3998854, "latencia": 42.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.5273607, "latencia": 28.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 51, "timestamp": 1787666960.653962, "latencia": 52.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.2261918, "latencia": 546.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.3546093, "latencia": 102.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.482593, "latencia": 102.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.5463243, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.6748993, "latencia": 102.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.737568, "latencia": 102.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.867012, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666961.9949098, "latencia": 102.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.0580914, "latencia": 102.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.1845186, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.185074, "latencia": 25.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.2484255, "latencia": 64.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.376711, "latencia": 116.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.4403827, "latencia": 62.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.441091, "latencia": 8.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.5675025, "latencia": 133.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.5680485, "latencia": 11.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787666962.5683086, "latencia": 9.5, "olor": "mentol"}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.1431267, "latencia": 14.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.1949506, "latencia": 76.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.1953444, "latencia": 11.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.2978113, "latencia": 91.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.3521411, "latencia": 14.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.4151688, "latencia": 12.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.542762, "latencia": 54.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787666964.732867, "latencia": 154.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666964.859631, "latencia": 88.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666964.9230905, "latencia": 116.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.050268, "latencia": 88.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.1141267, "latencia": 76.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.1148396, "latencia": 8.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.370757, "latencia": 113.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.434336, "latencia": 88.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.4983308, "latencia": 39.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.498717, "latencia": 8.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.5619884, "latencia": 8.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.8799555, "latencia": 101.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.8805459, "latencia": 38.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666965.9446626, "latencia": 64.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.1368964, "latencia": 102.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.2653487, "latencia": 125.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.3911624, "latencia": 97.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.4552126, "latencia": 84.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.517948, "latencia": 76.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.645129, "latencia": 109.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.7715735, "latencia": 120.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.8996131, "latencia": 131.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.9619732, "latencia": 73.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666966.9625037, "latencia": 8.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666967.0890918, "latencia": 112.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666967.2167456, "latencia": 83.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666967.2801065, "latencia": 102.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666967.4072294, "latencia": 111.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666967.470916, "latencia": 88.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666967.5978582, "latencia": 102.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787666967.5983825, "latencia": 10.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666967.789761, "latencia": 130.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666967.9171512, "latencia": 114.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666967.9176364, "latencia": 8.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666968.1087494, "latencia": 140.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666968.2373993, "latencia": 85.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666968.3011904, "latencia": 96.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666968.4298995, "latencia": 129.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666968.6223178, "latencia": 177.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787666968.7510235, "latencia": 102.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666971.2858582, "latencia": 66.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666971.2863653, "latencia": 15.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666971.5865085, "latencia": 297.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666971.587029, "latencia": 16.8, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666971.7786424, "latencia": 182.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.0215797, "latencia": 210.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.0851924, "latencia": 97.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.147896, "latencia": 28.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.1483378, "latencia": 33.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.148604, "latencia": 10.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.210376, "latencia": 39.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.2107785, "latencia": 15.9, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.3364773, "latencia": 41.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.5294325, "latencia": 106.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.5935133, "latencia": 88.8, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787666972.594058, "latencia": 10.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666972.7218754, "latencia": 14.8, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666972.9118354, "latencia": 148.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.1026847, "latencia": 193.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.1661835, "latencia": 62.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.3573391, "latencia": 143.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.35785, "latencia": 52.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.4203818, "latencia": 50.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.548737, "latencia": 103.1, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.6767986, "latencia": 118.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.7408738, "latencia": 94.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.868671, "latencia": 94.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787666973.932807, "latencia": 102.1, "olor": "lavanda"}
-{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.2162664, "latencia": 92.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.216773, "latencia": 15.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.2170901, "latencia": 13.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.2805586, "latencia": 7.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.4076493, "latencia": 12.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.5891893, "latencia": 102.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.6452274, "latencia": 14.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.8368492, "latencia": 122.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.8373752, "latencia": 9.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666976.9005618, "latencia": 13.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666977.0778866, "latencia": 89.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666977.2039394, "latencia": 75.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666977.2044823, "latencia": 30.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666977.267621, "latencia": 8.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666977.3948762, "latencia": 47.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666977.522439, "latencia": 9.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787666977.7148032, "latencia": 102.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666977.7153437, "latencia": 10.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666977.9072406, "latencia": 132.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.0360801, "latencia": 105.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.1639557, "latencia": 105.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.2272964, "latencia": 101.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.3555727, "latencia": 96.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.4183524, "latencia": 60.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.4188387, "latencia": 14.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.6097565, "latencia": 23.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.6102872, "latencia": 26.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.673325, "latencia": 10.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.8006496, "latencia": 16.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.864775, "latencia": 10.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666978.993046, "latencia": 14.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666979.1203244, "latencia": 20.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666979.1839488, "latencia": 7.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666979.309742, "latencia": 14.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666979.373547, "latencia": 12.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666979.5017066, "latencia": 15.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 59, "timestamp": 1787666979.6288948, "latencia": 21.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666979.6925516, "latencia": 29.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666979.819916, "latencia": 20.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666979.8835425, "latencia": 20.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666979.9969773, "latencia": 30.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666980.0616689, "latencia": 13.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666980.1903841, "latencia": 21.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666980.3189745, "latencia": 41.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666980.3827472, "latencia": 16.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666980.5104475, "latencia": 27.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 60, "timestamp": 1787666980.6375496, "latencia": 15.4, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 71, "timestamp": 1787666992.2648737, "latencia": 141.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 71, "timestamp": 1787666992.327547, "latencia": 30.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 71, "timestamp": 1787666992.3913634, "latencia": 62.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 71, "timestamp": 1787666992.391911, "latencia": 16.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 71, "timestamp": 1787666992.6468475, "latencia": 60.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 71, "timestamp": 1787666992.7732518, "latencia": 143.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666992.8996437, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666992.9001517, "latencia": 7.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666992.9004912, "latencia": 7.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666993.0910192, "latencia": 8.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666993.2186525, "latencia": 94.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666993.2193289, "latencia": 9.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666993.4744422, "latencia": 94.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666993.6023169, "latencia": 102.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666993.7172887, "latencia": 102.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 72, "timestamp": 1787666993.7790508, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666993.9070742, "latencia": 102.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666993.9707196, "latencia": 73.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.0981288, "latencia": 130.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.2256117, "latencia": 102.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.22615, "latencia": 7.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.3528845, "latencia": 95.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.417724, "latencia": 100.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.5442698, "latencia": 98.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.6070802, "latencia": 68.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 73, "timestamp": 1787666994.6076598, "latencia": 13.6, "olor": "mentol"}
-{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.2479231, "latencia": 102.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.3109324, "latencia": 70.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.375161, "latencia": 11.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.5032818, "latencia": 122.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.5672097, "latencia": 74.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.630936, "latencia": 78.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.69451, "latencia": 56.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.7586985, "latencia": 93.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.7592714, "latencia": 10.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666996.9509397, "latencia": 31.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666997.079368, "latencia": 77.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666997.2070994, "latencia": 128.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666997.2075903, "latencia": 10.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666997.335015, "latencia": 21.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666997.5273297, "latencia": 105.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666997.5906284, "latencia": 117.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 74, "timestamp": 1787666997.7175446, "latencia": 82.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666997.8448207, "latencia": 125.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666997.9090161, "latencia": 99.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.037175, "latencia": 102.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.0378232, "latencia": 13.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.1007657, "latencia": 24.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.357468, "latencia": 166.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.421338, "latencia": 88.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.5492682, "latencia": 87.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.6129858, "latencia": 102.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 75, "timestamp": 1787666998.7397854, "latencia": 102.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666998.8547084, "latencia": 102.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666998.9186683, "latencia": 119.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.046675, "latencia": 85.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.1097584, "latencia": 101.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.2387276, "latencia": 103.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.3671677, "latencia": 102.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.495445, "latencia": 130.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.5587125, "latencia": 67.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.5591235, "latencia": 9.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.7499225, "latencia": 112.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.87679, "latencia": 92.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787666999.9400566, "latencia": 102.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.0665338, "latencia": 115.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.0669765, "latencia": 25.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.1314642, "latencia": 64.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.3715863, "latencia": 141.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.4356942, "latencia": 102.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.5632722, "latencia": 100.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.6262376, "latencia": 58.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 76, "timestamp": 1787667000.6902182, "latencia": 61.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 77, "timestamp": 1787667000.753021, "latencia": 86.9, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 77, "timestamp": 1787667003.5269163, "latencia": 88.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 77, "timestamp": 1787667003.6543021, "latencia": 102.1, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 77, "timestamp": 1787667003.7186563, "latencia": 108.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 77, "timestamp": 1787667003.8456957, "latencia": 97.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 77, "timestamp": 1787667003.9740186, "latencia": 126.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 77, "timestamp": 1787667004.0374906, "latencia": 57.9, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.0380177, "latencia": 27.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.1648214, "latencia": 95.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.2282286, "latencia": 102.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.3569002, "latencia": 110.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.48488, "latencia": 103.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.5488248, "latencia": 99.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.6770642, "latencia": 121.8, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.804756, "latencia": 95.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.8688443, "latencia": 62.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.8692358, "latencia": 9.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.996707, "latencia": 142.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.997239, "latencia": 11.9, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667004.997476, "latencia": 12.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667005.1244202, "latencia": 98.9, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667005.1883876, "latencia": 54.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667005.1887121, "latencia": 13.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667005.4433444, "latencia": 54.8, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667005.570979, "latencia": 143.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667005.6348095, "latencia": 27.1, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667005.76303, "latencia": 142.5, "olor": "lavanda"}
-{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.2203946, "latencia": 102.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.3476198, "latencia": 103.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.4751463, "latencia": 101.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.5388281, "latencia": 102.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.6667635, "latencia": 102.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.731341, "latencia": 102.7, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.8589613, "latencia": 101.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667008.921982, "latencia": 82.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.0515227, "latencia": 122.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.1158924, "latencia": 71.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.243124, "latencia": 133.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.3071723, "latencia": 56.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.3709643, "latencia": 14.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.5630147, "latencia": 236.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.5634847, "latencia": 12.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.6899798, "latencia": 90.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 78, "timestamp": 1787667009.6904538, "latencia": 8.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667009.6907415, "latencia": 11.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667009.9455512, "latencia": 55.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.0093908, "latencia": 92.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.0742538, "latencia": 59.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.2031791, "latencia": 102.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.331908, "latencia": 120.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.3951461, "latencia": 84.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.5234916, "latencia": 102.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.651378, "latencia": 127.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.7149003, "latencia": 66.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.7154317, "latencia": 15.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667010.9066076, "latencia": 133.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.0347319, "latencia": 102.9, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.0353205, "latencia": 8.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.0982656, "latencia": 12.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.225769, "latencia": 8.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.289375, "latencia": 8.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.5459144, "latencia": 100.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.6734364, "latencia": 108.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 79, "timestamp": 1787667011.7373617, "latencia": 102.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667011.8659458, "latencia": 86.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667011.929879, "latencia": 95.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.0427628, "latencia": 114.4, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.1050937, "latencia": 51.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.1693454, "latencia": 38.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.2333732, "latencia": 37.5, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.3618412, "latencia": 51.0, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.5532436, "latencia": 116.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.6225317, "latencia": 76.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.7503932, "latencia": 112.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.8843663, "latencia": 103.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667012.8847356, "latencia": 30.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667013.1393788, "latencia": 70.8, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 80, "timestamp": 1787667013.139764, "latencia": 43.6, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 84, "timestamp": 1787667036.7241886, "latencia": 90.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 84, "timestamp": 1787667036.8683572, "latencia": 101.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 84, "timestamp": 1787667036.8687646, "latencia": 9.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 84, "timestamp": 1787667036.9190235, "latencia": 93.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.011096, "latencia": 107.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.1518507, "latencia": 96.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.2946587, "latencia": 110.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.2950337, "latencia": 48.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.3453038, "latencia": 45.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.4363573, "latencia": 102.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.5771418, "latencia": 101.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.6316788, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.7216542, "latencia": 102.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 85, "timestamp": 1787667037.8648272, "latencia": 102.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667037.917893, "latencia": 102.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.062135, "latencia": 102.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.1518838, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.2930212, "latencia": 103.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.293389, "latencia": 27.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.3461733, "latencia": 73.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.3464868, "latencia": 8.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.4350057, "latencia": 84.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.577413, "latencia": 9.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 86, "timestamp": 1787667038.577796, "latencia": 12.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667038.859374, "latencia": 68.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.0059328, "latencia": 136.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.0063078, "latencia": 21.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.0632937, "latencia": 80.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.0638156, "latencia": 12.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.2063162, "latencia": 21.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.2949061, "latencia": 14.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.4364173, "latencia": 36.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.7277684, "latencia": 100.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667039.72818, "latencia": 13.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667039.7815962, "latencia": 94.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667039.8716204, "latencia": 96.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.013012, "latencia": 102.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.0133665, "latencia": 10.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.1555996, "latencia": 26.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.2988348, "latencia": 103.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.3513365, "latencia": 43.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.4943023, "latencia": 115.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.5846756, "latencia": 72.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667040.725783, "latencia": 120.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667040.7774956, "latencia": 76.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667040.7778523, "latencia": 8.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667040.9258962, "latencia": 7.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667041.1571271, "latencia": 102.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667045.5540926, "latencia": 93.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667045.6064563, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667045.6966388, "latencia": 85.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667045.749683, "latencia": 20.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667045.8396132, "latencia": 99.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667045.981702, "latencia": 101.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.0352097, "latencia": 102.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.1244392, "latencia": 103.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.2685058, "latencia": 102.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.3210363, "latencia": 101.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.462466, "latencia": 102.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.550026, "latencia": 103.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.693333, "latencia": 101.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.7454295, "latencia": 102.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.837567, "latencia": 34.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.8379095, "latencia": 68.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.88842, "latencia": 45.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667046.9797919, "latencia": 55.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.036398, "latencia": 12.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.1258204, "latencia": 14.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.4254987, "latencia": 100.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.4259768, "latencia": 73.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.4262896, "latencia": 10.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.5892484, "latencia": 77.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.589699, "latencia": 14.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667047.8544555, "latencia": 74.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667052.205192, "latencia": 17.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667052.3985612, "latencia": 96.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667052.4910066, "latencia": 102.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667052.4914014, "latencia": 14.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667052.7760804, "latencia": 101.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667052.8278136, "latencia": 13.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667052.9214468, "latencia": 89.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667052.9218476, "latencia": 16.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667052.9723666, "latencia": 13.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667053.2240336, "latencia": 110.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667053.3656778, "latencia": 111.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667053.428903, "latencia": 85.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667053.52764, "latencia": 107.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667053.5906322, "latencia": 97.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667060.8692956, "latencia": 7.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667060.9574826, "latencia": 94.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.1018832, "latencia": 102.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.2446413, "latencia": 104.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.2973428, "latencia": 114.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.3863933, "latencia": 100.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.5278199, "latencia": 75.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.58229, "latencia": 129.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.8152146, "latencia": 196.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667061.9604757, "latencia": 110.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.0109572, "latencia": 89.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.102577, "latencia": 63.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.102953, "latencia": 42.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.2471192, "latencia": 109.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.3008955, "latencia": 94.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.3902013, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.5344858, "latencia": 102.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.6768315, "latencia": 101.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.729822, "latencia": 117.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.8201842, "latencia": 87.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 88, "timestamp": 1787667062.9640994, "latencia": 109.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.0171874, "latencia": 86.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.160148, "latencia": 120.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.2509158, "latencia": 102.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.415445, "latencia": 94.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.4726603, "latencia": 107.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.5397773, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.675901, "latencia": 106.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.8293095, "latencia": 105.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.8296652, "latencia": 89.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.9715958, "latencia": 80.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667063.9720047, "latencia": 15.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667064.0351403, "latencia": 96.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667064.178244, "latencia": 121.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667064.2571387, "latencia": 78.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667064.2576745, "latencia": 8.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667064.3946402, "latencia": 110.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.0479324, "latencia": 102.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.048328, "latencia": 11.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.100756, "latencia": 90.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.243465, "latencia": 102.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.333469, "latencia": 101.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.4780147, "latencia": 102.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.5310159, "latencia": 101.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 87, "timestamp": 1787667067.6216068, "latencia": 84.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667075.8820148, "latencia": 15.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.0277622, "latencia": 15.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.0824614, "latencia": 23.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.1717622, "latencia": 28.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.3134372, "latencia": 15.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.3670864, "latencia": 18.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.4560764, "latencia": 20.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.6000674, "latencia": 44.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 89, "timestamp": 1787667076.7922146, "latencia": 112.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667076.7926319, "latencia": 10.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667076.8839226, "latencia": 27.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.0252464, "latencia": 31.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.0790422, "latencia": 33.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.1675823, "latencia": 10.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.3691218, "latencia": 94.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.4603093, "latencia": 9.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.6027553, "latencia": 126.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.6553833, "latencia": 80.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 90, "timestamp": 1787667077.888801, "latencia": 227.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667077.8892236, "latencia": 8.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667077.9412026, "latencia": 6.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.0854514, "latencia": 106.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.1752195, "latencia": 102.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.3210828, "latencia": 102.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.3733988, "latencia": 104.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.516309, "latencia": 99.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.6070714, "latencia": 104.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.749747, "latencia": 117.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.8013978, "latencia": 85.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.890945, "latencia": 57.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667078.8913162, "latencia": 8.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.176396, "latencia": 110.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.1768148, "latencia": 42.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.1770573, "latencia": 24.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.3206756, "latencia": 69.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.4638867, "latencia": 51.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.608547, "latencia": 146.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.7510176, "latencia": 89.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 91, "timestamp": 1787667079.8054786, "latencia": 69.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667079.948115, "latencia": 159.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.0380218, "latencia": 33.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.0384605, "latencia": 9.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.1798763, "latencia": 8.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.1803086, "latencia": 7.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.4662673, "latencia": 115.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.466657, "latencia": 7.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.5193932, "latencia": 80.5, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 92, "timestamp": 1787667080.7503932, "latencia": 96.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 93, "timestamp": 1787667087.011274, "latencia": 72.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 93, "timestamp": 1787667087.0116785, "latencia": 7.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 93, "timestamp": 1787667087.1119864, "latencia": 94.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 93, "timestamp": 1787667087.2143977, "latencia": 102.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 93, "timestamp": 1787667087.214865, "latencia": 15.0, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 93, "timestamp": 1787667087.267353, "latencia": 13.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 93, "timestamp": 1787667087.3683512, "latencia": 14.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.1899004, "latencia": 25.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.1904397, "latencia": 22.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.2423587, "latencia": 34.6, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.2428246, "latencia": 14.4, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.3055797, "latencia": 68.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.3614552, "latencia": 13.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.46838, "latencia": 18.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.6194417, "latencia": 38.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667092.7212067, "latencia": 65.9, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667092.7827992, "latencia": 13.7, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667092.8465567, "latencia": 9.6, "olor": "mentol"}
-{"canal": 4, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667094.8178892, "latencia": 30.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667094.8816898, "latencia": 10.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667094.9446495, "latencia": 11.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667095.0724077, "latencia": 10.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667095.1992855, "latencia": 18.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667095.2498758, "latencia": 10.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667095.4505298, "latencia": 87.1, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 96, "timestamp": 1787667095.6034653, "latencia": 120.6, "olor": "lavanda"}
-{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667099.734872, "latencia": 11.1, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667099.7855878, "latencia": 91.2, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667099.89304, "latencia": 102.3, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667099.893513, "latencia": 11.6, "olor": ""}
-{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 95, "timestamp": 1787667099.9571593, "latencia": 10.8, "olor": ""}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667280.5227182, "latencia": 102.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667280.6243546, "latencia": 102.3, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667280.6246917, "latencia": 9.1, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667280.7258148, "latencia": 93.2, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667280.8263032, "latencia": 102.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667280.8767743, "latencia": 58.8, "olor": "mentol"}
-{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667280.9294746, "latencia": 8.3, "olor": "mentol"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667284.459362, "latencia": 7.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667284.6500196, "latencia": 135.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667284.6505933, "latencia": 9.8, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667284.8411548, "latencia": 136.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667284.9684732, "latencia": 102.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667285.0331047, "latencia": 103.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667285.1488256, "latencia": 112.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 98, "timestamp": 1787667285.1492891, "latencia": 10.0, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667285.334438, "latencia": 118.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667285.4611766, "latencia": 102.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667285.5722506, "latencia": 102.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667285.6767807, "latencia": 102.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667285.7774856, "latencia": 102.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667285.877863, "latencia": 102.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667285.988559, "latencia": 102.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667286.040511, "latencia": 102.4, "olor": "lavanda"}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.2596827, "latencia": 102.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.3608012, "latencia": 93.9, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.4679759, "latencia": 102.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.594944, "latencia": 102.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.6587956, "latencia": 102.2, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.7224574, "latencia": 55.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.7864587, "latencia": 25.9, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.7870047, "latencia": 16.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.8505175, "latencia": 49.4, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.8511436, "latencia": 8.1, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.8515282, "latencia": 41.6, "olor": ""}
-{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667290.9775982, "latencia": 83.7, "olor": ""}
-{"canal": 4, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667295.6925, "latencia": 9.9, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667295.8828948, "latencia": 135.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.01065, "latencia": 102.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.1379247, "latencia": 111.3, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.201043, "latencia": 94.2, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.2665148, "latencia": 59.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.2670808, "latencia": 10.1, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.3928583, "latencia": 7.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.4570787, "latencia": 18.4, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.5889628, "latencia": 22.8, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.6477504, "latencia": 16.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.7483041, "latencia": 14.1, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.8487582, "latencia": 16.5, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667296.9688466, "latencia": 22.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667297.0718036, "latencia": 21.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667297.1749904, "latencia": 26.6, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667297.3021085, "latencia": 20.7, "olor": "lavanda"}
-{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 99, "timestamp": 1787667297.3656447, "latencia": 18.3, "olor": "lavanda"}
+{"canal": 0, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673443.4435022, "latencia": 104.6, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673443.4971519, "latencia": 94.8, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673443.7274141, "latencia": 205.4, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673443.867267, "latencia": 101.4, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673443.927809, "latencia": 121.7, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.0184617, "latencia": 70.2, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.018848, "latencia": 11.9, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.1595209, "latencia": 132.0, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.3015456, "latencia": 86.7, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.3559904, "latencia": 100.3, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.4472737, "latencia": 109.9, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.4476697, "latencia": 9.5, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.5990868, "latencia": 75.0, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.6595502, "latencia": 102.6, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.7680614, "latencia": 103.4, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.7685578, "latencia": 23.3, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.7688982, "latencia": 14.6, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.8231547, "latencia": 62.9, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.92853, "latencia": 8.0, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.9809222, "latencia": 101.6, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673444.9816864, "latencia": 30.2, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673445.2302463, "latencia": 15.3, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673445.2309463, "latencia": 10.9, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673445.2829561, "latencia": 13.6, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673445.5684202, "latencia": 95.5, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 0, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 52, "timestamp": 1787673445.67144, "latencia": 102.7, "olor": "lavanda", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 53, "timestamp": 1787673454.510001, "latencia": 128.4, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673454.6116147, "latencia": 76.4, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673454.668805, "latencia": 102.6, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673454.6693141, "latencia": 10.4, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673454.7565942, "latencia": 90.4, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673454.8120525, "latencia": 55.7, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673454.9026444, "latencia": 50.0, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.0430863, "latencia": 100.8, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.097741, "latencia": 102.2, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.184948, "latencia": 111.8, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.327879, "latencia": 81.3, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.3286257, "latencia": 11.0, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.3819706, "latencia": 50.3, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.4708107, "latencia": 16.3, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.616668, "latencia": 64.3, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.669548, "latencia": 8.6, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.757117, "latencia": 14.7, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.9020193, "latencia": 74.6, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673455.9566634, "latencia": 15.6, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.0989025, "latencia": 73.4, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.188761, "latencia": 93.0, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.340183, "latencia": 101.6, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.4003472, "latencia": 96.5, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.4904985, "latencia": 99.7, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.5429792, "latencia": 15.1, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.7754502, "latencia": 8.6, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.8289635, "latencia": 93.7, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 4, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673456.9216127, "latencia": 102.8, "olor": "mentol", "modo": "Calibrado"}
+{"canal": 3, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673464.8773494, "latencia": 63.9, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673464.9787142, "latencia": 79.5, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.0336952, "latencia": 60.9, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.0909483, "latencia": 77.8, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.2511935, "latencia": 140.8, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.2517505, "latencia": 10.9, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.3123524, "latencia": 90.4, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.438875, "latencia": 111.5, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.6527095, "latencia": 193.9, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.754755, "latencia": 112.2, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.9553058, "latencia": 184.4, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673465.9558203, "latencia": 14.5, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.0567052, "latencia": 88.6, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.1626828, "latencia": 104.8, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.2637453, "latencia": 120.8, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.264255, "latencia": 9.8, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.4866092, "latencia": 184.8, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.551962, "latencia": 92.4, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.6798816, "latencia": 101.9, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.742897, "latencia": 57.4, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.7434175, "latencia": 9.6, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.8698819, "latencia": 137.0, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.9330206, "latencia": 39.7, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673466.9966652, "latencia": 62.7, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673467.0607483, "latencia": 123.6, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673467.2518451, "latencia": 183.5, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673467.3674674, "latencia": 110.9, "olor": "", "modo": "Manual"}
+{"canal": 3, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 54, "timestamp": 1787673467.4941852, "latencia": 94.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673470.797888, "latencia": 116.0, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673470.9580138, "latencia": 192.5, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.0656865, "latencia": 98.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.1679237, "latencia": 95.0, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.2756815, "latencia": 102.5, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.4022393, "latencia": 117.3, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.4652276, "latencia": 90.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.5941074, "latencia": 103.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.657334, "latencia": 98.9, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 55, "timestamp": 1787673471.7848759, "latencia": 114.9, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673473.9112117, "latencia": 128.0, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.0706341, "latencia": 124.8, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.1229007, "latencia": 80.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.2279155, "latencia": 112.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.2784271, "latencia": 11.7, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.3298926, "latencia": 80.5, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.3302784, "latencia": 9.7, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.4818852, "latencia": 116.9, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.5339382, "latencia": 82.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.6559088, "latencia": 102.9, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.656405, "latencia": 9.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.769088, "latencia": 87.9, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.8332078, "latencia": 103.2, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673474.9607277, "latencia": 101.8, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673475.0706723, "latencia": 102.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673475.182798, "latencia": 112.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673475.2460165, "latencia": 92.9, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673475.436681, "latencia": 183.4, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673475.550505, "latencia": 123.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673475.661224, "latencia": 102.2, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 56, "timestamp": 1787673475.8520794, "latencia": 205.0, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.138051, "latencia": 88.3, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.2439106, "latencia": 102.8, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.2444465, "latencia": 8.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.3490071, "latencia": 93.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.3495355, "latencia": 8.3, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.3499272, "latencia": 31.4, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.4067488, "latencia": 63.0, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.534154, "latencia": 102.4, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.5349455, "latencia": 9.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.7134502, "latencia": 121.0, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.7769043, "latencia": 14.1, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673478.9688263, "latencia": 125.6, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673479.0316608, "latencia": 102.4, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673479.0953934, "latencia": 13.8, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673479.1232054, "latencia": 7.5, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673479.3536901, "latencia": 102.7, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 57, "timestamp": 1787673479.3543153, "latencia": 23.4, "olor": "", "modo": "Manual"}
+{"canal": 2, "estado": "activo", "flujo": 0, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673483.5583084, "latencia": 102.2, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673483.6665113, "latencia": 102.6, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673483.8167238, "latencia": 102.3, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673483.8171577, "latencia": 8.3, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673483.8754141, "latencia": 93.9, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673483.875926, "latencia": 7.7, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673483.9709783, "latencia": 94.7, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.1336873, "latencia": 102.5, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.1342294, "latencia": 12.1, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.2939022, "latencia": 136.6, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.3535786, "latencia": 99.3, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.4616113, "latencia": 104.7, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.616854, "latencia": 100.0, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.7750227, "latencia": 205.2, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.9326105, "latencia": 102.2, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673484.9885626, "latencia": 101.9, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.0976148, "latencia": 102.7, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.256366, "latencia": 102.5, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.2567644, "latencia": 88.1, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.3212447, "latencia": 9.6, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.4118364, "latencia": 108.9, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.5570004, "latencia": 100.1, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.6082587, "latencia": 102.5, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.6961517, "latencia": 103.9, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.8435616, "latencia": 101.1, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.8441098, "latencia": 9.5, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.897089, "latencia": 88.7, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673485.9870615, "latencia": 92.7, "olor": "", "modo": "Calibrado"}
+{"canal": 2, "estado": "activo", "flujo": 70, "velocidad_motor": 0, "concentracion": 58, "timestamp": 1787673486.1324, "latencia": 93.1, "olor": "", "modo": "Calibrado"}

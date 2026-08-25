@@ -176,9 +176,9 @@ def generar_csv(ruta: str , datos: DatosInforme):
         seccion_calibrado_historial.append([])
 
 
-        #HISTORIAL DE PROTOCOLO
-        seccion_protocolo_historial = [["HISTORIAL DEL PROTOCOLO"],["Onset (s)","Hora","Canal", "Olor",
-                                   "Estado", "Velocidad (rpm)","Latencia (ms)"]]
+        #HISTORIAL DE SESIÓN
+        seccion_protocolo_historial = [["HISTORIAL DEL SESIÓN"],["Onset (s)","Hora","Canal", "Olor",
+                                   "Estado", "Velocidad (rpm)","Latencia (ms)", "Modo"]]
         
         for metrica in datos.historial_sesion :
             #las claves definidas deben coincidir con las del simulador
@@ -190,7 +190,8 @@ def generar_csv(ruta: str , datos: DatosInforme):
                 metrica.get("olor","----"),
                 metrica.get("estado",""),
                 metrica.get("velocidad_motor",0),
-                metrica.get("latencia",0)
+                metrica.get("latencia",0),
+                metrica.get("modo","----")
             ])
             
         ruta_eventos = ruta.replace(".csv", "_eventos.tsv")
@@ -384,15 +385,15 @@ def generar_excel(ruta: str, datos: DatosInforme):
 
                 
 
-        ##HOJA 3: HISTORIAL DE PROTOCOLO-----------------------------
-        hoja_historial_protocolo = workbook.create_sheet("Historial de protocolo")
-        hoja_historial_protocolo.title = "Historial de protocolo"
+        ##HOJA 3: HISTORIAL DE SESIÓN -----------------------------
+        hoja_historial_sesion = workbook.create_sheet("Historial de Sesión")
+        hoja_historial_sesion.title = "Historial de sesión"
 
-        cabeceras_historial_protocolo = ["Onset","Hora","Canal", "Olor", "Estado",
-                                     "Velocidad (rpm)", "Latencia (ms)"]
+        cabeceras_historial_sesion = ["Onset","Hora","Canal", "Olor", "Estado",
+                                     "Velocidad (rpm)", "Latencia (ms)", "Modo"]
         
-        for columna, cabecera in enumerate(cabeceras_historial_protocolo,start=1):
-            aplicar_estilo_cabecera(hoja_historial_protocolo.cell(1,columna),cabecera)
+        for columna, cabecera in enumerate(cabeceras_historial_sesion,start=1):
+            aplicar_estilo_cabecera(hoja_historial_sesion.cell(1,columna),cabecera)
 
         for fila, metrica in enumerate(datos.historial_sesion, start=2):
             onset = round(metrica["timestamp"]- datos.tiempo_inicio_sesion,3)
@@ -404,13 +405,14 @@ def generar_excel(ruta: str, datos: DatosInforme):
                 metrica.get("estado",""),
                 round(media(metrica.get("velocidad_motor", 0)), 1),
                 round(media(metrica.get("latencia", 0)), 1),
+                metrica.get("modo","----")
             ]
 
             for columna, valor in enumerate(fila_datos, start=1):
-                hoja_historial_protocolo.cell(fila, columna).value = valor
+                hoja_historial_sesion.cell(fila, columna).value = valor
 
 
-        ajustar_ancho_columnas(hoja_historial_protocolo)
+        ajustar_ancho_columnas(hoja_historial_sesion)
 
         ##HOJA 4: GRÁFICAS CALIBRACIÓN -----------------------------------
         hoja_graficas = workbook.create_sheet("Gráficas de Calibrado")
@@ -609,7 +611,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #HISTORIAL DE SESIÓN
         historia.append(Paragraph("Historial de Sesión", estilo_seccion))
         cabeceras_historial_sesion = [[
-            "Onset(s)","Hora", "Canal", "Olor","Estado","Velocidad(rpm)", "Latencia(ms)", "Fase"
+            "Onset(s)","Hora", "Canal", "Olor","Estado","Velocidad(rpm)", "Latencia(ms)", "Modo"
         ]]
         datos_historial_sesion = []
         for metrica in datos.historial_sesion:
@@ -622,10 +624,10 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 metrica.get("estado", ""),
                 round(metrica.get("velocidad_motor", 0), 1),
                 round(metrica.get("latencia", 0), 1),
-                ####
+                metrica.get("modo","----")
                 ])
         tabla_historial_sesion = Table(cabeceras_historial_sesion + datos_historial_sesion, 
-                                          colWidths=[16*mm, 16*mm, 16*mm, 16*mm, 16*mm, 26*mm, 24*mm, 22*mm])
+                                          colWidths=[16*mm, 16*mm, 16*mm, 16*mm, 16*mm, 26*mm, 24*mm, 20*mm])
         
         tabla_historial_sesion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_sesion)
