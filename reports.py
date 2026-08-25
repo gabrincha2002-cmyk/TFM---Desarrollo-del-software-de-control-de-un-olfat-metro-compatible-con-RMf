@@ -318,8 +318,8 @@ def generar_excel(ruta: str, datos: DatosInforme):
         fila +=1
 
         #se definen las cabeceras comunes a todos los datos
-        cabeceras_calibracion = ["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración máxima (µg/m\u00B3)", 
-                                "Concentración mínima (µg/m\u00B3)", "Flujo medio (ml/min)",
+        cabeceras_calibracion = ["Tiempo calibración (s)","Canal", "Olor", "Concentración media (µg/m\u00B3)","Concentración max. (µg/m\u00B3)", 
+                                "Concentración min. (µg/m\u00B3)", "Flujo medio (ml/min)",
                                 "Velocidad media(rpm)","Latencia media(ms)"]
         
         #se le aplica el estilo creado previamente correspondiente a las cabeceras

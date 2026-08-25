@@ -10,7 +10,7 @@ RECONEXION_AUTOMATICA_S = 0.5
 
 #-----CONFIGURACIÓN DEL OLFATÓMETRO-----------------
 NUM_CANALES = 6
-COLORES_CANALES = ["Verde Claro", "Negro", "Blanco", "Azul", "Amarillo", "Rojo"]
+COLORES_CANALES = ["Verde", "Negro", "Blanco", "Azul", "Amarillo", "Rojo"]
 CANAL_BLANCO = 2
 
 #-----CONFIGURACIÓN DEL PROTOCOLO-------------------
