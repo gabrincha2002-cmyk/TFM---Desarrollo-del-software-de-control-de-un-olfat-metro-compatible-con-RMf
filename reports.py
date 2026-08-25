@@ -419,6 +419,9 @@ def generar_excel(ruta: str, datos: DatosInforme):
         hoja_graficas.title = "Gráficas de Calibrado"
         hoja_graficas['A1'].font = estilo_titulo
 
+        etiquetas_parametros = dict(config.PARAMETROS_CALIBRACION)
+
+
         archivos_temporales = []
         if datos.metricas_calibracion:
             fila = 3
@@ -431,37 +434,44 @@ def generar_excel(ruta: str, datos: DatosInforme):
                         continue
                     if not valores:
                         continue
-                    #se generar grafícas mediante el paquetede matplotlib, y se guardan como imágenes temporales
-                    figura, eje = plt.subplots(figsize=(8,3), dpi=80)
+
+                    etiquetas_y = etiquetas_parametros.get(parametro, "----")
                     tiempo = [i * config.MUESTREO_CALIBRACION for i in range(len(valores))]
-                    eje.plot(tiempo,valores, color="#01bdce")
-                    eje.set_title(f'Canal {color_canal}/{metricas.get("olor","----")} - {parametro}', fontdict={'fontsize': 10, 'fontweight': 'bold'})
-                    eje.set_xlabel('Tiempo (s)')
-                    eje.set_ylabel(parametro)
+                    #se generar grafícas mediante el paquetede matplotlib, y se guardan como imágenes temporales
+                    figura, eje = plt.subplots(figsize=(9,4), dpi=110)
+                    figura.set_facecolor("#ffffff")
+                    eje.set_facecolor("#fafafa")
+                    eje.plot(tiempo,valores, color="#01bdce", linewidth=1.6)
+                    eje.set_title(f'Canal {color_canal}/{metricas.get("olor","----")} - {etiquetas_y}', fontdict={'fontsize': 10, 'fontweight': 'bold'}, color = "#555555")
+                    eje.set_xlabel('Tiempo (s)', fontsize= 10, color="#1a1a1a")
+                    eje.set_ylabel(etiquetas_y, fontsize=10,color="#1a1a1a")
                     eje.grid(True, linestyle='--', alpha=0.5)
-                    eje.set_facecolor('#2b2b2b')
-                    eje.patch.set_facecolor('#1e1e1e')
-                    eje.tick_params(colors="white")
-                    eje.title.set_color("white")
-                    eje.xaxis.label.set_color('white')
-                    eje.yaxis.label.set_color('white')
+                    #eje.set_facecolor('#2b2b2b')
+                    #eje.patch.set_facecolor('#1e1e1e')
+                    eje.tick_params(colors="#1a1a1a")
+                    #eje.title.set_color("white")
+                    #eje.xaxis.label.set_color('white')
+                    #eje.yaxis.label.set_color('white')
 
                     for spine in eje.spines.values():
-                        spine.set_color('white')
+                        spine.set_color('#333333')
+                        spine.set_linewidth(0.8)
+
+                    figura.tight_layout(rect=[0,0,1,0.90])
 
                     #Se guarda temporalmente la figura/gráfica generada, para luego insertarla en el Excel
                     with tempfile.NamedTemporaryFile(suffix=".png", delete= False) as temporal:
                         ruta_figura = temporal.name
                     archivos_temporales.append(ruta_figura)
 
-                    figura.savefig(ruta_figura, bbox_inches='tight', facecolor=figura.get_facecolor())
+                    figura.savefig(ruta_figura, bbox_inches='tight', facecolor=figura.get_facecolor(), dpi=110)
                     plt.close(figura)
 
                     #Ahora se inserta la imagen en la hoja Excel de la fila correspondiente.
                     imagen = openpyxl.drawing.image.Image(ruta_figura)
                     imagen.anchor = f'A{fila}'
                     hoja_graficas.add_image(imagen)
-                    fila += 18
+                    fila += 22
 
         #guardamos el workbook con el conjunto de las hojas y datos generados en la ruta seleccionada
         # por el usuario (siempre, haya o no datos de calibración)
