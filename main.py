@@ -146,10 +146,13 @@ class App(ctk.CTk):
         self.protocolo_parado = False
         self.orden_protocolo = None
 
-        #espera de posición de válvula (compartido entre calibrado y protocolo):
+        #espera de posición de válvula (compartido entre activación manual, calibrado y protocolo):
         #lista de (num_canal, funcion_periodo, args) pendientes de que el ESP32 confirme
         #que la válvula ha llegado a la posición de destino de ese canal.
         self.callbacks_pendientes_posicion_valvula = []
+        #canal cuya rotación aún no se ha confirmado, o None. Solo puede haber uno a la vez:
+        #la activación manual está bloqueada mientras hay protocolo o calibrado en curso, y
+        #activar un canal nuevo cancela (para) el anterior, así que nunca coexisten dos esperas.
         self.canal_esperando_posicion = None
 
         #calibrado
@@ -1158,9 +1161,8 @@ class App(ctk.CTk):
             for canal in self.cuadros_canales:
                 if canal.e_olor_canal.winfo_exists():
                     canal.e_olor_canal.configure(state="disabled")
-                canal.b_activar_canal.configure(state="disabled")
-                canal.b_parar_canal.configure(state="disabled")
-            
+            self._actualizar_bloqueo_canales_manual()
+
             #calibrado
             self.comb_canales_calibrados.configure(state="disabled")
             self.b_iniciar_calibrado_general.configure(state="disabled")
@@ -1213,9 +1215,8 @@ class App(ctk.CTk):
             for canal in self.cuadros_canales:
                 if canal.e_olor_canal.winfo_exists():
                     canal.e_olor_canal.configure(state="normal")
-                canal.b_activar_canal.configure(state="normal")
-                canal.b_parar_canal.configure(state="normal")
-            
+            self._actualizar_bloqueo_canales_manual()
+
             #calibrado
             self.comb_canales_calibrados.configure(state="normal")
             self.b_iniciar_calibrado_general.configure(state="normal")
@@ -1348,10 +1349,11 @@ class App(ctk.CTk):
         #self.canal_activo = canal
         self.fase_actual = "Exposición"
         self.consola.registro(f"Ciclo {self.ciclo_actual}/{self.e_num_ciclos.get()} Iniciando exposición en canal {canal.e_olor_canal.get()} durante {self.e_tiempo_exposicion.get()} segundos")
-        self._iniciar_rotacion(canal)
-        self.canal_esperando_posicion = canal.num_canal
-        self.callbacks_pendientes_posicion_valvula.append((canal.num_canal, self._completar_activacion, (canal,)))
-        self.callbacks_pendientes_posicion_valvula.append((canal.num_canal, self.periodo_exposicion, (canal, int(self.e_tiempo_exposicion.get()))))
+        canal.activar_canal()
+        if canal.num_canal == self.canal_esperando_posicion:
+            self.callbacks_pendientes_posicion_valvula.append((canal.num_canal, self.periodo_exposicion, (canal, int(self.e_tiempo_exposicion.get()))))
+        else:
+            self.periodo_exposicion(canal, int(self.e_tiempo_exposicion.get()))
 
     def periodo_exposicion(self, canal, segundos_restantes):
         if self.protocolo_parado:
@@ -1372,10 +1374,11 @@ class App(ctk.CTk):
         self.consola.registro(f"Ciclo {self.ciclo_actual}/{self.e_num_ciclos.get()} Iniciando desensibilización durante {self.e_tiempo_desensibilizacion.get()} segundos")
         #self.canal_activo = self.cuadros_canales[2]
         canal_desensibilizacion = self.cuadros_canales[2] #CANAL DE DESENSIBILIZACIÓN
-        self._iniciar_rotacion(canal_desensibilizacion)
-        self.canal_esperando_posicion = canal_desensibilizacion.num_canal
-        self.callbacks_pendientes_posicion_valvula.append((canal_desensibilizacion.num_canal, self._completar_activacion, (canal_desensibilizacion,)))
-        self.callbacks_pendientes_posicion_valvula.append((canal_desensibilizacion.num_canal, self.periodo_desensibilizacion, (int(self.e_tiempo_desensibilizacion.get()),)))
+        canal_desensibilizacion.activar_canal()
+        if canal_desensibilizacion.num_canal == self.canal_esperando_posicion:
+            self.callbacks_pendientes_posicion_valvula.append((canal_desensibilizacion.num_canal, self.periodo_desensibilizacion, (int(self.e_tiempo_desensibilizacion.get()),)))
+        else:
+            self.periodo_desensibilizacion(int(self.e_tiempo_desensibilizacion.get()))
 
     def periodo_desensibilizacion(self, segundos_restantes):
         if self.protocolo_parado:
@@ -1527,6 +1530,7 @@ class App(ctk.CTk):
     #CALIBRADO VELOCIDAD
     def iniciar_calibrado_velocidad(self):
         if self.canal_calibrado is not None:
+            self._actualizar_bloqueo_canales_manual()
             if not self.calibrado_velocidad_parado and not self.calibrando_velocidad:
                 self.calibrando_velocidad = True
                 self.consola.registro("Iniciando calibrado de velocidad...")
@@ -1543,10 +1547,8 @@ class App(ctk.CTk):
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else "----")
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia:
-                    self._iniciar_rotacion(self.canal_calibrado)
-                    self.canal_esperando_posicion = num_canal
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self._completar_activacion, (self.canal_calibrado,)))
-                if self.canal_esperando_posicion == num_canal:
+                    self.canal_calibrado.activar_canal()
+                if num_canal == self.canal_esperando_posicion:
                     self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_velocidad, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
                 else:
                     self.periodo_calibrado_velocidad(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -1617,6 +1619,7 @@ class App(ctk.CTk):
         self.canvas_velocidad.draw()
 
         self.b_iniciar_calibrado_velocidad.configure(state="normal")
+        self._actualizar_bloqueo_canales_manual()
         self.consola.registro("Calibrado de velocidad reiniciado")
     
     def parar_calibrado_velocidad(self):
@@ -1652,13 +1655,15 @@ class App(ctk.CTk):
                     self.consola.registro("Calibrado de velocidad finalizado")
                 else:
                     self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+            self._actualizar_bloqueo_canales_manual()
         else:
             self.consola.registro("No hay ningún calibrado de velocidad activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de velocidad.", nivel="AVISO")
-            
+
 
     #CALIBRADO FLUJO
     def iniciar_calibrado_flujo(self):
         if self.canal_calibrado is not None:
+            self._actualizar_bloqueo_canales_manual()
             if not self.calibrado_flujo_parado and not self.calibrando_flujo:
                 self.calibrando_flujo = True
                 self.consola.registro("Iniciando calibrado de flujo...")
@@ -1675,10 +1680,8 @@ class App(ctk.CTk):
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_velocidad and not self.calibrando_concentracion and not self.calibrando_latencia:
-                    self._iniciar_rotacion(self.canal_calibrado)
-                    self.canal_esperando_posicion = num_canal
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self._completar_activacion, (self.canal_calibrado,)))
-                if self.canal_esperando_posicion == num_canal:
+                    self.canal_calibrado.activar_canal()
+                if num_canal == self.canal_esperando_posicion:
                     self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_flujo, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
                 else:
                     self.periodo_calibrado_flujo(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -1748,6 +1751,7 @@ class App(ctk.CTk):
         self.canvas_flujo.draw()
 
         self.b_iniciar_calibrado_flujo.configure(state="normal")
+        self._actualizar_bloqueo_canales_manual()
         self.consola.registro("Calibrado de flujo reiniciado")
     
     def parar_calibrado_flujo(self):
@@ -1784,12 +1788,14 @@ class App(ctk.CTk):
                     self.consola.registro("Calibrado de flujo finalizado")
                 else:
                     self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+            self._actualizar_bloqueo_canales_manual()
         else:
             self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de flujo.", nivel="AVISO")
-    
+
     #CALIBRADO CONCENTRACIÓN
     def iniciar_calibrado_concentracion(self):
         if self.canal_calibrado is not None:
+            self._actualizar_bloqueo_canales_manual()
             if not self.calibrado_concentracion_parado and not self.calibrando_concentracion:
                 self.calibrando_concentracion = True
                 self.consola.registro("Iniciando calibrado de concentración...")
@@ -1806,10 +1812,8 @@ class App(ctk.CTk):
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_velocidad and not self.calibrando_latencia:
-                    self._iniciar_rotacion(self.canal_calibrado)
-                    self.canal_esperando_posicion = num_canal
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self._completar_activacion, (self.canal_calibrado,)))
-                if self.canal_esperando_posicion == num_canal:
+                    self.canal_calibrado.activar_canal()
+                if num_canal == self.canal_esperando_posicion:
                     self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_concentracion, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
                 else:
                     self.periodo_calibrado_concentracion(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -1880,6 +1884,7 @@ class App(ctk.CTk):
         self.canvas_concentracion.draw()
 
         self.b_iniciar_calibrado_concentracion.configure(state="normal")
+        self._actualizar_bloqueo_canales_manual()
         self.consola.registro("Calibrado de concentración reiniciado")
 
     def parar_calibrado_concentracion(self):
@@ -1917,12 +1922,14 @@ class App(ctk.CTk):
                     self.consola.registro("Calibrado de concentración finalizado")
                 else:
                     self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+            self._actualizar_bloqueo_canales_manual()
         else:
             self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de concentración.", nivel="AVISO")
 
     #CALIBRADO LATENCIA
     def iniciar_calibrado_latencia(self):
         if self.canal_calibrado is not None:
+            self._actualizar_bloqueo_canales_manual()
             if not self.calibrado_latencia_parado and not self.calibrando_latencia:
                 self.calibrando_latencia = True
                 self.consola.registro("Iniciando calibrado de latencia...")
@@ -1939,10 +1946,8 @@ class App(ctk.CTk):
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_velocidad:
-                    self._iniciar_rotacion(self.canal_calibrado)
-                    self.canal_esperando_posicion = num_canal
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self._completar_activacion, (self.canal_calibrado,)))
-                if self.canal_esperando_posicion == num_canal:
+                    self.canal_calibrado.activar_canal()
+                if num_canal == self.canal_esperando_posicion:
                     self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_latencia, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
                 else:
                     self.periodo_calibrado_latencia(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -2012,6 +2017,7 @@ class App(ctk.CTk):
         self.canvas_latencia.draw()
 
         self.b_iniciar_calibrado_latencia.configure(state="normal")
+        self._actualizar_bloqueo_canales_manual()
         self.consola.registro("Calibrado de latencia reiniciado")
 
     def parar_calibrado_latencia(self):
@@ -2048,6 +2054,7 @@ class App(ctk.CTk):
                     self.consola.registro("Calibrado de latencia finalizado")
                 else:
                     self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+            self._actualizar_bloqueo_canales_manual()
         else:
             self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de latencia.", nivel="AVISO")
 
@@ -2136,40 +2143,34 @@ class App(ctk.CTk):
             if funcion != funcion_periodo_en_espera
         ]
 
+    def _actualizar_bloqueo_canales_manual(self):
+        # Bloquea los botones "Activar"/"Parar" de los canales mientras haya un protocolo
+        # o un calibrado en curso, para evitar activaciones manuales que interfieran con
+        # el proceso en marcha. Se recalcula cada vez a partir del estado actual, así que
+        # es seguro llamarlo desde cualquier punto de inicio/parada/reinicio del calibrado.
+        if self.protocolo_activo or self.calibrado_activo():
+            for canal in self.cuadros_canales:
+                canal.b_activar_canal.configure(state="disabled")
+                canal.b_parar_canal.configure(state="disabled")
+        else:
+            for canal in self.cuadros_canales:
+                canal.b_activar_canal.configure(state="normal")
+                canal.b_parar_canal.configure(state="normal")
+
     def _cancelar_activacion_pendiente(self, canal):
         # Retira la activación (motor + cronómetro) pendiente para este canal concreto,
         # para que un ACK de rotación que llegue tarde no reactive un canal que ya se paró.
         self.callbacks_pendientes_posicion_valvula = [
             (num_canal, funcion, argumentos) for num_canal, funcion, argumentos in self.callbacks_pendientes_posicion_valvula
-            if not (funcion == self._completar_activacion and num_canal == canal.num_canal)
+            if not (funcion == self._completar_activacion_canal and num_canal == canal.num_canal)
         ]
 
-    def _iniciar_rotacion(self, canal):
-        # Mueve la válvula al canal indicado SIN arrancar todavía ni el motor ni el
-        # cronómetro de "tiempo activo" del canal (eso lo hace _completar_activacion,
-        # una vez el ESP32 confirme por ACK que la válvula ha llegado a la posición).
-        # Réplica de la parte de posicionamiento de actualizar_canales(num_canal, "activar").
-        num_canal = canal.num_canal
-        pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else config.CANAL_BLANCO, num_canal)
-        if self.canal_activo is not None and self.canal_activo.num_canal != num_canal:
-            self.consola.registro(f"Se ha activado el canal {num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ''}) mientras el canal {self.canal_activo.num_canal} ({self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() if self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() else ''}) estaba activo. Se detiene el canal {self.canal_activo.num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ''}).", nivel="AVISO")
-            self.canal_activo.parar_canal()
-        self.canal_activo = canal
-        self.sv_canal_activo.set(f"Canal {canal.e_olor_canal.get()}" if canal.e_olor_canal.get() else "Canal Blanco")
-        if self.protocolo_activo:
-            if self.sv_canal_activo.get() == "Canal Blanco":
-                self.sv_canal_anterior.set(f"Canal {self.canales_protocolo[self.indice_canal_protocolo].e_olor_canal.get()}" if self.indice_canal_protocolo >= 0 else "Ninguno")
-                self.sv_canal_siguiente.set(f"Canal {self.canales_protocolo[self.indice_canal_protocolo + 1].e_olor_canal.get()}" if self.indice_canal_protocolo + 1 < len(self.canales_protocolo) else "Ninguno")
-            else:
-                self.sv_canal_anterior.set("Canal Blanco" if self.indice_canal_protocolo - 1 >= 0 else "Ninguno")
-                self.sv_canal_siguiente.set("Canal Blanco" if self.indice_canal_protocolo + 1 <= len(self.canales_protocolo) else "Ninguno")
-        self.ws_client.enviar({"cmd": "rotar", "canal": num_canal, "pasos": pasos})
-
-    def _completar_activacion(self, canal):
-        # Se llama una vez confirmada la posición: arranca el motor y el cronómetro
-        # de "tiempo activo" del canal (canal_activo ya apunta a este canal, así que
-        # el "rotar" que reenvía activar_canal() internamente es de 0 pasos).
-        canal.activar_canal()
+    def _completar_activacion_canal(self, canal):
+        # Se llama una vez el ESP32 confirma que la válvula ha llegado a la posición de
+        # este canal: recién entonces se enciende el motor y arranca el cronómetro de
+        # "tiempo activo" del canal (ver actualizar_canales() y widgets.Canal).
+        self.ws_client.enviar({"cmd": "activar", "canal": canal.num_canal, "velocidad_%": 14})
+        canal.confirmar_activacion()
 
     def actualizar_graficas(self):
         #self.buffer_velocidad.append(nuevo_valor_velocidad)
@@ -2270,11 +2271,18 @@ class App(ctk.CTk):
                 
                 #mensaje para mover la válvula giratoria  a la posición del canal activo.
                 self.ws_client.enviar({"cmd": "rotar", "canal": num_canal, "pasos": pasos})
-                #mensaje para activar el motor DC
-                self.ws_client.enviar({"cmd": "activar", "canal": num_canal, "velocidad_%": 14})
+                #el motor DC y el cronómetro del canal se arrancan en _completar_activacion_canal,
+                #cuando el ESP32 confirme por ACK que la válvula ya ha llegado a esta posición
+                #(ver _datos_ack). Así evitamos que el "tiempo activo" empiece a contar mientras
+                #la válvula todavía está girando.
+                self.canal_esperando_posicion = num_canal
+                self.callbacks_pendientes_posicion_valvula.append((num_canal, self._completar_activacion_canal, (self.cuadros_canales[num_canal],)))
 
-            
+
             if accion== "parar":
+                self._cancelar_activacion_pendiente(self.cuadros_canales[num_canal])
+                if self.canal_esperando_posicion == num_canal:
+                    self.canal_esperando_posicion = None
                 if self.canal_activo is not None and self.canal_activo.num_canal == num_canal:
                     ultima_telemetria = self.ultimos_datos_telemetria.get(num_canal, {})
                     self.historial_sesion.append({

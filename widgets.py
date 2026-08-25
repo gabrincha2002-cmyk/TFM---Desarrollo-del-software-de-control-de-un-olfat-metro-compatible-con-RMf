@@ -18,6 +18,7 @@ class Canal(ctk.CTkFrame):
         self.registro = registro
         self.after_cronometro = None
         self.estado_canal= False
+        self._tiempo_inicial_pendiente = None
         self.crear_canal()
 
     def crear_canal(self):
@@ -79,17 +80,25 @@ class Canal(ctk.CTkFrame):
 
     def activar_canal(self,tiempo_inicial=datetime.datetime.strptime("00:00:00", "%H:%M:%S")):
         if not self.estado_canal:
+            # estado_canal se marca ya como activo para bloquear reentradas (doble clic, etc.)
+            # y para que "Parar" funcione durante la espera. El cronómetro y el motor no
+            # arrancan hasta confirmar_activacion(), cuando la válvula ya esté en posición.
             self.estado_canal=True
-            self.cronometro(tiempo_inicial)
-            self.configure(fg_color="#256F2F", border_color="#7DEB7D", border_width=4)  # Cambia el fondo del canal para indicar que está activo
-            self.b_activar_canal.configure(text="En marcha", fg_color="#70c64e",text_color="#ffffff",border_color="#006400",border_width=1,font=ctk.CTkFont(size=14, weight="bold"))
-            #FALTA INCLUIR FUNCIONALIDAD PARA ACTIVAR EL CANAL EN EL ESP32
-            if self.registro:
-                self.registro(f"Canal {self.color_canal} ({self.e_olor_canal.get()}) ACTIVADO")
-            
+            self._tiempo_inicial_pendiente = tiempo_inicial
             if self.actualizar_canal:
                 self.actualizar_canal(self.num_canal,"activar")
-            
+
+    def confirmar_activacion(self):
+        # Llamado por la app cuando el ESP32 confirma que la válvula ha llegado a la
+        # posición de este canal: aquí se refleja visualmente la activación y arranca
+        # el cronómetro de "tiempo activo".
+        if self.estado_canal:
+            self.cronometro(self._tiempo_inicial_pendiente)
+            self.configure(fg_color="#256F2F", border_color="#7DEB7D", border_width=4)  # Cambia el fondo del canal para indicar que está activo
+            self.b_activar_canal.configure(text="En marcha", fg_color="#70c64e",text_color="#ffffff",border_color="#006400",border_width=1,font=ctk.CTkFont(size=14, weight="bold"))
+            if self.registro:
+                self.registro(f"Canal {self.color_canal} ({self.e_olor_canal.get()}) ACTIVADO")
+
 
     def parar_canal(self):
         if self.estado_canal:

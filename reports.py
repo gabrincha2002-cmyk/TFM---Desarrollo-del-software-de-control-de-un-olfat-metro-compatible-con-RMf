@@ -606,15 +606,15 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         historia.append(PageBreak())
 
 
-        #HISTORIAL DE PROTOCOLO
-        historia.append(Paragraph("Historial de Protocolo", estilo_seccion))
-        cabeceras_historial_protocolo = [[
-            "Onset(s)","Hora", "Canal", "Olor","Estado","Velocidad(rpm)", "Latencia(ms)"
+        #HISTORIAL DE SESIÓN
+        historia.append(Paragraph("Historial de Sesión", estilo_seccion))
+        cabeceras_historial_sesion = [[
+            "Onset(s)","Hora", "Canal", "Olor","Estado","Velocidad(rpm)", "Latencia(ms)", "Fase"
         ]]
-        datos_historial_protocolo = []
+        datos_historial_sesion = []
         for metrica in datos.historial_sesion:
             onset = round(metrica["timestamp"] - datos.tiempo_inicio_sesion,3)
-            datos_historial_protocolo.append([
+            datos_historial_sesion.append([
                 onset,
                 datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),
                 datos.colores_canales[metrica["canal"]],
@@ -622,12 +622,13 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 metrica.get("estado", ""),
                 round(metrica.get("velocidad_motor", 0), 1),
                 round(metrica.get("latencia", 0), 1),
+                ####
                 ])
-        tabla_historial_protocolo = Table(cabeceras_historial_protocolo + datos_historial_protocolo, 
-                                          colWidths=[16*mm, 16*mm, 16*mm, 16*mm, 16*mm, 26*mm, 24*mm])
+        tabla_historial_sesion = Table(cabeceras_historial_sesion + datos_historial_sesion, 
+                                          colWidths=[16*mm, 16*mm, 16*mm, 16*mm, 16*mm, 26*mm, 24*mm, 22*mm])
         
-        tabla_historial_protocolo.setStyle(estilo_tabla_cabecera)
-        historia.append(tabla_historial_protocolo)
+        tabla_historial_sesion.setStyle(estilo_tabla_cabecera)
+        historia.append(tabla_historial_sesion)
 
         #GENERAR PDF
         documento = SimpleDocTemplate(ruta, pagesize=A4,
