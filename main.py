@@ -152,6 +152,7 @@ class App(ctk.CTk):
         self.calibrado_flujo_parado = False
         self.calibrado_concentracion_parado = False
         self.calibrado_latencia_parado = False
+        self.canales_calibrados = dict.fromkeys(config.COLORES_CANALES, False)
 
         # flags por parámetro
         self.calibrando_velocidad        = False
@@ -932,7 +933,7 @@ class App(ctk.CTk):
         self.l_latencia_canal.grid(row=11, column=0, padx=140, pady=(20,5), sticky="w")
         self.sv_latencia_canal= ctk.StringVar(value="0 ms")
         self.l_valor_latencia_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_latencia_canal, font=ctk.CTkFont(size=14))
-        self.l_valor_latencia_canal.grid(row=11, column=0, padx=140, pady=(20,5), sticky="e")
+        self.l_valor_latencia_canal.grid(row=11, column=0, padx=130, pady=(20,5), sticky="e")
 
         #self.l_flujo_aire_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Flujo de aire estimado: ", font=ctk.CTkFont(size=14, weight="bold"))
         #self.l_flujo_aire_canal.grid(row=8, column=0, padx=80, pady=(20,5), sticky="w")
@@ -1239,13 +1240,13 @@ class App(ctk.CTk):
 
                 if self.fase_actual == "Exposición":
                     canal = self.canales_protocolo[self.indice_canal_protocolo]
-                    self.canal_activo = canal
+                    #self.canal_activo = canal
                     #self.sv_canal_activo.set(self.canal_activo.e_olor_canal.get())
                     canal.activar_canal(tiempo_inicial = self.tiempo_guardado)
                     self.tiempo_guardado = None
                     self.periodo_exposicion(canal, self.segundos_restantes_protocolo)
                 if self.fase_actual == "Desensibilización":
-                    self.canal_activo = self.cuadros_canales[2]
+                    #self.canal_activo = self.cuadros_canales[2]
                     #self.sv_canal_activo.set(self.canal_activo.e_olor_canal.get())
                     self.cuadros_canales[2].activar_canal(tiempo_inicial = self.tiempo_guardado) #CANAL DE DESENSIBILIZACIÓN
                     self.tiempo_guardado = None
@@ -1334,7 +1335,7 @@ class App(ctk.CTk):
             return
         
         canal = self.canales_protocolo[self.indice_canal_protocolo]
-        self.canal_activo = canal
+        #self.canal_activo = canal
         self.fase_actual = "Exposición"
         self.consola.registro(f"Ciclo {self.ciclo_actual}/{self.e_num_ciclos.get()} Iniciando exposición en canal {canal.e_olor_canal.get()} durante {self.e_tiempo_exposicion.get()} segundos")
         canal.activar_canal()
@@ -1357,7 +1358,7 @@ class App(ctk.CTk):
     def iniciar_desensibilizacion(self):
         self.fase_actual = "Desensibilización"
         self.consola.registro(f"Ciclo {self.ciclo_actual}/{self.e_num_ciclos.get()} Iniciando desensibilización durante {self.e_tiempo_desensibilizacion.get()} segundos")
-        self.canal_activo = self.cuadros_canales[2]
+        #self.canal_activo = self.cuadros_canales[2]
         self.cuadros_canales[2].activar_canal() #CANAL DE DESENSIBILIZACIÓN
         self.periodo_desensibilizacion(int(self.e_tiempo_desensibilizacion.get()))
 
@@ -1516,7 +1517,7 @@ class App(ctk.CTk):
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
-                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
+                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else "----")
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia: 
                     self.canal_calibrado.activar_canal()
                 self.periodo_calibrado_velocidad(self.canal_calibrado, self.e_tiempo_calibrado.get())
@@ -2031,6 +2032,18 @@ class App(ctk.CTk):
     def seleccionar_calibrado(self,nombre_canal):
         if not self.calibrado_activo():
             if nombre_canal != 'Ninguno':
+
+                #se reinician los contadores y búfers temporales
+                self.contador_concentracion = 0
+                self.contador_flujo = 0
+                self.contador_velocidad = 0
+                self.contador_latencia = 0
+                self.buffer_concentracion =  collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
+                self.buffer_flujo =  collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
+                self.buffer_latencia =  collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
+                self.buffer_velocidad =  collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
+
+
                 self.consola.registro(f'Canal calibrado seleccionado: {nombre_canal}')
                 for canal in self.cuadros_canales:
                     if canal.e_olor_canal.get() == nombre_canal or canal.l_color_canal.cget("text") == nombre_canal:
@@ -2167,8 +2180,8 @@ class App(ctk.CTk):
                     if not self.protocolo_activo:
                         pasos = self.calcular_posicion_valvula(self.canal_activo.num_canal if self.canal_activo else config.CANAL_BLANCO, config.CANAL_BLANCO)
                         self.ws_client.enviar({"cmd": "rotar", "canal": num_canal, "pasos": pasos})
-                    self.canal_activo = None
-                    self.sv_canal_activo.set("Ninguno")
+                        self.canal_activo = None
+                        self.sv_canal_activo.set("Ninguno")
 
                     #podrían establecerse como valor "Ninguno" a los canales anterior y siguiente.
                 #self.consola.registro(f"Canal {num_canal} SE PARA")
