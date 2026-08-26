@@ -587,7 +587,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                     round(media(metrica.get("latencia", [])), 1),
                     ])
         tabla_caracterizacion = Table(cabeceras_caracterizacion + datos_caracterizacion,
-                               colWidths=[20*mm,16*mm, 30*mm, 22*mm, 22*mm, 22*mm, 22*mm, 20*mm, 18*mm])
+                               colWidths=[20*mm,14*mm, 30*mm, 22*mm, 22*mm, 22*mm, 24*mm, 20*mm, 18*mm])
         tabla_caracterizacion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_caracterizacion)
         historia.append(PageBreak())
@@ -611,7 +611,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 round(muestra["latencia"], 1),
                 ])
         tabla_historial_caracterizacion = Table(cabeceras_historial_caracterizacion + datos_historial_caracterizacion, 
-                                          colWidths=[14*mm, 18*mm, 18*mm, 30*mm, 18*mm, 18*mm, 18*mm, 20*mm, 18*mm])
+                                          colWidths=[18*mm, 18*mm, 14*mm, 30*mm, 18*mm, 18*mm, 18*mm, 20*mm, 18*mm])
         
         tabla_historial_caracterizacion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_caracterizacion)
@@ -637,7 +637,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 metrica.get("modo","----")
                 ])
         tabla_historial_sesion = Table(cabeceras_historial_sesion + datos_historial_sesion, 
-                                          colWidths=[20*mm, 16*mm, 16*mm, 30*mm, 16*mm, 18*mm, 16*mm, 18*mm])
+                                          colWidths=[18*mm, 16*mm, 14*mm, 30*mm, 16*mm, 18*mm, 14*mm, 24*mm])
         
         tabla_historial_sesion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_sesion)

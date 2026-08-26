@@ -363,7 +363,7 @@ class App(ctk.CTk):
 
         self.l_tiempo_caracterizacion = ctk.CTkLabel(self.f_caracterizacion_canales_tiempo, text="Tiempo:", text_color="#458B8D", font=ctk.CTkFont(size=14, weight="bold"))
         self.l_tiempo_caracterizacion.grid(row=0, column=1, padx=0, pady=5, sticky="e")
-        self.e_tiempo_caracterizacion = SpinboxCTk(self.f_caracterizacion_canales_tiempo, valor=30, valor_min=1, valor_max=config.VALOR_MAXIMO_TIEMPO_caracterizacion, escalon=1, width=60, height=15)
+        self.e_tiempo_caracterizacion = SpinboxCTk(self.f_caracterizacion_canales_tiempo, valor=30, valor_min=1, valor_max=config.VALOR_MAXIMO_TIEMPO_CARACTERIZACION, escalon=1, width=60, height=15)
         self.e_tiempo_caracterizacion.grid(row=0, column=2, padx=0, pady=5, sticky="w")
         self.asignar_tooltip_spinbox(self.e_tiempo_caracterizacion, mensaje_entry="Introduzca el tiempo de la duración (en segundos) de la fase de Caracterización (tanto induvidual como general)")
 
@@ -923,16 +923,16 @@ class App(ctk.CTk):
         self.sv_latencia_canal= ctk.StringVar(value="0 ms")
 
         self.l_canal_anterior, self.l_canal_anterior_valor = self._crear_pareja_estado(
-            self.tv_prot_cal_est.tab("Estado"), fila=7, texto="Canal anterior: ", textvariable=self.sv_canal_anterior)
+            self.tv_prot_cal_est.tab("Estado"), fila=7, texto="Canal anterior: ", stringvar=self.sv_canal_anterior)
 
         self.l_canal_activo, self.l_canal_activo_valor = self._crear_pareja_estado(
-            self.tv_prot_cal_est.tab("Estado"), fila=8, texto="Canal activo: ", textvariable=self.sv_canal_activo)
+            self.tv_prot_cal_est.tab("Estado"), fila=8, texto="Canal activo: ", stringvar=self.sv_canal_activo)
 
         self.l_canal_siguiente, self.l_canal_siguiente_valor = self._crear_pareja_estado(
-            self.tv_prot_cal_est.tab("Estado"), fila=9, texto="Canal siguiente: ", textvariable=self.sv_canal_siguiente)
+            self.tv_prot_cal_est.tab("Estado"), fila=9, texto="Canal siguiente: ", stringvar=self.sv_canal_siguiente)
 
         self.l_latencia_canal, self.l_valor_latencia_canal = self._crear_pareja_estado(
-            self.tv_prot_cal_est.tab("Estado"), fila=11, texto="Latencia: ", textvariable=self.sv_latencia_canal)
+            self.tv_prot_cal_est.tab("Estado"), fila=11, texto="Latencia: ", stringvar=self.sv_latencia_canal)
 
         #self.l_flujo_aire_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Flujo de aire estimado: ", font=ctk.CTkFont(size=14, weight="bold"))
         #self.l_flujo_aire_canal.grid(row=8, column=0, padx=80, pady=(20,5), sticky="w")
@@ -1534,8 +1534,8 @@ class App(ctk.CTk):
             if not self.caracterizacion_velocidad_parado and not self.caracterizando_velocidad:
                 self.caracterizando_velocidad = True
                 self.consola.registro("Iniciando caracterizacion de velocidad...")
-                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-                self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+                self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
                 self.contador_velocidad = 0
                 self.buffer_historico_caracterizacion_velocidad.clear()
@@ -1599,8 +1599,8 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de velocidad.", nivel="AVISO")
 
         self.buffer_historico_caracterizacion_velocidad.clear()
-        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-        self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+        self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
         #self.buffer_velocidad = collections.deque([np.nan]*61, maxlen=61)
         #self.tiempo_grafica_velocidad = collections.deque(list(range(0,61)), maxlen=61)
@@ -1668,8 +1668,8 @@ class App(ctk.CTk):
             if not self.caracterizacion_flujo_parado and not self.caracterizando_flujo:
                 self.caracterizando_flujo = True
                 self.consola.registro("Iniciando caracterizacion de flujo...")
-                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-                self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+                self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
                 self.contador_flujo = 0
                 self.buffer_historico_caracterizacion_flujo.clear()
@@ -1734,8 +1734,8 @@ class App(ctk.CTk):
 
 
         self.buffer_historico_caracterizacion_flujo.clear()
-        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-        self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+        self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
 
         self.ax_flujo.clear()
@@ -1801,8 +1801,8 @@ class App(ctk.CTk):
             if not self.caracterizacion_concentracion_parado and not self.caracterizando_concentracion:
                 self.caracterizando_concentracion = True
                 self.consola.registro("Iniciando caracterizacion de concentración...")
-                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-                self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+                self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
                 self.contador_concentracion = 0
                 self.buffer_historico_caracterizacion_concentracion.clear()
@@ -1868,8 +1868,8 @@ class App(ctk.CTk):
 
 
         self.buffer_historico_caracterizacion_concentracion.clear()
-        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-        self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+        self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
 
         self.ax_concentracion.clear()
@@ -1936,8 +1936,8 @@ class App(ctk.CTk):
             if not self.caracterizacion_latencia_parado and not self.caracterizando_latencia:
                 self.caracterizando_latencia = True
                 self.consola.registro("Iniciando caracterizacion de latencia...")
-                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-                self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+                self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
                 self.contador_latencia = 0
                 self.buffer_historico_caracterizacion_latencia.clear()
@@ -2002,8 +2002,8 @@ class App(ctk.CTk):
 
 
         self.buffer_historico_caracterizacion_latencia.clear()
-        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
-        self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION
+        self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CARACTERIZACION) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
 
         self.ax_latencia.clear()
@@ -2262,7 +2262,12 @@ class App(ctk.CTk):
                     self.consola.registro(f"Se ha activado el canal {num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ''}) mientras el canal {self.canal_activo.num_canal} ({self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() if self.cuadros_canales[self.canal_activo.num_canal].e_olor_canal.get() else ''}) estaba activo. Se detiene el canal {self.canal_activo.num_canal} ({self.cuadros_canales[num_canal].e_olor_canal.get() if self.cuadros_canales[num_canal].e_olor_canal.get() else ''}).", nivel="AVISO")
                     self.canal_activo.parar_canal()
                 self.canal_activo = self.cuadros_canales[num_canal]
-                self.sv_canal_activo.set(f"Canal {self.canal_activo.e_olor_canal.get()}" if self.canal_activo.e_olor_canal.get() else "Canal Blanco")
+                if self.canal_activo.e_olor_canal.winfo_exists() and self.canal_activo.e_olor_canal.get():
+                    self.sv_canal_activo.set(f"Canal {self.canal_activo.e_olor_canal.get()}")
+                if self.canal_activo.e_olor_canal.winfo_exists() and self.canal_activo.e_olor_canal.get() == "":
+                    self.sv_canal_activo.set(f"Canal ----")
+                if not self.canal_activo.e_olor_canal.winfo_exists():
+                    self.sv_canal_activo.set(f"Canal Blanco")
 
                 if self.protocolo_activo:
 
@@ -2341,7 +2346,7 @@ class App(ctk.CTk):
             datos_con_hist = dict(datos)
             datos_con_hist["timestamp"] = time.time()
             datos_con_hist["olor"] = olor
-            datos_con_hist["modo"] = "Protocolo" if self.protocolo_activo else "caracterizacion" if self.caracterizacion_activo() else "Manual"
+            datos_con_hist["modo"] = "Protocolo" if self.protocolo_activo else "Caracterizacion" if self.caracterizacion_activo() else "Manual"
             self.historial_sesion.append(datos_con_hist)
    
             with open(self.ruta_archivo_temporal, "a", encoding="utf-8") as archivo_temporal:
