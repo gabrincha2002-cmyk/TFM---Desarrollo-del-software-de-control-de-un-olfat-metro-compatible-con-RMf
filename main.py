@@ -49,7 +49,7 @@ import threading
 import zeroconf as zc
 
 
-#para el cálculo de métricas de calibración
+#para el cálculo de métricas de Caracterización
 import statistics
 
 #para generar números aleatorios en el protocolo aleatorio
@@ -103,9 +103,9 @@ class App(ctk.CTk):
         self.olores = []
         self.historial_sesion= []
         self.ultimos_datos_telemetria = {}
-        self.metricas_calibracion = {}
-        # Los widgets de UI (p. ej. `e_tiempo_calibrado`) se crean en `crear_ui()` más abajo,
-        # por eso no debemos usar `self.e_tiempo_calibrado.get()` aquí (aún no existe).
+        self.metricas_caracterizacion = {}
+        # Los widgets de UI (p. ej. `e_tiempo_caracterizacion`) se crean en `crear_ui()` más abajo,
+        # por eso no debemos usar `self.e_tiempo_caracterizacion.get()` aquí (aún no existe).
         # Usar el tamaño por defecto de las gráficas (`self.tiempo_grafica_flujo`) para inicializar buffers.
         self.buffer_flujo = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS, maxlen=config.TAMANO_BUFFER_GRAFICAS)
         self.buffer_concentracion = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
@@ -147,44 +147,44 @@ class App(ctk.CTk):
         self.protocolo_parado = False
         self.orden_protocolo = None
 
-        #espera de posición de válvula (compartido entre activación manual, calibrado y protocolo):
+        #espera de posición de válvula (compartido entre activación manual, caracterizacion y protocolo):
         #lista de (num_canal, funcion_periodo, args) pendientes de que el ESP32 confirme
         #que la válvula ha llegado a la posición de destino de ese canal.
         self.callbacks_pendientes_posicion_valvula = []
         #canal cuya rotación aún no se ha confirmado, o None. Solo puede haber uno a la vez:
-        #la activación manual está bloqueada mientras hay protocolo o calibrado en curso, y
+        #la activación manual está bloqueada mientras hay protocolo o caracterizacion en curso, y
         #activar un canal nuevo cancela (para) el anterior, así que nunca coexisten dos esperas.
         self.canal_esperando_posicion = None
 
-        #calibrado
-        self.canal_calibrado = None
-        self.calibrado_velocidad_parado = False
-        self.calibrado_flujo_parado = False
-        self.calibrado_concentracion_parado = False
-        self.calibrado_latencia_parado = False
-        self.canales_calibrados = dict.fromkeys(config.COLORES_CANALES, False)
+        #caracterizacion
+        self.canal_caracterizacion = None
+        self.caracterizacion_velocidad_parado = False
+        self.caracterizacion_flujo_parado = False
+        self.caracterizacion_concentracion_parado = False
+        self.caracterizacion_latencia_parado = False
+        self.canales_caracterizacions = dict.fromkeys(config.COLORES_CANALES, False)
 
         # flags por parámetro
-        self.calibrando_velocidad        = False
-        self.calibrando_flujo            = False
-        self.calibrando_concentracion    = False
-        self.calibrando_latencia         = False
+        self.caracterizando_velocidad        = False
+        self.caracterizando_flujo            = False
+        self.caracterizando_concentracion    = False
+        self.caracterizando_latencia         = False
 
         # buffers por parámetro
-        self.buffer_historico_calibrado_velocidad      = []
-        self.buffer_historico_calibrado_flujo          = []
-        self.buffer_historico_calibrado_concentracion  = []
-        self.buffer_historico_calibrado_latencia       = []
+        self.buffer_historico_caracterizacion_velocidad      = []
+        self.buffer_historico_caracterizacion_flujo          = []
+        self.buffer_historico_caracterizacion_concentracion  = []
+        self.buffer_historico_caracterizacion_latencia       = []
         self.contador_velocidad = 0
         self.contador_flujo = 0
         self.contador_concentracion = 0
         self.contador_latencia = 0
 
         # after por parámetro
-        self.after_calibrado_velocidad       = None
-        self.after_calibrado_flujo           = None
-        self.after_calibrado_concentracion   = None
-        self.after_calibrado_latencia        = None
+        self.after_caracterizacion_velocidad       = None
+        self.after_caracterizacion_flujo           = None
+        self.after_caracterizacion_concentracion   = None
+        self.after_caracterizacion_latencia        = None
         self.after_actualizar_graficas       = None
 
         #Cliente para establecer conexión con el controlador ESP32-WROOM (o simulador)
@@ -295,21 +295,21 @@ class App(ctk.CTk):
 
 
         
-        self.tv_canales_calibracion = ctk.CTkTabview(master=self, fg_color="transparent",border_color="#4a4c4e", border_width=1, corner_radius=10, width=450)
-        self.tv_canales_calibracion.grid(row=1,column=0,padx=5,pady=10,sticky="nsew", rowspan=2)
-        self.tv_canales_calibracion.add("Canales")
-        self.tv_canales_calibracion.add("Calibración")
-        self.tv_canales_calibracion._segmented_button.configure(text_color="#ffffff", border_width=1, corner_radius=10, width = 200,height =30, font=ctk.CTkFont(size=20, weight="bold"))
+        self.tv_canales_caracterizacion = ctk.CTkTabview(master=self, fg_color="transparent",border_color="#4a4c4e", border_width=1, corner_radius=10, width=450)
+        self.tv_canales_caracterizacion.grid(row=1,column=0,padx=5,pady=10,sticky="nsew", rowspan=2)
+        self.tv_canales_caracterizacion.add("Canales")
+        self.tv_canales_caracterizacion.add("Caracterización")
+        self.tv_canales_caracterizacion._segmented_button.configure(text_color="#ffffff", border_width=1, corner_radius=10, width = 200,height =30, font=ctk.CTkFont(size=20, weight="bold"))
 
-        self.tv_canales_calibracion.tab("Canales").grid_columnconfigure(0, weight=1)
-        self.tv_canales_calibracion.tab("Calibración").grid_columnconfigure(0, weight=1)
+        self.tv_canales_caracterizacion.tab("Canales").grid_columnconfigure(0, weight=1)
+        self.tv_canales_caracterizacion.tab("Caracterización").grid_columnconfigure(0, weight=1)
 
-        self.tv_canales_calibracion.set("Canales")
+        self.tv_canales_caracterizacion.set("Canales")
 
-        self.f_canales = ctk.CTkScrollableFrame(self.tv_canales_calibracion.tab("Canales"),fg_color="transparent")  # Fondo transparente para el marco
+        self.f_canales = ctk.CTkScrollableFrame(self.tv_canales_caracterizacion.tab("Canales"),fg_color="transparent")  # Fondo transparente para el marco
         self.f_canales.grid(row=0,column=0,padx=5,pady=10,sticky="nsew",rowspan=2)  # Usamos grid para colocar el marco
-        self.tv_canales_calibracion.tab("Canales").grid_rowconfigure(0, weight=1)
-        self.tv_canales_calibracion.tab("Canales").grid_columnconfigure(0, weight=1)
+        self.tv_canales_caracterizacion.tab("Canales").grid_rowconfigure(0, weight=1)
+        self.tv_canales_caracterizacion.tab("Canales").grid_columnconfigure(0, weight=1)
         self.f_canales.grid_columnconfigure(0, weight=1)
         self.f_canales.grid_columnconfigure(1, weight=1)
 
@@ -327,74 +327,74 @@ class App(ctk.CTk):
             fila = i%3
             cuadro_canal= Canal(self.f_canales,color_canal=self.colores_canales[i],num_canal=i,registro=self.consola.registro, actualizar_canal=self.actualizar_canales)
             cuadro_canal.grid(row=fila+1, column=columna, padx=10, pady=10, sticky="nsew")
-            #actualiza el CombBox de calibración cada vez que se modifica el nombre del canal
-            cuadro_canal.e_olor_canal.bind("<FocusOut>", lambda e: self.actualizar_comb_canales_calibrados())
+            #actualiza el CombBox de Caracterización cada vez que se modifica el nombre del canal
+            cuadro_canal.e_olor_canal.bind("<FocusOut>", lambda e: self.actualizar_comb_canales_caracterizacions())
             self.cuadros_canales.append(cuadro_canal)
        
         self.cuadros_canales[self.colores_canales.index("Blanco")].e_olor_canal.destroy()  # El canal blanco no tiene entrada de olor, por lo que se destruye el widget de entrada
 
         #----------
-        #CALIBRACIÓN
+        #Caracterización
         # Crea un frame deslizante dentro del tabview
-        self.f_calibracion_scroll = ctk.CTkScrollableFrame(self.tv_canales_calibracion.tab("Calibración"), fg_color="transparent")
-        self.f_calibracion_scroll.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
-        self.tv_canales_calibracion.tab("Calibración").grid_rowconfigure(0, weight=1)
-        self.tv_canales_calibracion.tab("Calibración").grid_columnconfigure(0, weight=1)
-        self.f_calibracion_scroll.grid_columnconfigure(0, weight=1)
-        self.f_calibracion_scroll.grid_columnconfigure(1, weight=1)
-        #self.f_calibracion_scroll.grid_rowconfigure(2, weight=1)
-        #self.f_calibracion_scroll.grid_rowconfigure(3, weight=1)   
+        self.f_caracterizacion_scroll = ctk.CTkScrollableFrame(self.tv_canales_caracterizacion.tab("Caracterización"), fg_color="transparent")
+        self.f_caracterizacion_scroll.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        self.tv_canales_caracterizacion.tab("Caracterización").grid_rowconfigure(0, weight=1)
+        self.tv_canales_caracterizacion.tab("Caracterización").grid_columnconfigure(0, weight=1)
+        self.f_caracterizacion_scroll.grid_columnconfigure(0, weight=1)
+        self.f_caracterizacion_scroll.grid_columnconfigure(1, weight=1)
+        #self.f_caracterizacion_scroll.grid_rowconfigure(2, weight=1)
+        #self.f_caracterizacion_scroll.grid_rowconfigure(3, weight=1)   
 
         
-        #self.l_calibracion = ctk.CTkLabel(self.f_calibracion_scroll, text="Calibración", text_color="#458B8D", font=ctk.CTkFont(size=22, weight="bold"))
-        #self.l_calibracion.grid(row=0, column=0, padx=10, pady=(10,5), sticky="n")
+        #self.l_caracterizacion = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Caracterización", text_color="#458B8D", font=ctk.CTkFont(size=22, weight="bold"))
+        #self.l_caracterizacion.grid(row=0, column=0, padx=10, pady=(10,5), sticky="n")
 
-        # Selección de canales a calibrar
-        self.f_calibracion_canales_tiempo = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
-        self.f_calibracion_canales_tiempo.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
+        # Selección de canales a caracterizar
+        self.f_caracterizacion_canales_tiempo = ctk.CTkFrame(self.f_caracterizacion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
+        self.f_caracterizacion_canales_tiempo.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
 
-        sv_canales_calibrado = ctk.StringVar(value="Canal a calibrar")
-        self.comb_canales_calibrados = ctk.CTkComboBox(self.f_calibracion_canales_tiempo, values=[],
-                                             width=180, height=36, text_color="#ffffff",command=self.seleccionar_calibrado,dropdown_fg_color="#0a5f70", variable=sv_canales_calibrado)
-        self.comb_canales_calibrados.grid(row=0, column=0, padx=10, pady=5, sticky="w")
-        CTkToolTip(self.comb_canales_calibrados, message="Seleccione una canal con olor predefinido para calibrar", delay=0.5, font=ctk.CTkFont(size=12))
-
-
-
-        self.l_tiempo_calibrado = ctk.CTkLabel(self.f_calibracion_canales_tiempo, text="Tiempo:", text_color="#458B8D", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_tiempo_calibrado.grid(row=0, column=1, padx=0, pady=5, sticky="e")
-        self.e_tiempo_calibrado = SpinboxCTk(self.f_calibracion_canales_tiempo, valor=30, valor_min=1, valor_max=config.VALOR_MAXIMO_TIEMPO_CALIBRACION, escalon=1, width=60, height=15)
-        self.e_tiempo_calibrado.grid(row=0, column=2, padx=0, pady=5, sticky="w")
-        self.asignar_tooltip_spinbox(self.e_tiempo_calibrado, mensaje_entry="Introduzca el tiempo de la duración (en segundos) de la fase de calibración (tanto induvidual como general)")
+        sv_canales_caracterizacion = ctk.StringVar(value="Canal a caracterizar")
+        self.comb_canales_caracterizacions = ctk.CTkComboBox(self.f_caracterizacion_canales_tiempo, values=[],
+                                             width=180, height=36, text_color="#ffffff",command=self.seleccionar_caracterizacion,dropdown_fg_color="#0a5f70", variable=sv_canales_caracterizacion)
+        self.comb_canales_caracterizacions.grid(row=0, column=0, padx=10, pady=5, sticky="w")
+        CTkToolTip(self.comb_canales_caracterizacions, message="Seleccione una canal con olor predefinido para caracterizar", delay=0.5, font=ctk.CTkFont(size=12))
 
 
-        self.f_botones_calibrado_general = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
-        self.f_botones_calibrado_general.grid(row=0, column=1, padx=15, pady=5, sticky="e")
-        #Iniciar calibrado general
-        self.b_iniciar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Inicio General", text_color="#ffffff", fg_color= "#85ad75", width= 10, height=15,
-                                                   hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
-        self.b_iniciar_calibrado_general.grid(row=0, column=0, ipadx=0, padx=5, pady=5, sticky="wsne")
 
-        #reiniciar calibrado general
-        self.b_reiniciar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Reinicio General", text_color="#ffffff", fg_color= "#C7BE19" , width=10, height=15,
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width= 1, corner_radius=10,command=self._consultar_reiniciar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
-        self.b_reiniciar_calibrado_general.grid(row=0, column=1, ipadx=0, padx=5, pady=5, sticky="wsne")
+        self.l_tiempo_caracterizacion = ctk.CTkLabel(self.f_caracterizacion_canales_tiempo, text="Tiempo:", text_color="#458B8D", font=ctk.CTkFont(size=14, weight="bold"))
+        self.l_tiempo_caracterizacion.grid(row=0, column=1, padx=0, pady=5, sticky="e")
+        self.e_tiempo_caracterizacion = SpinboxCTk(self.f_caracterizacion_canales_tiempo, valor=30, valor_min=1, valor_max=config.VALOR_MAXIMO_TIEMPO_caracterizacion, escalon=1, width=60, height=15)
+        self.e_tiempo_caracterizacion.grid(row=0, column=2, padx=0, pady=5, sticky="w")
+        self.asignar_tooltip_spinbox(self.e_tiempo_caracterizacion, mensaje_entry="Introduzca el tiempo de la duración (en segundos) de la fase de Caracterización (tanto induvidual como general)")
 
-        #parar calibrado general
-        self.b_parar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Parada General", text_color="#ffffff", fg_color= "#f56a6a", width=10, height=15,
-                                                   hover_color="#ee4242", border_color="#ff0000", border_width= 1, corner_radius=10,command=self._consultar_parar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
-        self.b_parar_calibrado_general.grid(row=0, column=2, ipadx=0 ,padx=5, pady=5, sticky="wsne")
 
-        #Calibración Velocidad
-        self.l_calibrado_velocidad = ctk.CTkLabel(self.f_calibracion_scroll, text="Velocidad", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
-        self.l_calibrado_velocidad.grid(row=1, column=0, padx=60, pady=0, sticky="ws")
+        self.f_botones_caracterizacion_general = ctk.CTkFrame(self.f_caracterizacion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
+        self.f_botones_caracterizacion_general.grid(row=0, column=1, padx=15, pady=5, sticky="e")
+        #Iniciar caracterizacion general
+        self.b_iniciar_caracterizacion_general = ctk.CTkButton(self.f_botones_caracterizacion_general, text="Inicio General", text_color="#ffffff", fg_color= "#85ad75", width= 10, height=15,
+                                                   hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_caracterizacion_general,font=ctk.CTkFont(size=18, weight="bold"))
+        self.b_iniciar_caracterizacion_general.grid(row=0, column=0, ipadx=0, padx=5, pady=5, sticky="wsne")
+
+        #reiniciar caracterizacion general
+        self.b_reiniciar_caracterizacion_general = ctk.CTkButton(self.f_botones_caracterizacion_general, text="Reinicio General", text_color="#ffffff", fg_color= "#C7BE19" , width=10, height=15,
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width= 1, corner_radius=10,command=self._consultar_reiniciar_caracterizacion_general,font=ctk.CTkFont(size=18, weight="bold"))
+        self.b_reiniciar_caracterizacion_general.grid(row=0, column=1, ipadx=0, padx=5, pady=5, sticky="wsne")
+
+        #parar caracterizacion general
+        self.b_parar_caracterizacion_general = ctk.CTkButton(self.f_botones_caracterizacion_general, text="Parada General", text_color="#ffffff", fg_color= "#f56a6a", width=10, height=15,
+                                                   hover_color="#ee4242", border_color="#ff0000", border_width= 1, corner_radius=10,command=self._consultar_parar_caracterizacion_general,font=ctk.CTkFont(size=18, weight="bold"))
+        self.b_parar_caracterizacion_general.grid(row=0, column=2, ipadx=0 ,padx=5, pady=5, sticky="wsne")
+
+        #Caracterización Velocidad
+        self.l_caracterizacion_velocidad = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Velocidad", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
+        self.l_caracterizacion_velocidad.grid(row=1, column=0, padx=60, pady=0, sticky="ws")
 
         #Gráfica en tiempo real - Velocidad
         #se establece un tamaño específico de fuente por defecto a cada eje de cada gráfica
         mpl.rcParams["axes.labelsize"] = 16
         fig_velocidad = Figure(figsize=(10,5),dpi=60)
         self.ax_velocidad = fig_velocidad.add_subplot(111)
-        self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_velocidad.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_velocidad.set_ylim(config.LIMITESY["velocidad"][0],config.LIMITESY["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_velocidad.set_xlabel("Tiempo (s)")
         self.ax_velocidad.set_ylabel("Velocidad (m/s)")
@@ -411,43 +411,43 @@ class App(ctk.CTk):
         self.ax_velocidad.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.ax_velocidad.plot(self.tiempo_grafica_velocidad,list(self.buffer_velocidad)[::-1])
         fig_velocidad.tight_layout()
-        self.canvas_velocidad = FigureCanvasTkAgg(fig_velocidad, master=self.f_calibracion_scroll)
+        self.canvas_velocidad = FigureCanvasTkAgg(fig_velocidad, master=self.f_caracterizacion_scroll)
         self.canvas_velocidad.get_tk_widget().grid(row=2, column=0, padx=10, pady=0, sticky="nesw")
         self.canvas_velocidad.draw()
 
-        self.f_botones_calibrado_velocidad = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
-        self.f_botones_calibrado_velocidad.grid(row=1, column=0, padx=10, pady=0, sticky="se")
-        self.f_botones_calibrado_velocidad.grid_columnconfigure(0, weight=1)
-        self.f_botones_calibrado_velocidad.grid_columnconfigure(1, weight=1)
-        self.f_botones_calibrado_velocidad.grid_columnconfigure(2, weight=1)
+        self.f_botones_caracterizacion_velocidad = ctk.CTkFrame(self.f_caracterizacion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
+        self.f_botones_caracterizacion_velocidad.grid(row=1, column=0, padx=10, pady=0, sticky="se")
+        self.f_botones_caracterizacion_velocidad.grid_columnconfigure(0, weight=1)
+        self.f_botones_caracterizacion_velocidad.grid_columnconfigure(1, weight=1)
+        self.f_botones_caracterizacion_velocidad.grid_columnconfigure(2, weight=1)
 
 
-        self.b_iniciar_calibrado_velocidad = ctk.CTkButton(self.f_botones_calibrado_velocidad, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibrado_velocidad.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_iniciar_calibrado_velocidad, message="Iniciar calibrado de velocidad", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_iniciar_caracterizacion_velocidad = ctk.CTkButton(self.f_botones_caracterizacion_velocidad, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_caracterizacion_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_velocidad.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_caracterizacion_velocidad, message="Iniciar caracterizacion de velocidad", delay=0.5, font=ctk.CTkFont(size=12))
 
        
 
-        self.b_reiniciar_calibrado_velocidad = ctk.CTkButton(self.f_botones_calibrado_velocidad, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
-                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_velocidad.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_reiniciar_calibrado_velocidad, message="Reiniciar calibrado de velocidad", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_reiniciar_caracterizacion_velocidad = ctk.CTkButton(self.f_botones_caracterizacion_velocidad, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
+                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_caracterizacion_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_velocidad.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_caracterizacion_velocidad, message="Reiniciar caracterizacion de velocidad", delay=0.5, font=ctk.CTkFont(size=12))
 
-        self.b_parar_calibrado_velocidad = ctk.CTkButton(self.f_botones_calibrado_velocidad, text="◼", text_color = "#ffffff",width=25, height=15, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_velocidad.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_parar_calibrado_velocidad, message="Detener el calibrado de velocidad ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_parar_caracterizacion_velocidad = ctk.CTkButton(self.f_botones_caracterizacion_velocidad, text="◼", text_color = "#ffffff",width=25, height=15, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_caracterizacion_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_velocidad.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_caracterizacion_velocidad, message="Detener el caracterizacion de velocidad ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
 
 
-        #Calibración Flujo
-        self.l_calibrado_flujo = ctk.CTkLabel(self.f_calibracion_scroll, text="Flujo", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
-        self.l_calibrado_flujo.grid(row=1, column=1, padx=60, pady=0, sticky="ws")
+        #Caracterización Flujo
+        self.l_caracterizacion_flujo = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Flujo", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
+        self.l_caracterizacion_flujo.grid(row=1, column=1, padx=60, pady=0, sticky="ws")
 
         #Gráfica en tiempo real - Flujo
         fig_flujo = Figure(figsize=(10,5),dpi=60)
         self.ax_flujo = fig_flujo.add_subplot(111)
-        self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_flujo.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_flujo.set_ylim(config.LIMITESY["flujo"][0],config.LIMITESY["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_flujo.set_xlabel("Tiempo (s)")
         self.ax_flujo.set_ylabel("Flujo (ml/min)")
@@ -462,44 +462,44 @@ class App(ctk.CTk):
         self.ax_flujo.spines['top'].set_color('#ffffff')  # Color de la línea superior
         self.ax_flujo.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         fig_flujo.tight_layout()
-        self.canvas_flujo = FigureCanvasTkAgg(fig_flujo, master=self.f_calibracion_scroll)
+        self.canvas_flujo = FigureCanvasTkAgg(fig_flujo, master=self.f_caracterizacion_scroll)
         self.canvas_flujo.get_tk_widget().grid(row=2, column=1, padx=10, pady=0, sticky="nsew")
         self.canvas_flujo.draw()
 
-        self.f_botones_calibrado_flujo = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
-        self.f_botones_calibrado_flujo.grid(row=1, column=1, padx=10, pady=0, sticky="se")
-        self.f_botones_calibrado_flujo.grid_columnconfigure(0, weight=1)
-        self.f_botones_calibrado_flujo.grid_columnconfigure(1, weight=1)
-        self.f_botones_calibrado_flujo.grid_columnconfigure(2, weight=1)
+        self.f_botones_caracterizacion_flujo = ctk.CTkFrame(self.f_caracterizacion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
+        self.f_botones_caracterizacion_flujo.grid(row=1, column=1, padx=10, pady=0, sticky="se")
+        self.f_botones_caracterizacion_flujo.grid_columnconfigure(0, weight=1)
+        self.f_botones_caracterizacion_flujo.grid_columnconfigure(1, weight=1)
+        self.f_botones_caracterizacion_flujo.grid_columnconfigure(2, weight=1)
 
-        self.b_iniciar_calibrado_flujo = ctk.CTkButton(self.f_botones_calibrado_flujo, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibrado_flujo.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_iniciar_calibrado_flujo, message="Iniciar calibrado de flujo", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_iniciar_caracterizacion_flujo = ctk.CTkButton(self.f_botones_caracterizacion_flujo, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_caracterizacion_flujo,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_flujo.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_caracterizacion_flujo, message="Iniciar caracterizacion de flujo", delay=0.5, font=ctk.CTkFont(size=12))
        
 
-        self.b_reiniciar_calibrado_flujo = ctk.CTkButton(self.f_botones_calibrado_flujo, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
-                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_flujo.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_reiniciar_calibrado_flujo, message="Reiniciar calibrado de flujo", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_reiniciar_caracterizacion_flujo = ctk.CTkButton(self.f_botones_caracterizacion_flujo, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
+                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_caracterizacion_flujo,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_flujo.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_caracterizacion_flujo, message="Reiniciar caracterizacion de flujo", delay=0.5, font=ctk.CTkFont(size=12))
 
 
-        self.b_parar_calibrado_flujo = ctk.CTkButton(self.f_botones_calibrado_flujo, text="◼", text_color = "#ffffff",width=25, height=15, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_flujo.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_parar_calibrado_flujo, message="Detener el calibrado de flujo ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_parar_caracterizacion_flujo = ctk.CTkButton(self.f_botones_caracterizacion_flujo, text="◼", text_color = "#ffffff",width=25, height=15, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_caracterizacion_flujo,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_flujo.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_caracterizacion_flujo, message="Detener el caracterizacion de flujo ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
         
 
 
 
-        #Calibración Concentración
-        self.l_calibrado_concentracion = ctk.CTkLabel(self.f_calibracion_scroll, text="Concentración", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
-        self.l_calibrado_concentracion.grid(row=3, column=0, padx=60, pady=0, sticky="ws")
+        #Caracterización Concentración
+        self.l_caracterizacion_concentracion = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Concentración", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
+        self.l_caracterizacion_concentracion.grid(row=3, column=0, padx=60, pady=0, sticky="ws")
 
         #Gráfica en tiempo real - Concentración
         fig_concentracion = Figure(figsize=(10,5),dpi=60)
         self.ax_concentracion = fig_concentracion.add_subplot(111)
-        self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_concentracion.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_concentracion.set_xlabel("Tiempo (s)")
         self.ax_concentracion.set_ylabel("Concentracion (µg/m\u00B3)")
@@ -514,44 +514,44 @@ class App(ctk.CTk):
         self.ax_concentracion.spines['top'].set_color('#ffffff')  # Color de la línea superior
         self.ax_concentracion.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         fig_concentracion.tight_layout()
-        self.canvas_concentracion = FigureCanvasTkAgg(fig_concentracion, master=self.f_calibracion_scroll)
+        self.canvas_concentracion = FigureCanvasTkAgg(fig_concentracion, master=self.f_caracterizacion_scroll)
         self.canvas_concentracion.get_tk_widget().grid(row=4, column=0, padx=10, pady=0, sticky="nsew")
         self.canvas_concentracion.draw()
 
-        self.f_botones_calibrado_concentracion = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
-        self.f_botones_calibrado_concentracion.grid(row=3, column=0, padx=10, pady=0, sticky="se")
-        self.f_botones_calibrado_concentracion.grid_columnconfigure(0, weight=1)
-        self.f_botones_calibrado_concentracion.grid_columnconfigure(1, weight=1)
-        self.f_botones_calibrado_concentracion.grid_columnconfigure(2, weight=1)
+        self.f_botones_caracterizacion_concentracion = ctk.CTkFrame(self.f_caracterizacion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
+        self.f_botones_caracterizacion_concentracion.grid(row=3, column=0, padx=10, pady=0, sticky="se")
+        self.f_botones_caracterizacion_concentracion.grid_columnconfigure(0, weight=1)
+        self.f_botones_caracterizacion_concentracion.grid_columnconfigure(1, weight=1)
+        self.f_botones_caracterizacion_concentracion.grid_columnconfigure(2, weight=1)
 
-        self.b_iniciar_calibrado_concentracion = ctk.CTkButton(self.f_botones_calibrado_concentracion, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibrado_concentracion.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_iniciar_calibrado_concentracion, message="Iniciar calibrado de concentración", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_iniciar_caracterizacion_concentracion = ctk.CTkButton(self.f_botones_caracterizacion_concentracion, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_caracterizacion_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_concentracion.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_caracterizacion_concentracion, message="Iniciar caracterizacion de concentración", delay=0.5, font=ctk.CTkFont(size=12))
        
 
-        self.b_reiniciar_calibrado_concentracion = ctk.CTkButton(self.f_botones_calibrado_concentracion, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
-                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_concentracion.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_reiniciar_calibrado_concentracion, message="Reiniciar calibrado de concentración", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_reiniciar_caracterizacion_concentracion = ctk.CTkButton(self.f_botones_caracterizacion_concentracion, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
+                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_caracterizacion_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_concentracion.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_caracterizacion_concentracion, message="Reiniciar caracterizacion de concentración", delay=0.5, font=ctk.CTkFont(size=12))
 
 
-        self.b_parar_calibrado_concentracion = ctk.CTkButton(self.f_botones_calibrado_concentracion, text="◼", text_color = "#ffffff",width=25, height=15, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_concentracion.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_parar_calibrado_concentracion, message="Detener el calibrado de concentración ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_parar_caracterizacion_concentracion = ctk.CTkButton(self.f_botones_caracterizacion_concentracion, text="◼", text_color = "#ffffff",width=25, height=15, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_caracterizacion_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_concentracion.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_caracterizacion_concentracion, message="Detener el caracterizacion de concentración ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
 
 
 
 
-        #Calibración Latencia
-        self.l_calibrado_latencia = ctk.CTkLabel(self.f_calibracion_scroll, text="Latencia", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
-        self.l_calibrado_latencia.grid(row=3, column=1, padx=60, pady=0, sticky="ws")
+        #Caracterización Latencia
+        self.l_caracterizacion_latencia = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Latencia", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
+        self.l_caracterizacion_latencia.grid(row=3, column=1, padx=60, pady=0, sticky="ws")
 
         #Gráfica en tiempo real - Latencia
         fig_latencia = Figure(figsize=(10,5),dpi=60)
         self.ax_latencia = fig_latencia.add_subplot(111)
-        self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_latencia.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_latencia.set_ylim(config.LIMITESY["latencia"][0],config.LIMITESY["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_latencia.set_xlabel("Tiempo (s)")
         self.ax_latencia.set_ylabel("Latencia (ms)")
@@ -566,31 +566,31 @@ class App(ctk.CTk):
         self.ax_latencia.spines['top'].set_color('#ffffff')  # Color de la línea superior
         self.ax_latencia.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         fig_latencia.tight_layout()
-        self.canvas_latencia = FigureCanvasTkAgg(fig_latencia, master=self.f_calibracion_scroll)
+        self.canvas_latencia = FigureCanvasTkAgg(fig_latencia, master=self.f_caracterizacion_scroll)
         self.canvas_latencia.get_tk_widget().grid(row=4, column=1, padx=10, pady=0, sticky="nsew")
         self.canvas_latencia.draw()
 
-        self.f_botones_calibrado_latencia = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
-        self.f_botones_calibrado_latencia.grid(row=3, column=1, padx=10, pady=0, sticky="se")
-        self.f_botones_calibrado_latencia.grid_columnconfigure(0, weight=1)
-        self.f_botones_calibrado_latencia.grid_columnconfigure(1, weight=1)
-        self.f_botones_calibrado_latencia.grid_columnconfigure(2, weight=1)
+        self.f_botones_caracterizacion_latencia = ctk.CTkFrame(self.f_caracterizacion_scroll, fg_color="transparent", width=75, height=15, corner_radius=10,border_width=1)
+        self.f_botones_caracterizacion_latencia.grid(row=3, column=1, padx=10, pady=0, sticky="se")
+        self.f_botones_caracterizacion_latencia.grid_columnconfigure(0, weight=1)
+        self.f_botones_caracterizacion_latencia.grid_columnconfigure(1, weight=1)
+        self.f_botones_caracterizacion_latencia.grid_columnconfigure(2, weight=1)
 
-        self.b_iniciar_calibrado_latencia = ctk.CTkButton(self.f_botones_calibrado_latencia, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibrado_latencia.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_iniciar_calibrado_latencia, message="Iniciar calibrado de latencia", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_iniciar_caracterizacion_latencia = ctk.CTkButton(self.f_botones_caracterizacion_latencia, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=25, height=15, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=5,command=self.iniciar_caracterizacion_latencia,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_latencia.grid(row=0, column=0, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_iniciar_caracterizacion_latencia, message="Iniciar caracterizacion de latencia", delay=0.5, font=ctk.CTkFont(size=12))
        
 
-        self.b_reiniciar_calibrado_latencia = ctk.CTkButton(self.f_botones_calibrado_latencia, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
-                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_latencia.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_reiniciar_calibrado_latencia, message="Reiniciar calibrado de latencia", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_reiniciar_caracterizacion_latencia = ctk.CTkButton(self.f_botones_caracterizacion_latencia, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=25, height=15,
+                                                   hover_color="#9da31e", border_color="#CFC61B", border_width=1, corner_radius=5,command=self.reiniciar_caracterizacion_latencia,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_latencia.grid(row=0, column=1, ipadx = 0, padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_reiniciar_caracterizacion_latencia, message="Reiniciar caracterizacion de latencia", delay=0.5, font=ctk.CTkFont(size=12))
 
-        self.b_parar_calibrado_latencia = ctk.CTkButton(self.f_botones_calibrado_latencia, text="◼", text_color = "#ffffff",width=25, height=15, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_latencia.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
-        CTkToolTip(self.b_parar_calibrado_latencia, message="Detener el calibrado de latencia ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
+        self.b_parar_caracterizacion_latencia = ctk.CTkButton(self.f_botones_caracterizacion_latencia, text="◼", text_color = "#ffffff",width=25, height=15, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=5,border_width=1, command=self.parar_caracterizacion_latencia,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_latencia.grid(row=0, column=2, ipadx = 0 ,padx=0, pady=0, sticky="nswe")
+        CTkToolTip(self.b_parar_caracterizacion_latencia, message="Detener el caracterizacion de latencia ya iniciado", delay=0.5, font=ctk.CTkFont(size=12))
 
 
 
@@ -619,12 +619,12 @@ class App(ctk.CTk):
         self.tv_prot_cal_est = ctk.CTkTabview(master=self, fg_color="transparent",border_color="#4a4c4e", border_width=1, corner_radius=10, width=400)
         self.tv_prot_cal_est.grid(row=1,column=1,padx=5,pady=10,sticky="nsew", rowspan=3)
         self.tv_prot_cal_est.add("Protocolo")
-        #self.tv_prot_cal_est.add("Calibración")
+        #self.tv_prot_cal_est.add("Caracterización")
         self.tv_prot_cal_est.add("Estado")
         self.tv_prot_cal_est._segmented_button.configure(text_color="#ffffff", border_width=1, corner_radius=10, width = 200,height =30, font=ctk.CTkFont(size=20, weight="bold"))
 
         self.tv_prot_cal_est.tab("Protocolo").grid_columnconfigure(0, weight=1)
-        #self.tv_prot_cal_est.tab("Calibración").grid_columnconfigure(0, weight=1)
+        #self.tv_prot_cal_est.tab("Caracterización").grid_columnconfigure(0, weight=1)
         self.tv_prot_cal_est.tab("Estado").grid_columnconfigure(0, weight=1)
 
         self.tv_prot_cal_est.set("Protocolo")
@@ -731,26 +731,26 @@ class App(ctk.CTk):
         # PROTOCOLOS PERSONALIZADOS
 
         """
-        #CALIBRACIÓN
+        #Caracterización
         # Crea un frame deslizante dentro del tabview
-        self.f_calibracion_scroll = ctk.CTkScrollableFrame(self.tv_prot_cal_est.tab("Calibración"), fg_color="transparent")
-        self.f_calibracion_scroll.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
-        self.tv_prot_cal_est.tab("Calibración").grid_rowconfigure(0, weight=1)
-        self.tv_prot_cal_est.tab("Calibración").grid_columnconfigure(0, weight=1)
-        self.f_calibracion_scroll.grid_columnconfigure(0, weight=1)
+        self.f_caracterizacion_scroll = ctk.CTkScrollableFrame(self.tv_prot_cal_est.tab("Caracterización"), fg_color="transparent")
+        self.f_caracterizacion_scroll.grid(row=0, column=0, padx=0, pady=0, sticky="nsew")
+        self.tv_prot_cal_est.tab("Caracterización").grid_rowconfigure(0, weight=1)
+        self.tv_prot_cal_est.tab("Caracterización").grid_columnconfigure(0, weight=1)
+        self.f_caracterizacion_scroll.grid_columnconfigure(0, weight=1)
         
-        self.l_calibracion = ctk.CTkLabel(self.f_calibracion_scroll, text="Calibración", text_color="#458B8D", font=ctk.CTkFont(size=22, weight="bold"))
-        self.l_calibracion.grid(row=0, column=0, padx=10, pady=(10,5), sticky="n")
+        self.l_caracterizacion = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Caracterización", text_color="#458B8D", font=ctk.CTkFont(size=22, weight="bold"))
+        self.l_caracterizacion.grid(row=0, column=0, padx=10, pady=(10,5), sticky="n")
 
-        # Selección de canales a calibrar
-        sv_canales_calibrado = ctk.StringVar(value="Ninguno")
-        comb_canales_calibrados = ctk.CTkComboBox(self.f_calibracion_scroll, values=['Ninguno','Canal Amarillo', 'Canal Rojo', 'Canal Verde', 'Canal Azul', 'Canal Blanco', 'Canal Negro'],
-                                             width=160, height=36, text_color="#ffffff",command=self.canal_calibrado,dropdown_fg_color="#0a5f70", variable=sv_canales_calibrado)
-        comb_canales_calibrados.grid(row=1, column=0, padx=10, pady=(20,5), sticky="n")
+        # Selección de canales a caracterizar
+        sv_canales_caracterizacion = ctk.StringVar(value="Ninguno")
+        comb_canales_caracterizacions = ctk.CTkComboBox(self.f_caracterizacion_scroll, values=['Ninguno','Canal Amarillo', 'Canal Rojo', 'Canal Verde', 'Canal Azul', 'Canal Blanco', 'Canal Negro'],
+                                             width=160, height=36, text_color="#ffffff",command=self.canal_caracterizacion,dropdown_fg_color="#0a5f70", variable=sv_canales_caracterizacion)
+        comb_canales_caracterizacions.grid(row=1, column=0, padx=10, pady=(20,5), sticky="n")
 
-        #Calibración Velocidad
-        self.l_calibracion_velocidad = ctk.CTkLabel(self.f_calibracion_scroll, text="Velocidad", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
-        self.l_calibracion_velocidad.grid(row=2, column=0, padx=10, pady=(50,5), sticky="n")
+        #Caracterización Velocidad
+        self.l_caracterizacion_velocidad = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Velocidad", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
+        self.l_caracterizacion_velocidad.grid(row=2, column=0, padx=10, pady=(50,5), sticky="n")
 
         #Gráfica en tiempo real - Velocidad
         fig_velocidad = Figure(figsize=(10,5),dpi=55)
@@ -759,27 +759,27 @@ class App(ctk.CTk):
         self.ax_velocidad.set_ylabel("Velocidad (m/s)")
         self.ax_velocidad.plot(self.tiempo_graficas,self.buffer_velocidad)
         fig_velocidad.tight_layout()
-        self.canvas_velocidad = FigureCanvasTkAgg(fig_velocidad, master=self.f_calibracion_scroll)
+        self.canvas_velocidad = FigureCanvasTkAgg(fig_velocidad, master=self.f_caracterizacion_scroll)
         self.canvas_velocidad.get_tk_widget().grid(row=3, column=0, padx=10, pady=20, sticky="n")
         self.canvas_velocidad.draw()
 
-        self.b_iniciar_calibracion_velocidad = ctk.CTkButton(self.f_calibracion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibracion_velocidad.grid(row=4, column=0, padx=90, pady=(20,5), sticky="w")
+        self.b_iniciar_caracterizacion_velocidad = ctk.CTkButton(self.f_caracterizacion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_caracterizacion_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_velocidad.grid(row=4, column=0, padx=90, pady=(20,5), sticky="w")
        
 
-        self.b_reiniciar_calibrado_velocidad = ctk.CTkButton(self.f_calibracion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_velocidad.grid(row=4, column=0, padx=10, pady=(20,5), sticky="n")
+        self.b_reiniciar_caracterizacion_velocidad = ctk.CTkButton(self.f_caracterizacion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_caracterizacion_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_velocidad.grid(row=4, column=0, padx=10, pady=(20,5), sticky="n")
 
-        self.b_parar_calibrado_velocidad = ctk.CTkButton(self.f_calibracion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_calibrado_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_velocidad.grid(row=4, column=0, padx=90, pady=(20,5), sticky="e")
+        self.b_parar_caracterizacion_velocidad = ctk.CTkButton(self.f_caracterizacion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_caracterizacion_velocidad,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_velocidad.grid(row=4, column=0, padx=90, pady=(20,5), sticky="e")
 
 
-        #Calibración Flujo
-        self.l_calibracion_flujo = ctk.CTkLabel(self.f_calibracion_scroll, text="Flujo", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
-        self.l_calibracion_flujo.grid(row=5, column=0, padx=10, pady=(50,5), sticky="n")
+        #Caracterización Flujo
+        self.l_caracterizacion_flujo = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Flujo", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
+        self.l_caracterizacion_flujo.grid(row=5, column=0, padx=10, pady=(50,5), sticky="n")
 
         #Gráfica en tiempo real - Flujo
         fig_flujo = Figure(figsize=(10,5),dpi=60)
@@ -788,28 +788,28 @@ class App(ctk.CTk):
         self.ax_flujo.set_ylabel("Flujo (ml/min)")
         self.ax_flujo.plot(self.tiempo_graficas,self.buffer_flujo)
         fig_flujo.tight_layout()
-        self.canvas_flujo = FigureCanvasTkAgg(fig_flujo, master=self.f_calibracion_scroll)
+        self.canvas_flujo = FigureCanvasTkAgg(fig_flujo, master=self.f_caracterizacion_scroll)
         self.canvas_flujo.get_tk_widget().grid(row=6, column=0, padx=10, pady=(20,5), sticky="n")
         self.canvas_flujo.draw()
 
-        self.b_iniciar_calibracion_flujo = ctk.CTkButton(self.f_calibracion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibracion_flujo.grid(row=7, column=0, padx=90, pady=(20,5), sticky="w")
+        self.b_iniciar_caracterizacion_flujo = ctk.CTkButton(self.f_caracterizacion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_caracterizacion_flujo,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_flujo.grid(row=7, column=0, padx=90, pady=(20,5), sticky="w")
        
 
-        self.b_reiniciar_calibrado_flujo = ctk.CTkButton(self.f_calibracion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_flujo.grid(row=7, column=0, padx=10, pady=(20,5), sticky="n")
+        self.b_reiniciar_caracterizacion_flujo = ctk.CTkButton(self.f_caracterizacion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_caracterizacion_flujo,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_flujo.grid(row=7, column=0, padx=10, pady=(20,5), sticky="n")
 
-        self.b_parar_calibrado_flujo = ctk.CTkButton(self.f_calibracion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_calibrado_flujo,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_flujo.grid(row=7, column=0, padx=90, pady=(20,5), sticky="e")
+        self.b_parar_caracterizacion_flujo = ctk.CTkButton(self.f_caracterizacion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_caracterizacion_flujo,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_flujo.grid(row=7, column=0, padx=90, pady=(20,5), sticky="e")
 
 
 
-        #Calibración Concentración
-        self.l_calibracion_concentracion = ctk.CTkLabel(self.f_calibracion_scroll, text="Concentración", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
-        self.l_calibracion_concentracion.grid(row=8, column=0, padx=10, pady=(50,5), sticky="n")
+        #Caracterización Concentración
+        self.l_caracterizacion_concentracion = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Concentración", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
+        self.l_caracterizacion_concentracion.grid(row=8, column=0, padx=10, pady=(50,5), sticky="n")
 
         #Gráfica en tiempo real - Concentración
         fig_concentracion = Figure(figsize=(10,5),dpi=60)
@@ -818,29 +818,29 @@ class App(ctk.CTk):
         self.ax_concentracion.set_ylabel("Concentracion (µg/m\u00B3)")
         self.ax_concentracion.plot(self.tiempo_graficas,self.buffer_concentracion)
         fig_concentracion.tight_layout()
-        self.canvas_concentracion = FigureCanvasTkAgg(fig_concentracion, master=self.f_calibracion_scroll)
+        self.canvas_concentracion = FigureCanvasTkAgg(fig_concentracion, master=self.f_caracterizacion_scroll)
         self.canvas_concentracion.get_tk_widget().grid(row=9, column=0, padx=10, pady=(20,5), sticky="n")
         self.canvas_concentracion.draw()
 
-        self.b_iniciar_calibracion_concentracion = ctk.CTkButton(self.f_calibracion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibracion_concentracion.grid(row=10, column=0, padx=90, pady=(20,5), sticky="w")
+        self.b_iniciar_caracterizacion_concentracion = ctk.CTkButton(self.f_caracterizacion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_caracterizacion_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_concentracion.grid(row=10, column=0, padx=90, pady=(20,5), sticky="w")
        
 
-        self.b_reiniciar_calibrado_concentracion = ctk.CTkButton(self.f_calibracion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_calibrado_concentracion, font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_concentracion.grid(row=10, column=0, padx=10, pady=(20,5), sticky="n")
+        self.b_reiniciar_caracterizacion_concentracion = ctk.CTkButton(self.f_caracterizacion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_caracterizacion_concentracion, font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_concentracion.grid(row=10, column=0, padx=10, pady=(20,5), sticky="n")
 
-        self.b_parar_calibrado_concentracion = ctk.CTkButton(self.f_calibracion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_calibrado_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_concentracion.grid(row=10, column=0, padx=90, pady=(20,5), sticky="e")
-
-
+        self.b_parar_caracterizacion_concentracion = ctk.CTkButton(self.f_caracterizacion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_caracterizacion_concentracion,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_concentracion.grid(row=10, column=0, padx=90, pady=(20,5), sticky="e")
 
 
-        #Calibración Latencia
-        self.l_calibracion_latencia = ctk.CTkLabel(self.f_calibracion_scroll, text="Latencia", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
-        self.l_calibracion_latencia.grid(row=11, column=0, padx=10, pady=(50,5), sticky="n")
+
+
+        #Caracterización Latencia
+        self.l_caracterizacion_latencia = ctk.CTkLabel(self.f_caracterizacion_scroll, text="Latencia", text_color="#458B8D", font=ctk.CTkFont(size=18, weight="bold"))
+        self.l_caracterizacion_latencia.grid(row=11, column=0, padx=10, pady=(50,5), sticky="n")
 
         #Gráfica en tiempo real - Latencia
         fig_latencia = Figure(figsize=(10,5),dpi=60)
@@ -848,22 +848,22 @@ class App(ctk.CTk):
         self.ax_concentracion.set_xlabel("Tiempo (s)")
         self.ax_concentracion.set_ylabel("Latencia (ms)")
         fig_latencia.tight_layout()
-        self.canvas_latencia = FigureCanvasTkAgg(fig_latencia, master=self.f_calibracion_scroll)
+        self.canvas_latencia = FigureCanvasTkAgg(fig_latencia, master=self.f_caracterizacion_scroll)
         self.canvas_latencia.get_tk_widget().grid(row=12, column=0, padx=10, pady=(20,5), sticky="n")
         self.canvas_latencia.draw()
 
-        self.b_iniciar_calibracion_latencia = ctk.CTkButton(self.f_calibracion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
-        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_iniciar_calibracion_latencia.grid(row=13, column=0, padx=90, pady=(20,5), sticky="w")
+        self.b_iniciar_caracterizacion_latencia = ctk.CTkButton(self.f_caracterizacion_scroll, text="▶", text_color = "#ffffff", fg_color="#85ad75", width=15, height=20, 
+        hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_caracterizacion_latencia,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_iniciar_caracterizacion_latencia.grid(row=13, column=0, padx=90, pady=(20,5), sticky="w")
        
 
-        self.b_reiniciar_calibrado_latencia = ctk.CTkButton(self.f_calibracion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_calibrado_latencia, font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_reiniciar_calibrado_latencia.grid(row=13, column=0, padx=10, pady=(20,5), sticky="n")
+        self.b_reiniciar_caracterizacion_latencia = ctk.CTkButton(self.f_caracterizacion_scroll, text="↻" , text_color = "#ffffff", fg_color="#C7BE19",width=15, height=20,
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width=1, corner_radius=10,command=self.reiniciar_caracterizacion_latencia, font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_reiniciar_caracterizacion_latencia.grid(row=13, column=0, padx=10, pady=(20,5), sticky="n")
 
-        self.b_parar_calibrado_latencia = ctk.CTkButton(self.f_calibracion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
-        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_calibrado_latencia,font=ctk.CTkFont(size=24, weight="bold"))
-        self.b_parar_calibrado_latencia.grid(row=13, column=0, padx=90, pady=(20,5), sticky="e")
+        self.b_parar_caracterizacion_latencia = ctk.CTkButton(self.f_caracterizacion_scroll, text="◼", text_color = "#ffffff",width=15, height=20, 
+        fg_color="#f56a6a", hover_color = "#ee4242", border_color="#ff0000",corner_radius=10,border_width=1, command=self.parar_caracterizacion_latencia,font=ctk.CTkFont(size=24, weight="bold"))
+        self.b_parar_caracterizacion_latencia.grid(row=13, column=0, padx=90, pady=(20,5), sticky="e")
 
 
 
@@ -871,19 +871,19 @@ class App(ctk.CTk):
 
 
 
-        self.b_iniciar_calibracion = ctk.CTkButton(self.f_calibracion_scroll, text="Iniciar Calibrado General", text_color="#ffffff", fg_color= "#85ad75", width= 15, height=20,
-                                                   hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_calibrado,font=ctk.CTkFont(size=20, weight="bold"))
-        self.b_iniciar_calibracion.grid(row=14, column=0, padx=10, pady=(70,5), sticky="n")
+        self.b_iniciar_caracterizacion = ctk.CTkButton(self.f_caracterizacion_scroll, text="Iniciar caracterizacion General", text_color="#ffffff", fg_color= "#85ad75", width= 15, height=20,
+                                                   hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_caracterizacion,font=ctk.CTkFont(size=20, weight="bold"))
+        self.b_iniciar_caracterizacion.grid(row=14, column=0, padx=10, pady=(70,5), sticky="n")
 
         
-        self.b_reiniciar_calibrado = ctk.CTkButton(self.f_calibracion_scroll, text="Reiniciar Calibrado General", text_color="#ffffff", fg_color= "#C7BE19" , width=15, height=20,
-                                                   hover_color="#9da31e", border_color="#F6F04F", border_width= 1, corner_radius=10,command=self.reiniciar_calibrado,font=ctk.CTkFont(size=20, weight="bold"))
-        self.b_reiniciar_calibrado.grid(row=15, column=0, padx=10, pady=(20,5), sticky="n")
+        self.b_reiniciar_caracterizacion = ctk.CTkButton(self.f_caracterizacion_scroll, text="Reiniciar caracterizacion General", text_color="#ffffff", fg_color= "#C7BE19" , width=15, height=20,
+                                                   hover_color="#9da31e", border_color="#F6F04F", border_width= 1, corner_radius=10,command=self.reiniciar_caracterizacion,font=ctk.CTkFont(size=20, weight="bold"))
+        self.b_reiniciar_caracterizacion.grid(row=15, column=0, padx=10, pady=(20,5), sticky="n")
 
 
-        self.b_parar_calibrado = ctk.CTkButton(self.f_calibracion_scroll, text="Parar Calibrado General", text_color="#ffffff", fg_color= "#f56a6a", width=15, height=20,
-                                                   hover_color="#ee4242", border_color="#ff0000", border_width= 1, corner_radius=10,command=self.parar_calibrado,font=ctk.CTkFont(size=20, weight="bold"))
-        self.b_parar_calibrado.grid(row=16, column=0, padx=10, pady=(20,5), sticky="n")
+        self.b_parar_caracterizacion = ctk.CTkButton(self.f_caracterizacion_scroll, text="Parar caracterizacion General", text_color="#ffffff", fg_color= "#f56a6a", width=15, height=20,
+                                                   hover_color="#ee4242", border_color="#ff0000", border_width= 1, corner_radius=10,command=self.parar_caracterizacion,font=ctk.CTkFont(size=20, weight="bold"))
+        self.b_parar_caracterizacion.grid(row=16, column=0, padx=10, pady=(20,5), sticky="n")
 
         """
 
@@ -999,9 +999,9 @@ class App(ctk.CTk):
                 tiempo_exposicion = self.e_tiempo_exposicion.get(),
                 tiempo_desensibilizacion = self.e_tiempo_desensibilizacion.get(),
                 intervalo_ciclos = self.e_intervalo_ciclos.get(),
-                tiempo_calibrado = self.e_tiempo_calibrado.get(),
+                tiempo_caracterizacion = self.e_tiempo_caracterizacion.get(),
                 historial_sesion = self.historial_sesion,
-                metricas_calibracion = self.metricas_calibracion,
+                metricas_caracterizacion = self.metricas_caracterizacion,
                 colores_canales = self.colores_canales,
         )
     
@@ -1124,10 +1124,10 @@ class App(ctk.CTk):
         self.l_fecha.configure(text=f"Fecha y hora: {tiempo_local}")
         self.after(1000, self.tiempo_sesion)
 
-    def actualizar_comb_canales_calibrados(self):
+    def actualizar_comb_canales_caracterizacions(self):
         valores = [canal.e_olor_canal.get() for canal in self.cuadros_canales if canal.e_olor_canal.get()] 
         valores.append("Canal Blanco")
-        self.comb_canales_calibrados.configure(values=valores)
+        self.comb_canales_caracterizacions.configure(values=valores)
 
     def bloquear_botones(self,bloquear):
         if bloquear:
@@ -1163,24 +1163,24 @@ class App(ctk.CTk):
                     canal.e_olor_canal.configure(state="disabled")
             self._actualizar_bloqueo_canales_manual()
 
-            #calibrado
-            self.comb_canales_calibrados.configure(state="disabled")
-            self.b_iniciar_calibrado_general.configure(state="disabled")
-            self.b_reiniciar_calibrado_general.configure(state="disabled")
-            self.b_parar_calibrado_general.configure(state="disabled")
+            #caracterizacion
+            self.comb_canales_caracterizacions.configure(state="disabled")
+            self.b_iniciar_caracterizacion_general.configure(state="disabled")
+            self.b_reiniciar_caracterizacion_general.configure(state="disabled")
+            self.b_parar_caracterizacion_general.configure(state="disabled")
 
-            self.b_iniciar_calibrado_velocidad.configure(state="disabled")
-            self.b_reiniciar_calibrado_velocidad.configure(state="disabled")
-            self.b_parar_calibrado_velocidad.configure(state="disabled")
-            self.b_iniciar_calibrado_flujo.configure(state="disabled")
-            self.b_reiniciar_calibrado_flujo.configure(state="disabled")
-            self.b_parar_calibrado_flujo.configure(state="disabled")
-            self.b_iniciar_calibrado_concentracion.configure(state="disabled")
-            self.b_reiniciar_calibrado_concentracion.configure(state="disabled")  
-            self.b_parar_calibrado_concentracion.configure(state="disabled")
-            self.b_iniciar_calibrado_latencia.configure(state="disabled")
-            self.b_reiniciar_calibrado_latencia.configure(state="disabled")
-            self.b_parar_calibrado_latencia.configure(state="disabled")
+            self.b_iniciar_caracterizacion_velocidad.configure(state="disabled")
+            self.b_reiniciar_caracterizacion_velocidad.configure(state="disabled")
+            self.b_parar_caracterizacion_velocidad.configure(state="disabled")
+            self.b_iniciar_caracterizacion_flujo.configure(state="disabled")
+            self.b_reiniciar_caracterizacion_flujo.configure(state="disabled")
+            self.b_parar_caracterizacion_flujo.configure(state="disabled")
+            self.b_iniciar_caracterizacion_concentracion.configure(state="disabled")
+            self.b_reiniciar_caracterizacion_concentracion.configure(state="disabled")  
+            self.b_parar_caracterizacion_concentracion.configure(state="disabled")
+            self.b_iniciar_caracterizacion_latencia.configure(state="disabled")
+            self.b_reiniciar_caracterizacion_latencia.configure(state="disabled")
+            self.b_parar_caracterizacion_latencia.configure(state="disabled")
 
 
         else:
@@ -1217,24 +1217,24 @@ class App(ctk.CTk):
                     canal.e_olor_canal.configure(state="normal")
             self._actualizar_bloqueo_canales_manual()
 
-            #calibrado
-            self.comb_canales_calibrados.configure(state="normal")
-            self.b_iniciar_calibrado_general.configure(state="normal")
-            self.b_reiniciar_calibrado_general.configure(state="normal")
-            self.b_parar_calibrado_general.configure(state="normal")
+            #caracterizacion
+            self.comb_canales_caracterizacions.configure(state="normal")
+            self.b_iniciar_caracterizacion_general.configure(state="normal")
+            self.b_reiniciar_caracterizacion_general.configure(state="normal")
+            self.b_parar_caracterizacion_general.configure(state="normal")
 
-            self.b_iniciar_calibrado_velocidad.configure(state="normal")
-            self.b_reiniciar_calibrado_velocidad.configure(state="normal")
-            self.b_parar_calibrado_velocidad.configure(state="normal")
-            self.b_iniciar_calibrado_flujo.configure(state="normal")
-            self.b_reiniciar_calibrado_flujo.configure(state="normal")
-            self.b_parar_calibrado_flujo.configure(state="normal")
-            self.b_iniciar_calibrado_concentracion.configure(state="normal")
-            self.b_reiniciar_calibrado_concentracion.configure(state="normal")  
-            self.b_parar_calibrado_concentracion.configure(state="normal")
-            self.b_iniciar_calibrado_latencia.configure(state="normal")
-            self.b_reiniciar_calibrado_latencia.configure(state="normal")
-            self.b_parar_calibrado_latencia.configure(state="normal")
+            self.b_iniciar_caracterizacion_velocidad.configure(state="normal")
+            self.b_reiniciar_caracterizacion_velocidad.configure(state="normal")
+            self.b_parar_caracterizacion_velocidad.configure(state="normal")
+            self.b_iniciar_caracterizacion_flujo.configure(state="normal")
+            self.b_reiniciar_caracterizacion_flujo.configure(state="normal")
+            self.b_parar_caracterizacion_flujo.configure(state="normal")
+            self.b_iniciar_caracterizacion_concentracion.configure(state="normal")
+            self.b_reiniciar_caracterizacion_concentracion.configure(state="normal")  
+            self.b_parar_caracterizacion_concentracion.configure(state="normal")
+            self.b_iniciar_caracterizacion_latencia.configure(state="normal")
+            self.b_reiniciar_caracterizacion_latencia.configure(state="normal")
+            self.b_parar_caracterizacion_latencia.configure(state="normal")
 
     def iniciar_protocolo(self):
         
@@ -1527,80 +1527,80 @@ class App(ctk.CTk):
         if protocolo_activo and 
         """
 
-    #CALIBRADO VELOCIDAD
-    def iniciar_calibrado_velocidad(self):
-        if self.canal_calibrado is not None:
+    #caracterizacion VELOCIDAD
+    def iniciar_caracterizacion_velocidad(self):
+        if self.canal_caracterizacion is not None:
             self._actualizar_bloqueo_canales_manual()
-            if not self.calibrado_velocidad_parado and not self.calibrando_velocidad:
-                self.calibrando_velocidad = True
-                self.consola.registro("Iniciando calibrado de velocidad...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-                self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+            if not self.caracterizacion_velocidad_parado and not self.caracterizando_velocidad:
+                self.caracterizando_velocidad = True
+                self.consola.registro("Iniciando caracterizacion de velocidad...")
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+                self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
                 self.contador_velocidad = 0
-                self.buffer_historico_calibrado_velocidad.clear()
-                self.b_iniciar_calibrado_velocidad.configure(state="disabled")
-                self.b_reiniciar_calibrado_velocidad.configure(state="disabled")
-                num_canal = self.canal_calibrado.num_canal
-                if num_canal not in self.metricas_calibracion:
-                    self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
-                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
-                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else "----")
-                if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia:
-                    self.canal_calibrado.activar_canal()
+                self.buffer_historico_caracterizacion_velocidad.clear()
+                self.b_iniciar_caracterizacion_velocidad.configure(state="disabled")
+                self.b_reiniciar_caracterizacion_velocidad.configure(state="disabled")
+                num_canal = self.canal_caracterizacion.num_canal
+                if num_canal not in self.metricas_caracterizacion:
+                    self.metricas_caracterizacion[num_canal] = {}
+                self.metricas_caracterizacion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_caracterizacion[num_canal].setdefault("duracion", self.e_tiempo_caracterizacion.get())
+                self.metricas_caracterizacion[num_canal].setdefault("olor", self.canal_caracterizacion.e_olor_canal.get() if self.canal_caracterizacion.e_olor_canal.winfo_exists() else "----")
+                if not self.caracterizando_flujo and not self.caracterizando_concentracion and not self.caracterizando_latencia:
+                    self.canal_caracterizacion.activar_canal()
                 if num_canal == self.canal_esperando_posicion:
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_velocidad, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
+                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_caracterizacion_velocidad, (self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())))
                 else:
-                    self.periodo_calibrado_velocidad(self.canal_calibrado, self.e_tiempo_calibrado.get())
+                    self.periodo_caracterizacion_velocidad(self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())
             else:
-                self.calibrado_velocidad_parado = False
-                #self.calibrando_velocidad = True
-                self.consola.registro("Reanudando calibrado de velocidad...")
+                self.caracterizacion_velocidad_parado = False
+                #self.caracterizando_velocidad = True
+                self.consola.registro("Reanudando caracterizacion de velocidad...")
                 self.consola.registro(f"Tiempo guardado: {self.segundos_restantes_velocidad}")
-                #self.canal_calibrado.activar_canal(tiempo_inicial = self.tiempo_guardado)
-                self.canal_calibrado.activar_canal()
+                #self.canal_caracterizacion.activar_canal(tiempo_inicial = self.tiempo_guardado)
+                self.canal_caracterizacion.activar_canal()
                 #self.tiempo_guardado = None
-                self.periodo_calibrado_velocidad(self.canal_calibrado, self.segundos_restantes_velocidad)
+                self.periodo_caracterizacion_velocidad(self.canal_caracterizacion, self.segundos_restantes_velocidad)
                 #self.sv_canal_activo.set(self.canal_activo.e_olor_canal.get())
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de velocidad", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de velocidad", nivel="AVISO")
             
 
-    def periodo_calibrado_velocidad(self, canal_calibrado, segundos_restantes):
+    def periodo_caracterizacion_velocidad(self, canal_caracterizacion, segundos_restantes):
         self.segundos_restantes_velocidad = segundos_restantes
         if segundos_restantes > 0:
-            self.consola.registro(f"Calibrado de velocidad en curso... Tiempo restante: {self.segundos_restantes_velocidad}s")
+            self.consola.registro(f"caracterizacion de velocidad en curso... Tiempo restante: {self.segundos_restantes_velocidad}s")
             #self.sv_cuenta_atrasc.set(f"{self.segundos_restantes_velocidad}s")
-            self.after_calibrado_velocidad = self.after(1000, lambda: self.periodo_calibrado_velocidad(canal_calibrado, segundos_restantes - 1))
+            self.after_caracterizacion_velocidad = self.after(1000, lambda: self.periodo_caracterizacion_velocidad(canal_caracterizacion, segundos_restantes - 1))
         else:
             #self.sv_cuenta_atras.set("")
-            if canal_calibrado is not None:
-                canal_calibrado.parar_canal()
+            if canal_caracterizacion is not None:
+                canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
-            self.parar_calibrado_velocidad()
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar.", nivel="AVISO")
+            self.parar_caracterizacion_velocidad()
 
-    def reiniciar_calibrado_velocidad(self):
-        self._cancelar_espera_posicion_valvula(self.periodo_calibrado_velocidad)
-        if self.canal_calibrado is not None:
-            self._cancelar_activacion_pendiente(self.canal_calibrado)
-        self.calibrando_velocidad = False
-        self.calibrado_velocidad_parado = False
+    def reiniciar_caracterizacion_velocidad(self):
+        self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_velocidad)
+        if self.canal_caracterizacion is not None:
+            self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+        self.caracterizando_velocidad = False
+        self.caracterizacion_velocidad_parado = False
         self.segundos_restantes_velocidad = 0
         self.contador_velocidad = 0
         self.tiempo_guardado = None
-        if self.after_calibrado_velocidad:
-            self.after_cancel(self.after_calibrado_velocidad)
-            self.after_calibrado_velocidad = None
-        if self.canal_calibrado is not None:
-            self.canal_calibrado.parar_canal()
+        if self.after_caracterizacion_velocidad:
+            self.after_cancel(self.after_caracterizacion_velocidad)
+            self.after_caracterizacion_velocidad = None
+        if self.canal_caracterizacion is not None:
+            self.canal_caracterizacion.parar_canal()
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de velocidad.", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de velocidad.", nivel="AVISO")
 
-        self.buffer_historico_calibrado_velocidad.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-        self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_historico_caracterizacion_velocidad.clear()
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+        self.tiempo_grafica_velocidad = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
         #self.buffer_velocidad = collections.deque([np.nan]*61, maxlen=61)
         #self.tiempo_grafica_velocidad = collections.deque(list(range(0,61)), maxlen=61)
@@ -1608,7 +1608,7 @@ class App(ctk.CTk):
         self.ax_velocidad.clear()
         self.ax_velocidad.set_xlabel("Tiempo (s)")
         self.ax_velocidad.set_ylabel("Velocidad (m/s)")
-        self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_velocidad.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_velocidad.set_ylim(config.LIMITESY["velocidad"][0],config.LIMITESY["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_velocidad.tick_params(colors = "#ffffff") 
         self.ax_velocidad.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
@@ -1619,127 +1619,127 @@ class App(ctk.CTk):
         self.ax_velocidad.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.canvas_velocidad.draw()
 
-        self.b_iniciar_calibrado_velocidad.configure(state="normal")
+        self.b_iniciar_caracterizacion_velocidad.configure(state="normal")
         self._actualizar_bloqueo_canales_manual()
-        self.consola.registro("Calibrado de velocidad reiniciado")
+        self.consola.registro("caracterizacion de velocidad reiniciado")
     
-    def parar_calibrado_velocidad(self):
-        if self.calibrando_velocidad:
-            self._cancelar_espera_posicion_valvula(self.periodo_calibrado_velocidad)
-            self.calibrado_velocidad_parado = True
-            #self.calibrando_velocidad = False
-            if self.after_calibrado_velocidad:
-                self.after_cancel(self.after_calibrado_velocidad)
-                self.after_calibrado_velocidad = None
-            if self.canal_calibrado is not None:
-                #if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia:
-                if not self.calibrado_flujo_parado and not self.calibrado_concentracion_parado and not self.calibrado_latencia_parado:
-                    self._cancelar_activacion_pendiente(self.canal_calibrado)
-                    self.canal_calibrado.parar_canal()
+    def parar_caracterizacion_velocidad(self):
+        if self.caracterizando_velocidad:
+            self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_velocidad)
+            self.caracterizacion_velocidad_parado = True
+            #self.caracterizando_velocidad = False
+            if self.after_caracterizacion_velocidad:
+                self.after_cancel(self.after_caracterizacion_velocidad)
+                self.after_caracterizacion_velocidad = None
+            if self.canal_caracterizacion is not None:
+                #if not self.caracterizando_flujo and not self.caracterizando_concentracion and not self.caracterizando_latencia:
+                if not self.caracterizacion_flujo_parado and not self.caracterizacion_concentracion_parado and not self.caracterizacion_latencia_parado:
+                    self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+                    self.canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de velocidad.", nivel="AVISO")
-            self.b_iniciar_calibrado_velocidad.configure(state="normal")
-            self.b_reiniciar_calibrado_velocidad.configure(state="normal")
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de velocidad.", nivel="AVISO")
+            self.b_iniciar_caracterizacion_velocidad.configure(state="normal")
+            self.b_reiniciar_caracterizacion_velocidad.configure(state="normal")
 
             if self.segundos_restantes_velocidad > 0:
-                self.consola.registro(f"Calibrado de velocidad parado con {self.segundos_restantes_velocidad} segundos restantes")
+                self.consola.registro(f"caracterizacion de velocidad parado con {self.segundos_restantes_velocidad} segundos restantes")
 
             else:
-                if self.canal_calibrado is not None:
-                    num_canal = self.canal_calibrado.num_canal
-                    if num_canal not in self.metricas_calibracion:
-                        self.metricas_calibracion[num_canal] = {}
-                        self.metricas_calibracion[num_canal]["olor"] = self.canal_calibrado.e_olor_canal.get() or self.canal_calibrado.color_canal
-                    self.metricas_calibracion[num_canal]["velocidad"] = list(self.buffer_historico_calibrado_velocidad)
-                    self.calibrando_velocidad = False
-                    self.calibrado_velocidad_parado = False
-                    self.consola.registro("Calibrado de velocidad finalizado")
+                if self.canal_caracterizacion is not None:
+                    num_canal = self.canal_caracterizacion.num_canal
+                    if num_canal not in self.metricas_caracterizacion:
+                        self.metricas_caracterizacion[num_canal] = {}
+                        self.metricas_caracterizacion[num_canal]["olor"] = self.canal_caracterizacion.e_olor_canal.get() or self.canal_caracterizacion.color_canal
+                    self.metricas_caracterizacion[num_canal]["velocidad"] = list(self.buffer_historico_caracterizacion_velocidad)
+                    self.caracterizando_velocidad = False
+                    self.caracterizacion_velocidad_parado = False
+                    self.consola.registro("caracterizacion de velocidad finalizado")
                 else:
-                    self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+                    self.consola.registro("No se pudieron guardar las métricas de caracterizacion: No hay ningún canal seleccionado para caracterizar.", nivel="AVISO")
             self._actualizar_bloqueo_canales_manual()
         else:
-            self.consola.registro("No hay ningún calibrado de velocidad activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de velocidad.", nivel="AVISO")
+            self.consola.registro("No hay ningún caracterizacion de velocidad activo. Seleccione un canal y pulse iniciar para comenzar el caracterizacion de velocidad.", nivel="AVISO")
 
 
-    #CALIBRADO FLUJO
-    def iniciar_calibrado_flujo(self):
-        if self.canal_calibrado is not None:
+    #caracterizacion FLUJO
+    def iniciar_caracterizacion_flujo(self):
+        if self.canal_caracterizacion is not None:
             self._actualizar_bloqueo_canales_manual()
-            if not self.calibrado_flujo_parado and not self.calibrando_flujo:
-                self.calibrando_flujo = True
-                self.consola.registro("Iniciando calibrado de flujo...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-                self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+            if not self.caracterizacion_flujo_parado and not self.caracterizando_flujo:
+                self.caracterizando_flujo = True
+                self.consola.registro("Iniciando caracterizacion de flujo...")
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+                self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
                 self.contador_flujo = 0
-                self.buffer_historico_calibrado_flujo.clear()
-                self.b_iniciar_calibrado_flujo.configure(state="disabled")
-                self.b_reiniciar_calibrado_flujo.configure(state="disabled")
-                num_canal = self.canal_calibrado.num_canal
-                if num_canal not in self.metricas_calibracion:
-                    self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
-                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
-                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
-                if not self.calibrando_velocidad and not self.calibrando_concentracion and not self.calibrando_latencia:
-                    self.canal_calibrado.activar_canal()
+                self.buffer_historico_caracterizacion_flujo.clear()
+                self.b_iniciar_caracterizacion_flujo.configure(state="disabled")
+                self.b_reiniciar_caracterizacion_flujo.configure(state="disabled")
+                num_canal = self.canal_caracterizacion.num_canal
+                if num_canal not in self.metricas_caracterizacion:
+                    self.metricas_caracterizacion[num_canal] = {}
+                self.metricas_caracterizacion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_caracterizacion[num_canal].setdefault("duracion", self.e_tiempo_caracterizacion.get())
+                self.metricas_caracterizacion[num_canal].setdefault("olor", self.canal_caracterizacion.e_olor_canal.get() if self.canal_caracterizacion.e_olor_canal.winfo_exists() else self.canal_caracterizacion.color_canal)
+                if not self.caracterizando_velocidad and not self.caracterizando_concentracion and not self.caracterizando_latencia:
+                    self.canal_caracterizacion.activar_canal()
                 if num_canal == self.canal_esperando_posicion:
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_flujo, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
+                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_caracterizacion_flujo, (self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())))
                 else:
-                    self.periodo_calibrado_flujo(self.canal_calibrado, self.e_tiempo_calibrado.get())
+                    self.periodo_caracterizacion_flujo(self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())
             else:
-                self.calibrado_flujo_parado = False
-                #self.calibrando_flujo = True
-                self.consola.registro("Reanudando calibrado de flujo...")
+                self.caracterizacion_flujo_parado = False
+                #self.caracterizando_flujo = True
+                self.consola.registro("Reanudando caracterizacion de flujo...")
                 self.consola.registro(f"Tiempo guardado: {self.segundos_restantes_flujo}")
-                #self.canal_calibrado.activar_canal(tiempo_inicial = self.tiempo_guardado)
-                self.canal_calibrado.activar_canal()
+                #self.canal_caracterizacion.activar_canal(tiempo_inicial = self.tiempo_guardado)
+                self.canal_caracterizacion.activar_canal()
                 #self.tiempo_guardado = None
-                self.periodo_calibrado_flujo(self.canal_calibrado, self.segundos_restantes_flujo)
+                self.periodo_caracterizacion_flujo(self.canal_caracterizacion, self.segundos_restantes_flujo)
                 #self.sv_canal_activo.set(self.canal_activo.e_olor_canal.get())
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de flujo", nivel="AVISO")
             
         
-    def periodo_calibrado_flujo(self, canal_calibrado, segundos_restantes):
+    def periodo_caracterizacion_flujo(self, canal_caracterizacion, segundos_restantes):
         self.segundos_restantes_flujo = segundos_restantes
         if segundos_restantes > 0:
-            self.consola.registro(f"Calibrado de flujo en curso... Tiempo restante: {self.segundos_restantes_flujo}s")
+            self.consola.registro(f"caracterizacion de flujo en curso... Tiempo restante: {self.segundos_restantes_flujo}s")
             #self.sv_cuenta_atrasc.set(f"{self.segundos_restantes_flujo}s")
-            self.after_calibrado_flujo = self.after(1000, lambda: self.periodo_calibrado_flujo(canal_calibrado, segundos_restantes - 1))
+            self.after_caracterizacion_flujo = self.after(1000, lambda: self.periodo_caracterizacion_flujo(canal_caracterizacion, segundos_restantes - 1))
         else:
             #self.sv_cuenta_atras.set("")
-            if canal_calibrado is not None:
-                canal_calibrado.parar_canal()
+            if canal_caracterizacion is not None:
+                canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo.", nivel="AVISO")
-            self.parar_calibrado_flujo()
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de flujo.", nivel="AVISO")
+            self.parar_caracterizacion_flujo()
 
-    def reiniciar_calibrado_flujo(self):
-        self._cancelar_espera_posicion_valvula(self.periodo_calibrado_flujo)
-        if self.canal_calibrado is not None:
-            self._cancelar_activacion_pendiente(self.canal_calibrado)
-        self.calibrando_flujo = False
-        self.calibrado_flujo_parado = False
+    def reiniciar_caracterizacion_flujo(self):
+        self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_flujo)
+        if self.canal_caracterizacion is not None:
+            self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+        self.caracterizando_flujo = False
+        self.caracterizacion_flujo_parado = False
         self.segundos_restantes_flujo = 0
         self.contador_flujo = 0
         self.tiempo_guardado = None
-        if self.after_calibrado_flujo:
-            self.after_cancel(self.after_calibrado_flujo)
-            self.after_calibrado_flujo = None
-        if self.canal_calibrado is not None:
-            self.canal_calibrado.parar_canal()
+        if self.after_caracterizacion_flujo:
+            self.after_cancel(self.after_caracterizacion_flujo)
+            self.after_caracterizacion_flujo = None
+        if self.canal_caracterizacion is not None:
+            self.canal_caracterizacion.parar_canal()
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo.", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de flujo.", nivel="AVISO")
 
 
-        self.buffer_historico_calibrado_flujo.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-        self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_historico_caracterizacion_flujo.clear()
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+        self.tiempo_grafica_flujo = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
 
         self.ax_flujo.clear()
-        self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_flujo.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_flujo.set_ylim(config.LIMITESY["flujo"][0],config.LIMITESY["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_flujo.set_xlabel("Tiempo (s)")
         self.ax_flujo.set_ylabel("Flujo (l/min)")
@@ -1752,128 +1752,128 @@ class App(ctk.CTk):
         self.ax_flujo.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.canvas_flujo.draw()
 
-        self.b_iniciar_calibrado_flujo.configure(state="normal")
+        self.b_iniciar_caracterizacion_flujo.configure(state="normal")
         self._actualizar_bloqueo_canales_manual()
-        self.consola.registro("Calibrado de flujo reiniciado")
+        self.consola.registro("caracterizacion de flujo reiniciado")
     
-    def parar_calibrado_flujo(self):
-        if self.calibrando_flujo:
-            self._cancelar_espera_posicion_valvula(self.periodo_calibrado_flujo)
-            self.calibrado_flujo_parado = True
-            #self.calibrando_flujo = False
-            if self.after_calibrado_flujo:
-                self.after_cancel(self.after_calibrado_flujo)
-                self.after_calibrado_flujo = None
-            if self.canal_calibrado is not None:
-                if not self.calibrado_velocidad_parado and not self.calibrado_concentracion_parado and not self.calibrado_latencia_parado:
-                    self._cancelar_activacion_pendiente(self.canal_calibrado)
-                    self.canal_calibrado.parar_canal()
+    def parar_caracterizacion_flujo(self):
+        if self.caracterizando_flujo:
+            self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_flujo)
+            self.caracterizacion_flujo_parado = True
+            #self.caracterizando_flujo = False
+            if self.after_caracterizacion_flujo:
+                self.after_cancel(self.after_caracterizacion_flujo)
+                self.after_caracterizacion_flujo = None
+            if self.canal_caracterizacion is not None:
+                if not self.caracterizacion_velocidad_parado and not self.caracterizacion_concentracion_parado and not self.caracterizacion_latencia_parado:
+                    self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+                    self.canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo.", nivel="AVISO")
-            self.b_iniciar_calibrado_flujo.configure(state="normal")
-            self.b_reiniciar_calibrado_flujo.configure(state="normal")
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de flujo.", nivel="AVISO")
+            self.b_iniciar_caracterizacion_flujo.configure(state="normal")
+            self.b_reiniciar_caracterizacion_flujo.configure(state="normal")
 
             if self.segundos_restantes_flujo > 0:
-                #self.tiempo_guardado = datetime.datetime.strptime(int(self.e_tiempo_calibrado.get()) - self.segundos_restantes, "%H:%M:%S")
+                #self.tiempo_guardado = datetime.datetime.strptime(int(self.e_tiempo_caracterizacion.get()) - self.segundos_restantes, "%H:%M:%S")
                 #self.consola.registro(f"{self.tiempo_guardado}")
-                self.consola.registro(f"Calibrado de flujo parado con {self.segundos_restantes_flujo} segundos restantes")
+                self.consola.registro(f"caracterizacion de flujo parado con {self.segundos_restantes_flujo} segundos restantes")
         
             else:
-                if self.canal_calibrado is not None:
-                    num_canal = self.canal_calibrado.num_canal
-                    if num_canal not in self.metricas_calibracion:
-                        self.metricas_calibracion[num_canal] = {}
-                        self.metricas_calibracion[num_canal]["olor"] = self.canal_calibrado.e_olor_canal.get() or self.canal_calibrado.color_canal
-                    self.metricas_calibracion[num_canal]["flujo"] = list(self.buffer_historico_calibrado_flujo)
-                    self.calibrando_flujo = False
-                    self.calibrado_flujo_parado = False
-                    self.consola.registro("Calibrado de flujo finalizado")
+                if self.canal_caracterizacion is not None:
+                    num_canal = self.canal_caracterizacion.num_canal
+                    if num_canal not in self.metricas_caracterizacion:
+                        self.metricas_caracterizacion[num_canal] = {}
+                        self.metricas_caracterizacion[num_canal]["olor"] = self.canal_caracterizacion.e_olor_canal.get() or self.canal_caracterizacion.color_canal
+                    self.metricas_caracterizacion[num_canal]["flujo"] = list(self.buffer_historico_caracterizacion_flujo)
+                    self.caracterizando_flujo = False
+                    self.caracterizacion_flujo_parado = False
+                    self.consola.registro("caracterizacion de flujo finalizado")
                 else:
-                    self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+                    self.consola.registro("No se pudieron guardar las métricas de caracterizacion: No hay ningún canal seleccionado para caracterizar.", nivel="AVISO")
             self._actualizar_bloqueo_canales_manual()
         else:
-            self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de flujo.", nivel="AVISO")
+            self.consola.registro("No hay ningún caracterizacion activo. Seleccione un canal y pulse iniciar para comenzar el caracterizacion de flujo.", nivel="AVISO")
 
-    #CALIBRADO CONCENTRACIÓN
-    def iniciar_calibrado_concentracion(self):
-        if self.canal_calibrado is not None:
+    #caracterizacion CONCENTRACIÓN
+    def iniciar_caracterizacion_concentracion(self):
+        if self.canal_caracterizacion is not None:
             self._actualizar_bloqueo_canales_manual()
-            if not self.calibrado_concentracion_parado and not self.calibrando_concentracion:
-                self.calibrando_concentracion = True
-                self.consola.registro("Iniciando calibrado de concentración...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-                self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+            if not self.caracterizacion_concentracion_parado and not self.caracterizando_concentracion:
+                self.caracterizando_concentracion = True
+                self.consola.registro("Iniciando caracterizacion de concentración...")
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+                self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
                 self.contador_concentracion = 0
-                self.buffer_historico_calibrado_concentracion.clear()
-                self.b_iniciar_calibrado_concentracion.configure(state="disabled")
-                self.b_reiniciar_calibrado_concentracion.configure(state="disabled")
-                num_canal = self.canal_calibrado.num_canal
-                if num_canal not in self.metricas_calibracion:
-                    self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
-                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
-                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
-                if not self.calibrando_flujo and not self.calibrando_velocidad and not self.calibrando_latencia:
-                    self.canal_calibrado.activar_canal()
+                self.buffer_historico_caracterizacion_concentracion.clear()
+                self.b_iniciar_caracterizacion_concentracion.configure(state="disabled")
+                self.b_reiniciar_caracterizacion_concentracion.configure(state="disabled")
+                num_canal = self.canal_caracterizacion.num_canal
+                if num_canal not in self.metricas_caracterizacion:
+                    self.metricas_caracterizacion[num_canal] = {}
+                self.metricas_caracterizacion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_caracterizacion[num_canal].setdefault("duracion", self.e_tiempo_caracterizacion.get())
+                self.metricas_caracterizacion[num_canal].setdefault("olor", self.canal_caracterizacion.e_olor_canal.get() if self.canal_caracterizacion.e_olor_canal.winfo_exists() else self.canal_caracterizacion.color_canal)
+                if not self.caracterizando_flujo and not self.caracterizando_velocidad and not self.caracterizando_latencia:
+                    self.canal_caracterizacion.activar_canal()
                 if num_canal == self.canal_esperando_posicion:
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_concentracion, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
+                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_caracterizacion_concentracion, (self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())))
                 else:
-                    self.periodo_calibrado_concentracion(self.canal_calibrado, self.e_tiempo_calibrado.get())
+                    self.periodo_caracterizacion_concentracion(self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())
             else:
-                self.calibrado_concentracion_parado = False
-                #self.calibrando_concentracion = True
-                self.consola.registro("Reanudando calibrado de concentración...")
+                self.caracterizacion_concentracion_parado = False
+                #self.caracterizando_concentracion = True
+                self.consola.registro("Reanudando caracterizacion de concentración...")
                 self.consola.registro(f"Tiempo guardado: {self.segundos_restantes_concentracion}")
-                #self.canal_calibrado.activar_canal(tiempo_inicial = self.tiempo_guardado)
-                self.canal_calibrado.activar_canal()
+                #self.canal_caracterizacion.activar_canal(tiempo_inicial = self.tiempo_guardado)
+                self.canal_caracterizacion.activar_canal()
                 #self.tiempo_guardado = None
-                self.periodo_calibrado_concentracion(self.canal_calibrado, self.segundos_restantes_concentracion)
+                self.periodo_caracterizacion_concentracion(self.canal_caracterizacion, self.segundos_restantes_concentracion)
                 #self.sv_canal_activo.set(self.canal_activo.e_olor_canal.get())
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de concentración", nivel="AVISO")
             
         
-    def periodo_calibrado_concentracion(self, canal_calibrado, segundos_restantes):
+    def periodo_caracterizacion_concentracion(self, canal_caracterizacion, segundos_restantes):
         self.segundos_restantes_concentracion = segundos_restantes
         if segundos_restantes > 0:
-            self.consola.registro(f"Calibrado de concentración en curso... Tiempo restante: {self.segundos_restantes_concentracion}s")
+            self.consola.registro(f"caracterizacion de concentración en curso... Tiempo restante: {self.segundos_restantes_concentracion}s")
             #self.sv_cuenta_atrasc.set(f"{self.segundos_restantes}s")
-            self.after_calibrado_concentracion = self.after(1000, lambda: self.periodo_calibrado_concentracion(canal_calibrado, segundos_restantes - 1))
+            self.after_caracterizacion_concentracion = self.after(1000, lambda: self.periodo_caracterizacion_concentracion(canal_caracterizacion, segundos_restantes - 1))
         else:
             #self.sv_cuenta_atras.set("")
-            if canal_calibrado is not None:
-                canal_calibrado.parar_canal()
+            if canal_caracterizacion is not None:
+                canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración.", nivel="AVISO")
-            self.parar_calibrado_concentracion()
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de concentración.", nivel="AVISO")
+            self.parar_caracterizacion_concentracion()
 
-    def reiniciar_calibrado_concentracion(self):
-        self._cancelar_espera_posicion_valvula(self.periodo_calibrado_concentracion)
-        if self.canal_calibrado is not None:
-            self._cancelar_activacion_pendiente(self.canal_calibrado)
-        self.calibrando_concentracion = False
-        self.calibrado_concentracion_parado = False
+    def reiniciar_caracterizacion_concentracion(self):
+        self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_concentracion)
+        if self.canal_caracterizacion is not None:
+            self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+        self.caracterizando_concentracion = False
+        self.caracterizacion_concentracion_parado = False
         self.segundos_restantes_concentracion = 0
         self.contador_concentracion = 0
         self.tiempo_guardado = None
-        if self.after_calibrado_concentracion:
-            self.after_cancel(self.after_calibrado_concentracion)
-            self.after_calibrado_concentracion = None
-        if self.canal_calibrado is not None:
-            self.canal_calibrado.parar_canal()
+        if self.after_caracterizacion_concentracion:
+            self.after_cancel(self.after_caracterizacion_concentracion)
+            self.after_caracterizacion_concentracion = None
+        if self.canal_caracterizacion is not None:
+            self.canal_caracterizacion.parar_canal()
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración.", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de concentración.", nivel="AVISO")
 
 
 
-        self.buffer_historico_calibrado_concentracion.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-        self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_historico_caracterizacion_concentracion.clear()
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+        self.tiempo_grafica_concentracion = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
 
         self.ax_concentracion.clear()
-        self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_concentracion.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_concentracion.set_xlabel("Tiempo (s)")
         self.ax_concentracion.set_ylabel("Concentración (ppm)")
@@ -1886,128 +1886,128 @@ class App(ctk.CTk):
         self.ax_concentracion.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.canvas_concentracion.draw()
 
-        self.b_iniciar_calibrado_concentracion.configure(state="normal")
+        self.b_iniciar_caracterizacion_concentracion.configure(state="normal")
         self._actualizar_bloqueo_canales_manual()
-        self.consola.registro("Calibrado de concentración reiniciado")
+        self.consola.registro("caracterizacion de concentración reiniciado")
 
-    def parar_calibrado_concentracion(self):
-        if self.calibrando_concentracion:
-            self._cancelar_espera_posicion_valvula(self.periodo_calibrado_concentracion)
-            self.calibrado_concentracion_parado = True
-            #self.calibrando_concentracion = False
-            if self.after_calibrado_concentracion:
-                self.after_cancel(self.after_calibrado_concentracion)
-                self.after_calibrado_concentracion = None
-            if self.canal_calibrado is not None:
-                if not self.calibrado_flujo_parado and not self.calibrado_velocidad_parado and not self.calibrado_latencia_parado:
-                    self._cancelar_activacion_pendiente(self.canal_calibrado)
-                    self.canal_calibrado.parar_canal()
+    def parar_caracterizacion_concentracion(self):
+        if self.caracterizando_concentracion:
+            self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_concentracion)
+            self.caracterizacion_concentracion_parado = True
+            #self.caracterizando_concentracion = False
+            if self.after_caracterizacion_concentracion:
+                self.after_cancel(self.after_caracterizacion_concentracion)
+                self.after_caracterizacion_concentracion = None
+            if self.canal_caracterizacion is not None:
+                if not self.caracterizacion_flujo_parado and not self.caracterizacion_velocidad_parado and not self.caracterizacion_latencia_parado:
+                    self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+                    self.canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración.", nivel="AVISO")
-            self.b_iniciar_calibrado_concentracion.configure(state="normal")
-            self.b_reiniciar_calibrado_concentracion.configure(state="normal")
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de concentración.", nivel="AVISO")
+            self.b_iniciar_caracterizacion_concentracion.configure(state="normal")
+            self.b_reiniciar_caracterizacion_concentracion.configure(state="normal")
 
             if self.segundos_restantes_concentracion > 0:
-                #self.tiempo_guardado = datetime.datetime.strptime(int(self.e_tiempo_calibrado.get()) - self.segundos_restantes, "%H:%M:%S")
+                #self.tiempo_guardado = datetime.datetime.strptime(int(self.e_tiempo_caracterizacion.get()) - self.segundos_restantes, "%H:%M:%S")
                 #self.consola.registro(f"{self.tiempo_guardado}")
-                self.consola.registro(f"Calibrado de concentración parado con {self.segundos_restantes_concentracion} segundos restantes")
+                self.consola.registro(f"caracterizacion de concentración parado con {self.segundos_restantes_concentracion} segundos restantes")
 
         
             else:
-                if self.canal_calibrado is not None:
-                    num_canal = self.canal_calibrado.num_canal
-                    if num_canal not in self.metricas_calibracion:
-                        self.metricas_calibracion[num_canal] = {}
-                        self.metricas_calibracion[num_canal]["olor"] = self.canal_calibrado.e_olor_canal.get() or self.canal_calibrado.color_canal
-                    self.metricas_calibracion[num_canal]["concentracion"] = list(self.buffer_historico_calibrado_concentracion)
-                    self.calibrando_concentracion = False
-                    self.calibrado_concentracion_parado = False
-                    self.consola.registro("Calibrado de concentración finalizado")
+                if self.canal_caracterizacion is not None:
+                    num_canal = self.canal_caracterizacion.num_canal
+                    if num_canal not in self.metricas_caracterizacion:
+                        self.metricas_caracterizacion[num_canal] = {}
+                        self.metricas_caracterizacion[num_canal]["olor"] = self.canal_caracterizacion.e_olor_canal.get() or self.canal_caracterizacion.color_canal
+                    self.metricas_caracterizacion[num_canal]["concentracion"] = list(self.buffer_historico_caracterizacion_concentracion)
+                    self.caracterizando_concentracion = False
+                    self.caracterizacion_concentracion_parado = False
+                    self.consola.registro("caracterizacion de concentración finalizado")
                 else:
-                    self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+                    self.consola.registro("No se pudieron guardar las métricas de caracterizacion: No hay ningún canal seleccionado para caracterizar.", nivel="AVISO")
             self._actualizar_bloqueo_canales_manual()
         else:
-            self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de concentración.", nivel="AVISO")
+            self.consola.registro("No hay ningún caracterizacion activo. Seleccione un canal y pulse iniciar para comenzar el caracterizacion de concentración.", nivel="AVISO")
 
-    #CALIBRADO LATENCIA
-    def iniciar_calibrado_latencia(self):
-        if self.canal_calibrado is not None:
+    #caracterizacion LATENCIA
+    def iniciar_caracterizacion_latencia(self):
+        if self.canal_caracterizacion is not None:
             self._actualizar_bloqueo_canales_manual()
-            if not self.calibrado_latencia_parado and not self.calibrando_latencia:
-                self.calibrando_latencia = True
-                self.consola.registro("Iniciando calibrado de latencia...")
-                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-                self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+            if not self.caracterizacion_latencia_parado and not self.caracterizando_latencia:
+                self.caracterizando_latencia = True
+                self.consola.registro("Iniciando caracterizacion de latencia...")
+                tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+                self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
                 self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
                 self.contador_latencia = 0
-                self.buffer_historico_calibrado_latencia.clear()
-                self.b_iniciar_calibrado_latencia.configure(state="disabled")
-                self.b_reiniciar_calibrado_latencia.configure(state="disabled")
-                num_canal = self.canal_calibrado.num_canal
-                if num_canal not in self.metricas_calibracion:
-                    self.metricas_calibracion[num_canal] = {}
-                self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
-                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
-                self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
-                if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_velocidad:
-                    self.canal_calibrado.activar_canal()
+                self.buffer_historico_caracterizacion_latencia.clear()
+                self.b_iniciar_caracterizacion_latencia.configure(state="disabled")
+                self.b_reiniciar_caracterizacion_latencia.configure(state="disabled")
+                num_canal = self.canal_caracterizacion.num_canal
+                if num_canal not in self.metricas_caracterizacion:
+                    self.metricas_caracterizacion[num_canal] = {}
+                self.metricas_caracterizacion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_caracterizacion[num_canal].setdefault("duracion", self.e_tiempo_caracterizacion.get())
+                self.metricas_caracterizacion[num_canal].setdefault("olor", self.canal_caracterizacion.e_olor_canal.get() if self.canal_caracterizacion.e_olor_canal.winfo_exists() else self.canal_caracterizacion.color_canal)
+                if not self.caracterizando_flujo and not self.caracterizando_concentracion and not self.caracterizando_velocidad:
+                    self.canal_caracterizacion.activar_canal()
                 if num_canal == self.canal_esperando_posicion:
-                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_calibrado_latencia, (self.canal_calibrado, self.e_tiempo_calibrado.get())))
+                    self.callbacks_pendientes_posicion_valvula.append((num_canal, self.periodo_caracterizacion_latencia, (self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())))
                 else:
-                    self.periodo_calibrado_latencia(self.canal_calibrado, self.e_tiempo_calibrado.get())
+                    self.periodo_caracterizacion_latencia(self.canal_caracterizacion, self.e_tiempo_caracterizacion.get())
             else:
-                self.calibrado_latencia_parado = False
-                #self.calibrando_latencia = True
-                self.consola.registro("Reanudando calibrado de latencia...")
+                self.caracterizacion_latencia_parado = False
+                #self.caracterizando_latencia = True
+                self.consola.registro("Reanudando caracterizacion de latencia...")
                 self.consola.registro(f"Tiempo guardado: {self.segundos_restantes_latencia}")
-                #self.canal_calibrado.activar_canal(tiempo_inicial = self.tiempo_guardado)
-                self.canal_calibrado.activar_canal()
+                #self.canal_caracterizacion.activar_canal(tiempo_inicial = self.tiempo_guardado)
+                self.canal_caracterizacion.activar_canal()
                 #self.tiempo_guardado = None
-                self.periodo_calibrado_latencia(self.canal_calibrado, self.segundos_restantes_latencia)
+                self.periodo_caracterizacion_latencia(self.canal_caracterizacion, self.segundos_restantes_latencia)
                 #self.sv_canal_activo.set(self.canal_activo.e_olor_canal.get())
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de latencia", nivel="AVISO")
             
 
-    def periodo_calibrado_latencia(self, canal_calibrado, segundos_restantes):
+    def periodo_caracterizacion_latencia(self, canal_caracterizacion, segundos_restantes):
         self.segundos_restantes_latencia = segundos_restantes
         if segundos_restantes > 0:
-            self.consola.registro(f"Calibrado de latencia en curso... Tiempo restante: {self.segundos_restantes_latencia}s")
+            self.consola.registro(f"caracterizacion de latencia en curso... Tiempo restante: {self.segundos_restantes_latencia}s")
             #self.sv_cuenta_atrasc.set(f"{self.segundos_restantes_latencia}s")
-            self.after_calibrado_latencia = self.after(1000, lambda: self.periodo_calibrado_latencia(canal_calibrado, segundos_restantes - 1))
+            self.after_caracterizacion_latencia = self.after(1000, lambda: self.periodo_caracterizacion_latencia(canal_caracterizacion, segundos_restantes - 1))
         else:
             #self.sv_cuenta_atras.set("")
-            if canal_calibrado is not None:
-                canal_calibrado.parar_canal()
+            if canal_caracterizacion is not None:
+                canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia.", nivel="AVISO")
-            self.parar_calibrado_latencia()
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de latencia.", nivel="AVISO")
+            self.parar_caracterizacion_latencia()
 
-    def reiniciar_calibrado_latencia(self):
-        self._cancelar_espera_posicion_valvula(self.periodo_calibrado_latencia)
-        if self.canal_calibrado is not None:
-            self._cancelar_activacion_pendiente(self.canal_calibrado)
-        self.calibrando_latencia = False
-        self.calibrado_latencia_parado = False
+    def reiniciar_caracterizacion_latencia(self):
+        self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_latencia)
+        if self.canal_caracterizacion is not None:
+            self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+        self.caracterizando_latencia = False
+        self.caracterizacion_latencia_parado = False
         self.segundos_restantes_latencia = 0
         self.contador_latencia = 0
         self.tiempo_guardado = None
-        if self.after_calibrado_latencia:
-            self.after_cancel(self.after_calibrado_latencia)
-            self.after_calibrado_latencia = None
-        if self.canal_calibrado is not None:
-            self.canal_calibrado.parar_canal()
+        if self.after_caracterizacion_latencia:
+            self.after_cancel(self.after_caracterizacion_latencia)
+            self.after_caracterizacion_latencia = None
+        if self.canal_caracterizacion is not None:
+            self.canal_caracterizacion.parar_canal()
         else:
-            self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia.", nivel="AVISO")
+            self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de latencia.", nivel="AVISO")
 
 
-        self.buffer_historico_calibrado_latencia.clear()
-        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*config.MUESTRAS_POR_SEGUNDO_CALIBRACION
-        self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_CALIBRACION) for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_historico_caracterizacion_latencia.clear()
+        tiempo_caracterizacion_segundos=int(self.e_tiempo_caracterizacion.get())*config.MUESTRAS_POR_SEGUNDO_caracterizacion
+        self.tiempo_grafica_latencia = collections.deque((i * (1/config.MUESTRAS_POR_SEGUNDO_caracterizacion) for i in range(tiempo_caracterizacion_segundos)), maxlen=tiempo_caracterizacion_segundos)
         self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
 
         self.ax_latencia.clear()
-        self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_latencia.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_latencia.set_ylim(config.LIMITESY["latencia"][0],config.LIMITESY["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_latencia.set_xlabel("Tiempo (s)")
         self.ax_latencia.set_ylabel("Latencia (ms)")
@@ -2020,89 +2020,89 @@ class App(ctk.CTk):
         self.ax_latencia.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.canvas_latencia.draw()
 
-        self.b_iniciar_calibrado_latencia.configure(state="normal")
+        self.b_iniciar_caracterizacion_latencia.configure(state="normal")
         self._actualizar_bloqueo_canales_manual()
-        self.consola.registro("Calibrado de latencia reiniciado")
+        self.consola.registro("caracterizacion de latencia reiniciado")
 
-    def parar_calibrado_latencia(self):
-        if self.calibrando_latencia:
-            self._cancelar_espera_posicion_valvula(self.periodo_calibrado_latencia)
-            self.calibrado_latencia_parado = True
-            #self.calibrando_latencia = False
-            if self.after_calibrado_latencia:
-                self.after_cancel(self.after_calibrado_latencia)
-                self.after_calibrado_latencia = None
-            if self.canal_calibrado is not None:
-                if not self.calibrado_flujo_parado and not self.calibrado_concentracion_parado and not self.calibrado_velocidad_parado:
-                    self._cancelar_activacion_pendiente(self.canal_calibrado)
-                    self.canal_calibrado.parar_canal()
+    def parar_caracterizacion_latencia(self):
+        if self.caracterizando_latencia:
+            self._cancelar_espera_posicion_valvula(self.periodo_caracterizacion_latencia)
+            self.caracterizacion_latencia_parado = True
+            #self.caracterizando_latencia = False
+            if self.after_caracterizacion_latencia:
+                self.after_cancel(self.after_caracterizacion_latencia)
+                self.after_caracterizacion_latencia = None
+            if self.canal_caracterizacion is not None:
+                if not self.caracterizacion_flujo_parado and not self.caracterizacion_concentracion_parado and not self.caracterizacion_velocidad_parado:
+                    self._cancelar_activacion_pendiente(self.canal_caracterizacion)
+                    self.canal_caracterizacion.parar_canal()
             else:
-                self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia.", nivel="AVISO")
-            self.b_iniciar_calibrado_latencia.configure(state="normal")
-            self.b_reiniciar_calibrado_latencia.configure(state="normal")
+                self.consola.registro("No hay ningún canal seleccionado para caracterizar. Seleccione un canal para iniciar el caracterizacion de latencia.", nivel="AVISO")
+            self.b_iniciar_caracterizacion_latencia.configure(state="normal")
+            self.b_reiniciar_caracterizacion_latencia.configure(state="normal")
 
             if self.segundos_restantes_latencia > 0:
-                #self.tiempo_guardado = datetime.datetime.strptime(int(self.e_tiempo_calibrado.get()) - self.segundos_restantes, "%H:%M:%S")
+                #self.tiempo_guardado = datetime.datetime.strptime(int(self.e_tiempo_caracterizacion.get()) - self.segundos_restantes, "%H:%M:%S")
                 #self.consola.registro(f"{self.tiempo_guardado}")
-                self.consola.registro(f"Calibrado de latencia parado con {self.segundos_restantes_latencia} segundos restantes")
+                self.consola.registro(f"caracterizacion de latencia parado con {self.segundos_restantes_latencia} segundos restantes")
         
             else:
-                if self.canal_calibrado is not None:
-                    num_canal = self.canal_calibrado.num_canal
-                    if num_canal not in self.metricas_calibracion:
-                        self.metricas_calibracion[num_canal] = {}
-                        self.metricas_calibracion[num_canal]["olor"] = self.canal_calibrado.e_olor_canal.get() or self.canal_calibrado.color_canal
-                    self.metricas_calibracion[num_canal]["latencia"] = list(self.buffer_historico_calibrado_latencia)
-                    self.calibrando_latencia = False
-                    self.calibrado_latencia_parado = False
-                    self.consola.registro("Calibrado de latencia finalizado")
+                if self.canal_caracterizacion is not None:
+                    num_canal = self.canal_caracterizacion.num_canal
+                    if num_canal not in self.metricas_caracterizacion:
+                        self.metricas_caracterizacion[num_canal] = {}
+                        self.metricas_caracterizacion[num_canal]["olor"] = self.canal_caracterizacion.e_olor_canal.get() or self.canal_caracterizacion.color_canal
+                    self.metricas_caracterizacion[num_canal]["latencia"] = list(self.buffer_historico_caracterizacion_latencia)
+                    self.caracterizando_latencia = False
+                    self.caracterizacion_latencia_parado = False
+                    self.consola.registro("caracterizacion de latencia finalizado")
                 else:
-                    self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
+                    self.consola.registro("No se pudieron guardar las métricas de caracterizacion: No hay ningún canal seleccionado para caracterizar.", nivel="AVISO")
             self._actualizar_bloqueo_canales_manual()
         else:
-            self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado de latencia.", nivel="AVISO")
+            self.consola.registro("No hay ningún caracterizacion activo. Seleccione un canal y pulse iniciar para comenzar el caracterizacion de latencia.", nivel="AVISO")
 
 
-    def iniciar_calibrado_general(self):
-        self.iniciar_calibrado_velocidad()
-        self.iniciar_calibrado_flujo()
-        self.iniciar_calibrado_concentracion()
-        self.iniciar_calibrado_latencia()
+    def iniciar_caracterizacion_general(self):
+        self.iniciar_caracterizacion_velocidad()
+        self.iniciar_caracterizacion_flujo()
+        self.iniciar_caracterizacion_concentracion()
+        self.iniciar_caracterizacion_latencia()
 
-    def _consultar_reiniciar_calibrado_general(self):
-        if self.calibrando_velocidad or self.calibrando_flujo or self.calibrando_concentracion or self.calibrando_latencia:
-            respuesta = messagebox.askyesno("Reiniciar calibrado general", "¿Está seguro de que desea reiniciar el calibrado general? Se reiniciará el calibrado de todos los canales y se perderán los datos de la actual sesión experimental.")
+    def _consultar_reiniciar_caracterizacion_general(self):
+        if self.caracterizando_velocidad or self.caracterizando_flujo or self.caracterizando_concentracion or self.caracterizando_latencia:
+            respuesta = messagebox.askyesno("Reiniciar caracterizacion general", "¿Está seguro de que desea reiniciar el caracterizacion general? Se reiniciará el caracterizacion de todos los canales y se perderán los datos de la actual sesión experimental.")
             if respuesta:
-                self.consola.registro("Reiniciando calibrado general...")
-                self.reiniciar_calibrado_general()
-                self.consola.registro("Calibrado general reiniciado.")
+                self.consola.registro("Reiniciando caracterizacion general...")
+                self.reiniciar_caracterizacion_general()
+                self.consola.registro("caracterizacion general reiniciado.")
             else:
-                self.consola.registro("Reinicio de calibrado general cancelado.")
+                self.consola.registro("Reinicio de caracterizacion general cancelado.")
         else:
-            self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado.", nivel="AVISO")
-    def reiniciar_calibrado_general(self):
-        self.reiniciar_calibrado_velocidad()
-        self.reiniciar_calibrado_flujo()
-        self.reiniciar_calibrado_concentracion()
-        self.reiniciar_calibrado_latencia()
+            self.consola.registro("No hay ningún caracterizacion activo. Seleccione un canal y pulse iniciar para comenzar el caracterizacion.", nivel="AVISO")
+    def reiniciar_caracterizacion_general(self):
+        self.reiniciar_caracterizacion_velocidad()
+        self.reiniciar_caracterizacion_flujo()
+        self.reiniciar_caracterizacion_concentracion()
+        self.reiniciar_caracterizacion_latencia()
 
-    def _consultar_parar_calibrado_general(self):
-        if self.calibrando_velocidad or self.calibrando_flujo or self.calibrando_concentracion or self.calibrando_latencia:
-            respuesta = messagebox.askyesno("Parar calibrado general", "¿Está seguro de que desea parar el calibrado general? Se pausará el calibrado de todos los canales y se podrá reanudar más tarde.")
+    def _consultar_parar_caracterizacion_general(self):
+        if self.caracterizando_velocidad or self.caracterizando_flujo or self.caracterizando_concentracion or self.caracterizando_latencia:
+            respuesta = messagebox.askyesno("Parar caracterizacion general", "¿Está seguro de que desea parar el caracterizacion general? Se pausará el caracterizacion de todos los canales y se podrá reanudar más tarde.")
             if respuesta:
-                self.consola.registro("Parando calibrado general...")
-                self.parar_calibrado_general()
-                self.consola.registro("Calibrado general parado.")
+                self.consola.registro("Parando caracterizacion general...")
+                self.parar_caracterizacion_general()
+                self.consola.registro("caracterizacion general parado.")
             else:
-                self.consola.registro("Parada de calibrado general cancelada.")
+                self.consola.registro("Parada de caracterizacion general cancelada.")
         else:
-            self.consola.registro("No hay ningún calibrado activo. Seleccione un canal y pulse iniciar para comenzar el calibrado.", nivel="AVISO")
+            self.consola.registro("No hay ningún caracterizacion activo. Seleccione un canal y pulse iniciar para comenzar el caracterizacion.", nivel="AVISO")
 
-    def parar_calibrado_general(self):
-        self.parar_calibrado_velocidad()
-        self.parar_calibrado_flujo()
-        self.parar_calibrado_concentracion()
-        self.parar_calibrado_latencia()
+    def parar_caracterizacion_general(self):
+        self.parar_caracterizacion_velocidad()
+        self.parar_caracterizacion_flujo()
+        self.parar_caracterizacion_concentracion()
+        self.parar_caracterizacion_latencia()
 
     def protocolo_definido(self,protocolo):
         if protocolo != '------':
@@ -2110,8 +2110,8 @@ class App(ctk.CTk):
         else:
             self.consola.registro(f'Prorocolo definido no seleccionado')
     
-    def seleccionar_calibrado(self,nombre_canal):
-        if not self.calibrado_activo():
+    def seleccionar_caracterizacion(self,nombre_canal):
+        if not self.caracterizacion_activo():
             if nombre_canal != 'Ninguno':
 
                 #se reinician los contadores y búfers temporales
@@ -2125,20 +2125,20 @@ class App(ctk.CTk):
                 self.buffer_velocidad =  collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
 
 
-                self.consola.registro(f'Canal calibrado seleccionado: {nombre_canal}')
+                self.consola.registro(f'Canal caracterizacion seleccionado: {nombre_canal}')
                 for canal in self.cuadros_canales:
                     if canal.e_olor_canal.get() == nombre_canal or canal.l_color_canal.cget("text") == nombre_canal:
-                        self.canal_calibrado = canal
+                        self.canal_caracterizacion = canal
             else:
-                self.consola.registro(f'Canal calibrado no seleccionado')
+                self.consola.registro(f'Canal caracterizacion no seleccionado')
 
         else:   
-            self.comb_canales_calibrados.configure(state = "disabled")
+            self.comb_canales_caracterizacions.configure(state = "disabled")
         
                 
-    def calibrado_activo(self):
-        return (self.calibrando_velocidad or self.calibrando_flujo or
-                self.calibrando_concentracion or self.calibrando_latencia)
+    def caracterizacion_activo(self):
+        return (self.caracterizando_velocidad or self.caracterizando_flujo or
+                self.caracterizando_concentracion or self.caracterizando_latencia)
 
     def _cancelar_espera_posicion_valvula(self, funcion_periodo_en_espera):
         # Retira de la cola de espera la llamada periodo pendiente, si seguía pendiente.
@@ -2149,10 +2149,10 @@ class App(ctk.CTk):
 
     def _actualizar_bloqueo_canales_manual(self):
         # Bloquea los botones "Activar"/"Parar" de los canales mientras haya un protocolo
-        # o un calibrado en curso, para evitar activaciones manuales que interfieran con
+        # o un caracterizacion en curso, para evitar activaciones manuales que interfieran con
         # el proceso en marcha. Se recalcula cada vez a partir del estado actual, así que
-        # es seguro llamarlo desde cualquier punto de inicio/parada/reinicio del calibrado.
-        if self.protocolo_activo or self.calibrado_activo():
+        # es seguro llamarlo desde cualquier punto de inicio/parada/reinicio del caracterizacion.
+        if self.protocolo_activo or self.caracterizacion_activo():
             for canal in self.cuadros_canales:
                 canal.b_activar_canal.configure(state="disabled")
                 canal.b_parar_canal.configure(state="disabled")
@@ -2181,13 +2181,13 @@ class App(ctk.CTk):
         #self.buffer_flujo.append(nuevo_valor_flujo)
         #self.buffer_concentración.append(nuevo_valor_concentración)
         #self.buffer_latencia.append(nuevo_valor_latencia)
-        if self.calibrando_velocidad and not self.calibrado_velocidad_parado:
+        if self.caracterizando_velocidad and not self.caracterizacion_velocidad_parado:
             if not self.ax_velocidad.lines:
                 self.ax_velocidad.clear()
                 self.ax_velocidad.plot(self.tiempo_grafica_velocidad, self.buffer_velocidad)
             else: 
                 self.ax_velocidad.lines[0].set_data(self.tiempo_grafica_velocidad, self.buffer_velocidad)
-            self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_velocidad.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
             self.ax_velocidad.set_ylim(config.LIMITESY["velocidad"][0],config.LIMITESY["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
             #self.ax_velocidad.plot(self.tiempo_grafica_velocidad, self.buffer_velocidad)
             self.ax_velocidad.set_xlabel("Tiempo (s)")
@@ -2196,13 +2196,13 @@ class App(ctk.CTk):
             self.ax_velocidad.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
             self.ax_velocidad.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_velocidad.draw()
-        if self.calibrando_flujo and not self.calibrado_flujo_parado:
+        if self.caracterizando_flujo and not self.caracterizacion_flujo_parado:
             if not self.ax_flujo.lines:
                 self.ax_flujo.clear()
                 self.ax_flujo.plot(self.tiempo_grafica_flujo, self.buffer_flujo)
             else: 
                 self.ax_flujo.lines[0].set_data(self.tiempo_grafica_flujo, self.buffer_flujo)
-            self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_flujo.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
             self.ax_flujo.set_ylim(config.LIMITESY["flujo"][0],config.LIMITESY["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_flujo.set_xlabel("Tiempo (s)")
             self.ax_flujo.set_ylabel("Flujo (ml/min)")
@@ -2210,13 +2210,13 @@ class App(ctk.CTk):
             self.ax_flujo.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
             self.ax_flujo.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_flujo.draw()
-        if self.calibrando_concentracion and not self.calibrado_concentracion_parado:
+        if self.caracterizando_concentracion and not self.caracterizacion_concentracion_parado:
             if not self.ax_concentracion.lines:
                 self.ax_concentracion.clear()
                 self.ax_concentracion.plot(self.tiempo_grafica_concentracion, self.buffer_concentracion)
             else: 
                 self.ax_concentracion.lines[0].set_data(self.tiempo_grafica_concentracion, self.buffer_concentracion)
-            self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_concentracion.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
             self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_concentracion.set_xlabel("Tiempo (s)")
             self.ax_concentracion.set_ylabel("Concentración (µg/m\u00B3)")
@@ -2224,13 +2224,13 @@ class App(ctk.CTk):
             self.ax_concentracion.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
             self.ax_concentracion.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_concentracion.draw()
-        if self.calibrando_latencia and not self.calibrado_latencia_parado:
+        if self.caracterizando_latencia and not self.caracterizacion_latencia_parado:
             if not self.ax_latencia.lines:
                 self.ax_latencia.clear()
                 self.ax_latencia.plot(self.tiempo_grafica_latencia, self.buffer_latencia)
             else: 
                 self.ax_latencia.lines[0].set_data(self.tiempo_grafica_latencia, self.buffer_latencia)
-            self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_latencia.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
             self.ax_latencia.set_ylim(config.LIMITESY["latencia"][0],config.LIMITESY["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_latencia.set_xlabel("Tiempo (s)")
             self.ax_latencia.set_ylabel("Latencia (ms)")
@@ -2341,7 +2341,7 @@ class App(ctk.CTk):
             datos_con_hist = dict(datos)
             datos_con_hist["timestamp"] = time.time()
             datos_con_hist["olor"] = olor
-            datos_con_hist["modo"] = "Protocolo" if self.protocolo_activo else "Calibrado" if self.calibrado_activo() else "Manual"
+            datos_con_hist["modo"] = "Protocolo" if self.protocolo_activo else "caracterizacion" if self.caracterizacion_activo() else "Manual"
             self.historial_sesion.append(datos_con_hist)
    
             with open(self.ruta_archivo_temporal, "a", encoding="utf-8") as archivo_temporal:
@@ -2350,28 +2350,28 @@ class App(ctk.CTk):
                 
         
         
-        if self.canal_calibrado is not None and num_canal == self.canal_calibrado.num_canal:
-            if self.calibrando_flujo and not self.calibrado_flujo_parado:
+        if self.canal_caracterizacion is not None and num_canal == self.canal_caracterizacion.num_canal:
+            if self.caracterizando_flujo and not self.caracterizacion_flujo_parado:
                 #self.buffer_flujo.append(datos["flujo"])
                 self.buffer_flujo[self.contador_flujo]=(datos.get("flujo", 0.0))
                 self.contador_flujo += 1
-                self.buffer_historico_calibrado_flujo.append(datos["flujo"])
-            if self.calibrando_concentracion and not self.calibrado_concentracion_parado:
+                self.buffer_historico_caracterizacion_flujo.append(datos["flujo"])
+            if self.caracterizando_concentracion and not self.caracterizacion_concentracion_parado:
                 #self.buffer_concentracion.append(datos["concentracion"])
                 self.buffer_concentracion[self.contador_concentracion]=(datos.get("concentracion", 0.0))
                 self.contador_concentracion += 1
-                self.buffer_historico_calibrado_concentracion.append(datos["concentracion"])
-            if self.calibrando_latencia and not self.calibrado_latencia_parado:
+                self.buffer_historico_caracterizacion_concentracion.append(datos["concentracion"])
+            if self.caracterizando_latencia and not self.caracterizacion_latencia_parado:
                 #self.buffer_latencia.append(datos["latencia"])
                 self.buffer_latencia[self.contador_latencia]=(datos.get("latencia", 0.0))
                 self.contador_latencia += 1
-                self.buffer_historico_calibrado_latencia.append(datos["latencia"])
-            if self.calibrando_velocidad and not self.calibrado_velocidad_parado:
+                self.buffer_historico_caracterizacion_latencia.append(datos["latencia"])
+            if self.caracterizando_velocidad and not self.caracterizacion_velocidad_parado:
                 #self.buffer_velocidad[self.contador]
                     #self.buffer_velocidad.append(datos["velocidad_motor"])
                 self.buffer_velocidad[self.contador_velocidad] = (datos.get("velocidad_motor", 0.0))
                 self.contador_velocidad += 1
-                self.buffer_historico_calibrado_velocidad.append(datos["velocidad_motor"])
+                self.buffer_historico_caracterizacion_velocidad.append(datos["velocidad_motor"])
 
         # Actualizar labels de Estado
         #self.after(100, self._actualizar_labels_estado, datos)
@@ -2383,7 +2383,7 @@ class App(ctk.CTk):
         #if self.canal_activo is not None:
             #if datos.get("canal") == self.canal_activo.num_canal:
                 #self.sv_latencia_canal.set(f"{datos.get('latencia',0)} ms")
-                #if self.calibrado_activo():
+                #if self.caracterizacion_activo():
                     #self.sv_velocidad_motor.set(f"{datos['velocidad_motor']:.1f} m/s")
                     #self.sv_flujo_aire_canal.set(f"{datos.get('flujo',0.0):.1f} ml/min")
                     #self.sv_concentracion_canal.set(f"{datos.get('concentracion',0.0):.1f} µg/m\u00B3")
@@ -2402,7 +2402,7 @@ class App(ctk.CTk):
         estado_en_cola = datos.get("en_cola", "desconocido")
 
         # ACK final de "rotar" (ya no en cola, es decir, la válvula ha llegado a la posición de destino
-        # de ese canal): dispara el inicio del conteo (calibrado o protocolo) que estaba esperando a
+        # de ese canal): dispara el inicio del conteo (caracterizacion o protocolo) que estaba esperando a
         # que la válvula se posicionase en ese canal concreto.
         if accion == "rotar" and estado_accion is True and not estado_en_cola:
             if self.canal_esperando_posicion == canal_accion:
@@ -2450,7 +2450,7 @@ class App(ctk.CTk):
             self.consola.registro("Conexión establecida con el ESP32", nivel="INFO")
         elif estado == "desconectado":
             self.consola.registro(f"Sin conexión con el ESP32. Reintentando en {config.RECONEXION_AUTOMATICA_S} s…", nivel="ERROR")
-            if (self.protocolo_activo and not self.protocolo_parado) or self.calibrado_activo() or self.canal_activo is not None:
+            if (self.protocolo_activo and not self.protocolo_parado) or self.caracterizacion_activo() or self.canal_activo is not None:
                 #Intento de parada de todos los canales como medida de seguridad en caso de que el sistema estuviera activo y se pierda la conexión con el ESP32. 
                 self.ws_client.enviar({"cmd": "parar_todos"})
                 self.consola.registro("COMPRUEBE QUE EL SISTEMA ESTÁ APAGADO. SI NO ES ASÍ, PULSE LA SETA DE EMERGENCIA.", nivel="AVISO")
