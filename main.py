@@ -1,8 +1,6 @@
 """
 =============================================================
- App de escritorio — Control remoto 6 motores 
- Controlador: ESP32 ESP-WROOM-32
- Dependencias: pip install customtkinter 
+ App de escritorio
 =============================================================
 """
 
