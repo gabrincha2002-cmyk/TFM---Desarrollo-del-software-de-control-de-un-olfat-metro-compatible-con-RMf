@@ -91,6 +91,7 @@ class App(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", self._cerrar_aplicacion)
         self.colores_canales = config.COLORES_CANALES  # Colores para cada cartucho
         self.posicion_valvula = 0
+        self.fase_actual = None
         # Diccionario para mapear los canales a sus posiciones en la gráfica
         self.posiciones_canales = config.POSICIONES_CANALES
         self.tiempo_grafica_flujo = list(range(config.TIEMPO_GRAFICAS))
@@ -389,6 +390,8 @@ class App(ctk.CTk):
         self.l_calibrado_velocidad.grid(row=1, column=0, padx=60, pady=0, sticky="ws")
 
         #Gráfica en tiempo real - Velocidad
+        #se establece un tamaño específico de fuente por defecto a cada eje de cada gráfica
+        mpl.rcParams["axes.labelsize"] = 16
         fig_velocidad = Figure(figsize=(10,5),dpi=60)
         self.ax_velocidad = fig_velocidad.add_subplot(111)
         self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
@@ -917,29 +920,19 @@ class App(ctk.CTk):
 
         #self.actualizar_canales()
 
-        self.l_canal_anterior= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Canal anterior: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_canal_anterior.grid(row=7, column=0, padx=110, pady=(20,5), sticky="w")
-        #self.canal_anterior = ctk.StringVar(value="Ninguno")
-        self.l_canal_anterior_valor = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_canal_anterior, font=ctk.CTkFont(size=14))
-        self.l_canal_anterior_valor.grid(row=7, column=0, padx=110, pady=(20,5), sticky="e")
-
-        self.l_canal_activo= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Canal activo: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_canal_activo.grid(row=8, column=0, padx=115, pady=(20,5), sticky="w")
-
-        self.l_canal_activo_valor = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_canal_activo, font=ctk.CTkFont(size=14))
-        self.l_canal_activo_valor.grid(row=8, column=0, padx=115, pady=(20,5), sticky="e")
-
-        self.l_canal_siguiente= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Canal siguiente: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_canal_siguiente.grid(row=9, column=0, padx=105, pady=(20,5), sticky="w")
-
-        self.l_canal_siguiente_valor = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_canal_siguiente, font=ctk.CTkFont(size=14))
-        self.l_canal_siguiente_valor.grid(row=9, column=0, padx=105, pady=(20,5), sticky="e")
-
-        self.l_latencia_canal= ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Latencia: ", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_latencia_canal.grid(row=11, column=0, padx=140, pady=(20,5), sticky="w")
         self.sv_latencia_canal= ctk.StringVar(value="0 ms")
-        self.l_valor_latencia_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), textvariable=self.sv_latencia_canal, font=ctk.CTkFont(size=14))
-        self.l_valor_latencia_canal.grid(row=11, column=0, padx=130, pady=(20,5), sticky="e")
+
+        self.l_canal_anterior, self.l_canal_anterior_valor = self._crear_pareja_estado(
+            self.tv_prot_cal_est.tab("Estado"), fila=7, texto="Canal anterior: ", textvariable=self.sv_canal_anterior)
+
+        self.l_canal_activo, self.l_canal_activo_valor = self._crear_pareja_estado(
+            self.tv_prot_cal_est.tab("Estado"), fila=8, texto="Canal activo: ", textvariable=self.sv_canal_activo)
+
+        self.l_canal_siguiente, self.l_canal_siguiente_valor = self._crear_pareja_estado(
+            self.tv_prot_cal_est.tab("Estado"), fila=9, texto="Canal siguiente: ", textvariable=self.sv_canal_siguiente)
+
+        self.l_latencia_canal, self.l_valor_latencia_canal = self._crear_pareja_estado(
+            self.tv_prot_cal_est.tab("Estado"), fila=11, texto="Latencia: ", textvariable=self.sv_latencia_canal)
 
         #self.l_flujo_aire_canal = ctk.CTkLabel(self.tv_prot_cal_est.tab("Estado"), text="Flujo de aire estimado: ", font=ctk.CTkFont(size=14, weight="bold"))
         #self.l_flujo_aire_canal.grid(row=8, column=0, padx=80, pady=(20,5), sticky="w")
@@ -978,6 +971,16 @@ class App(ctk.CTk):
         self.button.grid(row=1, column=0, pady=20, sticky="nesw")
         """
     
+    def _crear_pareja_estado(self, tabview, fila, texto, stringvar, pady=(20,5)):
+        contenedor = ctk.CTkFrame(tabview, fg_color="transparent")
+        contenedor.grid(row=fila, column=0, pady=pady, sticky="n")
+        etiqueta = ctk.CTkLabel(contenedor, text=texto, font=ctk.CTkFont(size=14, weight="bold"))
+        etiqueta.pack(side="left")
+        valor = ctk.CTkLabel(contenedor, textvariable=stringvar, font=ctk.CTkFont(size=14))
+        valor.pack(side="left", padx=(4, 0))
+
+        return etiqueta, valor
+
 # ─────────────────────────────────────────────────────────────
 #  FUNCIONALIDADES
 # ─────────────────────────────────────────────────────────────
@@ -1542,6 +1545,7 @@ class App(ctk.CTk):
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else "----")
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_latencia:
                     self.canal_calibrado.activar_canal()
@@ -1675,6 +1679,7 @@ class App(ctk.CTk):
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_velocidad and not self.calibrando_concentracion and not self.calibrando_latencia:
                     self.canal_calibrado.activar_canal()
@@ -1807,6 +1812,7 @@ class App(ctk.CTk):
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_velocidad and not self.calibrando_latencia:
                     self.canal_calibrado.activar_canal()
@@ -1941,6 +1947,7 @@ class App(ctk.CTk):
                 if num_canal not in self.metricas_calibracion:
                     self.metricas_calibracion[num_canal] = {}
                 self.metricas_calibracion[num_canal].setdefault("tiempo_inicio", time.time())
+                self.metricas_calibracion[num_canal].setdefault("duracion", self.e_tiempo_calibrado.get())
                 self.metricas_calibracion[num_canal].setdefault("olor", self.canal_calibrado.e_olor_canal.get() if self.canal_calibrado.e_olor_canal.winfo_exists() else self.canal_calibrado.color_canal)
                 if not self.calibrando_flujo and not self.calibrando_concentracion and not self.calibrando_velocidad:
                     self.canal_calibrado.activar_canal()

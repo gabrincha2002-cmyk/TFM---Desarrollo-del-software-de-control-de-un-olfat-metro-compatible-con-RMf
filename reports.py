@@ -144,7 +144,7 @@ def generar_csv(ruta: str , datos: DatosInforme):
         #si la variable metricas_calibracion existe ejecuta el siguiente código
         if datos.metricas_calibracion:
             for num_canal, metrica in datos.metricas_calibracion.items():
-                seccion_calibrado_resultados.append([datos.tiempo_calibrado,
+                seccion_calibrado_resultados.append([metrica.get("duracion", datos.tiempo_calibrado),
                                         datos.colores_canales[num_canal],
                                         metrica.get("olor","----"),
                                         round(media(metrica.get("concentracion", 0)), 2),
@@ -336,7 +336,7 @@ def generar_excel(ruta: str, datos: DatosInforme):
         if datos.metricas_calibracion:
             for num_canal, metrica in datos.metricas_calibracion.items():
                 fila_datos = [
-                    datos.tiempo_calibrado,
+                    metrica.get("duracion", datos.tiempo_calibrado),
                     datos.colores_canales[num_canal],
                     metrica.get("olor","----"),
                     round(media(metrica.get("concentracion", 0)), 2),
@@ -569,14 +569,14 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #RESULTADOS DE CALIBRACIÓN
         historia.append(Paragraph("Resultados de calibracion", estilo_seccion))
         cabeceras_calibracion = [[                                    
-        "Tiempo (s)","Canal", "Olor", "ug/m³ med.", "ug/m³ max.",
+        "Tiempo(s)","Canal", "Olor", "ug/m³ med.", "ug/m³ max.",
         "ug/m³ min.", "ml/min med.", "rpm med.", "ms med."
         ]]
         datos_calibracion = []
         if datos.metricas_calibracion:
             for num_canal, metrica in datos.metricas_calibracion.items():
                 datos_calibracion.append([
-                    datos.tiempo_calibrado,
+                    metrica.get("duracion", datos.tiempo_calibrado),
                     datos.colores_canales[num_canal],
                     metrica.get("olor", "----"),
                     round(media(metrica.get("concentracion", [])),2),
@@ -587,7 +587,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                     round(media(metrica.get("latencia", [])), 1),
                     ])
         tabla_calibracion = Table(cabeceras_calibracion + datos_calibracion,
-                               colWidths=[20*mm,16*mm, 16*mm, 24*mm, 24*mm, 24*mm, 22*mm, 22*mm, 24*mm])
+                               colWidths=[20*mm,16*mm, 30*mm, 22*mm, 22*mm, 22*mm, 22*mm, 20*mm, 18*mm])
         tabla_calibracion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_calibracion)
         historia.append(PageBreak())
@@ -611,7 +611,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 round(muestra["latencia"], 1),
                 ])
         tabla_historial_calibracion = Table(cabeceras_historial_calibrado + datos_historial_calibrado, 
-                                          colWidths=[14*mm, 18*mm, 18*mm, 26*mm, 18*mm, 22*mm, 20*mm, 22*mm, 20*mm])
+                                          colWidths=[14*mm, 18*mm, 18*mm, 30*mm, 18*mm, 18*mm, 18*mm, 20*mm, 18*mm])
         
         tabla_historial_calibracion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_calibracion)
@@ -637,7 +637,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 metrica.get("modo","----")
                 ])
         tabla_historial_sesion = Table(cabeceras_historial_sesion + datos_historial_sesion, 
-                                          colWidths=[16*mm, 16*mm, 16*mm, 16*mm, 16*mm, 26*mm, 24*mm, 20*mm])
+                                          colWidths=[20*mm, 16*mm, 16*mm, 30*mm, 16*mm, 18*mm, 16*mm, 18*mm])
         
         tabla_historial_sesion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_sesion)

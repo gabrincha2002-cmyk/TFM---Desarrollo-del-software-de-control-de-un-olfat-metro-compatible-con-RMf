@@ -65,9 +65,6 @@ class Canal(ctk.CTkFrame):
         if self.after_cronometro:
             self.after_cancel(self.after_cronometro)
             self.after_cronometro = None
-    
-    def actualizar_barra_progreso(self, valor):
-        self.pb_actividad_canal.set(valor)
         
 
     def activar_canal(self,tiempo_inicial=datetime.datetime.strptime("00:00:00", "%H:%M:%S")):
@@ -97,8 +94,6 @@ class Canal(ctk.CTkFrame):
             self.estado_canal=False
             self.pausar_cronometro()
             # se congela la barra de progreso al parar
-            self.pb_actividad_canal.stop()
-            self.l_porcentaje_act_canal.configure(text=self.pb_actividad_canal.get())
         
             self.configure(fg_color="#343638", border_color="#4a4c4e", border_width=1)  # Restaura el fondo del canal para indicar que está inactivo
             self.b_activar_canal.configure(text="Activar", fg_color="#85ad75",text_color="#ffffff",border_color="#006400",border_width=1,
