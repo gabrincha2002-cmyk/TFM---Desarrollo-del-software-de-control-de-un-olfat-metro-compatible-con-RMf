@@ -430,7 +430,7 @@ def generar_excel(ruta: str, datos: DatosInforme):
                 #muestras = metrica.get("muestras", {})
 
                 for parametro, valores in metricas.items():
-                    if parametro == "olor" or parametro == "tiempo_inicio":
+                    if parametro in ("olor", "tiempo_inicio", "duracion"):
                         continue
                     if not valores:
                         continue
