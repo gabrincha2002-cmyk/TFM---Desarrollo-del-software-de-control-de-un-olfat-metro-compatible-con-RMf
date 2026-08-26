@@ -271,11 +271,8 @@ class App(ctk.CTk):
 
         #CABECERA
         self.l_titulo = ctk.CTkLabel(self.f_cabecera,text="OlfaMetric",corner_radius=10,
-                                  text_color="#01bdce", font=ctk.CTkFont(size=60, overstrike=False, weight="bold"))
+                                  text_color="#0f7780", font=ctk.CTkFont(size=60, overstrike=False, weight="bold"))
         self.l_titulo.grid(row=0, column=0, padx=20, pady=10, sticky="w")
-        self.l_subtitulo = ctk.CTkLabel(self.f_cabecera,text="- An olfactory metric for everyone -",corner_radius=10,
-                                  text_color="#80E8E9", font=ctk.CTkFont(size=30, weight="normal",slant="italic"))
-        self.l_subtitulo.grid(row=0, column=0, padx=350, pady=5, sticky="w")
 
         self.l_estado_conexion = ctk.CTkLabel(self.f_cabecera,text="○ Desconectado",fg_color="#1e1e1e",text_color="#fa8989",
                                      font=ctk.CTkFont(size=18,weight="bold"))

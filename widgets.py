@@ -30,24 +30,16 @@ class Canal(ctk.CTkFrame):
         self.l_color_canal.grid(row=0, column=0, padx=(10,5), pady=10, sticky="w")
 
         # Olor del canal
-        self.e_olor_canal = ctk.CTkEntry(self, placeholder_text="Olor del canal", font=ctk.CTkFont(size=20))
-        self.e_olor_canal.grid(row=0, column=0, padx=10, pady=10, sticky="e")
+        self.e_olor_canal = ctk.CTkEntry(self, placeholder_text="Olor del canal", font=ctk.CTkFont(size=20), width=200)
+        self.e_olor_canal.grid(row=0, column=1, padx=10, pady=10, sticky="e")
         CTkToolTip(self.e_olor_canal, message="Introduce el nombre del olor que se va a utilizar en este canal.\nEste nombre se mostrará en los informes de sesión.", delay=0.5, justify="left", wraplength=300)
 
         #Tiempo activo del canal
         self.sv_tiempo_activo=ctk.StringVar(value="Tiempo activo: 00:00:00")  # Variable para almacenar el tiempo activo del canal
         self.l_tiempo_act_canal = ctk.CTkLabel(self, textvariable= self.sv_tiempo_activo, font=ctk.CTkFont(size=14))
-        self.l_tiempo_act_canal.grid(row=2, column=0, padx=10, pady=(10,5), sticky="w")
+        self.l_tiempo_act_canal.grid(row=2, column=0, padx=10, pady=(10,5), sticky="wn")
 
-        # Barra de progreso de la actividad
-        self.pb_actividad_canal = ctk.CTkProgressBar(self, width=400, height=20)
-        self.pb_actividad_canal.grid(row=3, column=0, padx=10, pady=(10,5), sticky="w")
-        self.pb_actividad_canal.set(0.0)
-
-        # Porcentaje de actividad
-        self.l_porcentaje_act_canal = ctk.CTkLabel(self, text="0%", font=ctk.CTkFont(size=14))
-        self.l_porcentaje_act_canal.grid(row=3, column=1, padx=10, pady=(5,10), sticky="w")
-        self.l_porcentaje_act_canal.configure(text="0%")
+ 
         #Botón Activar
 
         self.b_activar_canal = ctk.CTkButton(self, text="Activar", fg_color="#85ad75",text_color="#ffffff", 
@@ -59,7 +51,7 @@ class Canal(ctk.CTkFrame):
         self.b_parar_canal = ctk.CTkButton(self, text="Parar", fg_color="#f56a6a",text_color="#ffffff",
                                              hover_color="#ee4242",corner_radius=10,border_color="#ff0000",border_width=1,
                                              font=ctk.CTkFont(size=16, weight="bold"), command=self.parar_canal)
-        self.b_parar_canal.grid(row=5, column=1, padx=10, pady=(5,10), sticky="w")
+        self.b_parar_canal.grid(row=5, column=1, padx=10, pady=(5,10), sticky="e")
 
     def cronometro(self,tiempo):
         if self.estado_canal:
@@ -207,7 +199,7 @@ class Consola(ctk.CTkTextbox):
         self.grid_rowconfigure(0, weight=1)
         self.grid_rowconfigure(1, weight=1)
 
-        ctk.CTkLabel(self, text="Consola", text_color="#458B8D", font=ctk.CTkFont(size=22, weight="bold")).grid(row=0, column=0, padx=5, pady=(5,5), sticky="nw")
+        ctk.CTkLabel(self, text="Consola", text_color="#0f7780", font=ctk.CTkFont(size=22, weight="bold")).grid(row=0, column=0, padx=5, pady=(5,5), sticky="nw")
 
         self.t_registro=ctk.CTkTextbox(self, width=1000, height=150, font=ctk.CTkFont(size=14),)
         self.t_registro.grid(row=1, column=0, padx=10, pady=(10,5), sticky="nsew")

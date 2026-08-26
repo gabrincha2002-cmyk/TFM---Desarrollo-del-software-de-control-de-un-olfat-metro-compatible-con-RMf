@@ -75,6 +75,8 @@ class WSClient:
         self._cola_rx: queue.Queue = queue.Queue()   # mensajes recibidos pendientes de envío a App
         self._loop:    Optional[asyncio.AbstractEventLoop] = None
         self._hilo:    Optional[threading.Thread]          = None
+        self._tarea_principal: Optional[asyncio.Task]      = None #para guardar la tarea asíncrona que correrá en el bucle de 
+                                                                    #eventos de conexión y poder cancelarlo cunado se quiera
         self._activo   = False
         self.conectado = False
 
@@ -88,12 +90,32 @@ class WSClient:
         logger.info(f"WSClient iniciado → {self.uri}")
 
     def detener(self):
-        """Para la conexión y el hilo de fondo."""
+        """Para la conexión y el hilo de fondo.
+
+        Cancela activamente la tarea en curso (esté conectada, intentando conectar
+        o esperando entre reintentos) y espera a que el hilo de fondo termine antes
+        de devolver el control. Sin esto, un iniciar() llamado justo después (p.ej.
+        al reconectar con una URI encontrada por mDNS) podía arrancar un segundo
+        hilo/event-loop mientras el anterior seguía vivo —atascado en un intento de
+        conexión a una URI inalcanzable, que puede tardar bastante en fallar por sí
+        solo—, dejando dos bucles de reconexión compitiendo por los mismos atributos
+        (_ws, _loop, conectado) con URIs distintas.
+        """
         self._activo = False
         self.conectado = False
-        if self._loop and self._loop.is_running() and self._ws:
-            #self._loop.call_soon_threadsafe(self._loop.stop)
-            asyncio.run_coroutine_threadsafe(self._ws.close(), self._loop)
+        if self._loop and self._loop.is_running():
+            if self._ws:
+                asyncio.run_coroutine_threadsafe(self._ws.close(), self._loop)
+            if self._tarea_principal and not self._tarea_principal.done():
+                # cancel() debe programarse desde dentro del propio loop (call_soon_threadsafe),
+                # ya que los objetos de asyncio no son seguros de tocar desde otro hilo. Esto
+                # interrumpe de inmediato cualquier await en curso, incluido uno bloqueado
+                # dentro de websockets.connect(), sin esperar a que falle por su cuenta.
+                self._loop.call_soon_threadsafe(self._tarea_principal.cancel)
+        if self._hilo and self._hilo.is_alive():
+            self._hilo.join(timeout=3.0)
+            if self._hilo.is_alive():
+                logger.warning("El hilo de WSClient no terminó a tiempo al detener; puede quedar una reconexión en curso con la URI anterior.")
         logger.info("WSClient detenido.")
 
     def enviar(self, datos: dict):
@@ -108,8 +130,17 @@ class WSClient:
     def _ejecutar_loop(self):
         self._loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self._ciclo_conexion())
-        self._loop.close()
+        self._tarea_principal = self._loop.create_task(self._ciclo_conexion())
+        try:
+            self._loop.run_until_complete(self._tarea_principal)
+        except asyncio.CancelledError:
+            pass
+        #se procede a la limpieza en caso de que el hilo esté a punto de morir
+        finally:
+            #se realiza la limpieza de la tarea principal realizada
+            self._tarea_principal = None
+            #se cierra el bucle ejecutado para la conexión del cliente websocket con el servidor liberando recursos
+            self._loop.close()
 
     async def _ciclo_conexion(self):
         """Intenta conectar y reconectar indefinidamente."""
@@ -117,7 +148,7 @@ class WSClient:
         while self._activo:
             self._on_estado("conectando")
             try:
-                async with websockets.connect(self.uri, ping_interval=15 , ping_timeout=15) as ws:
+                async with websockets.connect(self.uri, ping_interval=15, ping_timeout=15, open_timeout=5) as ws:
                     self._ws = ws
                     self.conectado = True
                     self._on_estado("conectado")

@@ -137,9 +137,9 @@ def generar_csv(ruta: str , datos: DatosInforme):
                             ]
 
         #RESULTADOS CALIBRACIÓN
-        seccion_calibrado_resultados = [["RESULTADOS CALIBRACIÓN"],["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración máxima (µg/m\u00B3)", 
-                                   "Concentración mínima (µg/m\u00B3)", 
-                                   "Flujo (ml/min)","Velocidad (rpm)","Latencia (ms)"]]
+        seccion_calibrado_resultados = [["RESULTADOS CALIBRACIÓN"],["Tiempo calibración (s)","Canal", "Olor", "Concentración media(µg/m\u00B3)","Concentración max. (µg/m\u00B3)", 
+                                   "Concentración min (µg/m\u00B3)", 
+                                   "Flujo media(ml/min)","Velocidad media(rpm)","Latencia media(ms)"]]
 
         #si la variable metricas_calibracion existe ejecuta el siguiente código
         if datos.metricas_calibracion:
@@ -472,7 +472,7 @@ def generar_excel(ruta: str, datos: DatosInforme):
                     imagen.anchor = f'A{fila}'
                     hoja_graficas.add_image(imagen)
                     fila += 22
-
+                fila +=22
         #guardamos el workbook con el conjunto de las hojas y datos generados en la ruta seleccionada
         # por el usuario (siempre, haya o no datos de calibración)
         workbook.save(ruta)
@@ -569,8 +569,8 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #RESULTADOS DE CALIBRACIÓN
         historia.append(Paragraph("Resultados de calibracion", estilo_seccion))
         cabeceras_calibracion = [[                                    
-        "Tiempo (s)","Canal", "Olor", "Conc. med(ug/m³)", "Conc.max(ug/m³)",
-        "Conc.min(ug/m³)", "Flujo med(ml/min)", "Vel. med (rpm)", "Latencia med(ms)"
+        "Tiempo (s)","Canal", "Olor", "ug/m³ med.", "ug/m³ max.",
+        "ug/m³ min.", "ml/min med.", "rpm med.", "ms med."
         ]]
         datos_calibracion = []
         if datos.metricas_calibracion:
@@ -595,7 +595,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #HISTORIAL DE CALIBRACIÓN
         historia.append(Paragraph("Historial Calibración", estilo_seccion))
         cabeceras_historial_calibrado = [[
-            "Hora", "Onset(s)","Canal", "Olor","Estado","Concentración (µg/m\u00B3)", "Flujo (ml/min)","Velocidad(rpm)", "Latencia(ms)"
+            "Hora", "Onset(s)","Canal", "Olor","Estado","µg/m\u00B3", "ml/min","rpm", "ms"
         ]]
         datos_historial_calibrado = []
         for muestra in _conversor_list_muestras_calibracion(datos):
@@ -611,7 +611,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
                 round(muestra["latencia"], 1),
                 ])
         tabla_historial_calibracion = Table(cabeceras_historial_calibrado + datos_historial_calibrado, 
-                                          colWidths=[14*mm, 16*mm, 20*mm, 16*mm, 20*mm, 24*mm, 24*mm, 24*mm, 24*mm])
+                                          colWidths=[14*mm, 18*mm, 18*mm, 26*mm, 18*mm, 22*mm, 20*mm, 22*mm, 20*mm])
         
         tabla_historial_calibracion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_historial_calibracion)
@@ -621,7 +621,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #HISTORIAL DE SESIÓN
         historia.append(Paragraph("Historial de Sesión", estilo_seccion))
         cabeceras_historial_sesion = [[
-            "Onset(s)","Hora", "Canal", "Olor","Estado","Velocidad(rpm)", "Latencia(ms)", "Modo"
+            "Onset(s)","Hora", "Canal", "Olor","Estado","rpm", "ms", "Modo"
         ]]
         datos_historial_sesion = []
         for metrica in datos.historial_sesion:
