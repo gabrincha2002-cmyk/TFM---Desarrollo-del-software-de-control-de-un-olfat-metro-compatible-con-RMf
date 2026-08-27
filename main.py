@@ -1090,6 +1090,11 @@ class App(ctk.CTk):
 
     def iniciar_busqueda_mdns(self):
         self.consola.registro("Buscando dispositivos en la red...")
+        #se deshabilita el botón para evitar solapar búsquedas/conexiones: si el usuario
+        #pulsara de nuevo mientras hay una conexión en curso, conectar_dispositivo_encontrado
+        #cancelaría esa conexión a medio hacer (ws_client.detener()) antes de que pudiera
+        #completarse, reiniciando el ciclo indefinidamente sin llegar nunca a "conectado"
+        self.b_buscar_dispositivos.configure(state="disabled")
 
         def _hilo_busqueda_mdns():
             uri = discovery.buscar_mdns()
@@ -1103,6 +1108,7 @@ class App(ctk.CTk):
     def _informar_no_encontrado(self):
         self.consola.registro(f'No se encontró ningún dispositivo', nivel = "AVISO")
         self.l_estado_conexion.configure(text="✕ Error",text_color="#fa8989")
+        self.b_buscar_dispositivos.configure(state="normal")
 
     def conectar_dispositivo_encontrado(self,uri):
             #imprime/registra en la consola que se ha encontrado un dispositivo
@@ -2459,6 +2465,12 @@ class App(ctk.CTk):
                 self.consola.registro("COMPRUEBE QUE EL SISTEMA ESTÁ APAGADO. SI NO ES ASÍ, PULSE LA SETA DE EMERGENCIA.", nivel="AVISO")
         texto, color = textos.get(estado, ("○ Desconectado", "#fa8989"))
         self.after(0, lambda: self.l_estado_conexion.configure(text=texto, text_color=color))
+        #se reactiva el botón de búsqueda solo en estados terminales del intento de conexión,
+        #nunca durante "conectando", para no permitir que una nueva búsqueda cancele el intento en curso.
+        #Se respeta el bloqueo de bloquear_botones() si hay un protocolo/caracterización en marcha.
+        bloqueo_por_proceso = (self.protocolo_activo and not self.protocolo_parado) or self.caracterizacion_activo() or self.canal_activo is not None
+        if estado in ("conectado", "desconectado", "error") and not bloqueo_por_proceso:
+            self.after(0, lambda: self.b_buscar_dispositivos.configure(state="normal"))
 
 if __name__ == "__main__":  
     app = App()
