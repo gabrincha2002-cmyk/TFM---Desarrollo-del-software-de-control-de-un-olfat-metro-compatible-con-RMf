@@ -205,7 +205,7 @@ class App(ctk.CTk):
         self.ws_client.iniciar()
         #se llama a la función para procesar los mensajes recibidos de ws_client
         self._procesar_cola_ws()
-        self._procesar_estado_ws
+        self._procesar_estado_ws()
         self.crear_ui()
         self.tiempo_sesion()
 
@@ -2473,7 +2473,7 @@ class App(ctk.CTk):
                         self.ws_client.enviar({"cmd": "parar_todos"})
                         self.consola.registro("COMPRUEBE QUE EL SISTEMA ESTÁ APAGADO. SI NO ES ASÍ, PULSE LA SETA DE EMERGENCIA.", nivel="AVISO")
                 texto, color = textos.get(estado, ("○ Desconectado", "#fa8989"))
-                self.after(0, lambda: self.l_estado_conexion.configure(text=texto, text_color=color))
+                self.after(0, lambda texto=texto, color=color: self.l_estado_conexion.configure(text=texto, text_color=color))
                 #se reactiva el botón de búsqueda solo en estados terminales del intento de conexión,
                 #nunca durante "conectando", para no permitir que una nueva búsqueda cancele el intento en curso.
                 #Se respeta el bloqueo de bloquear_botones() si hay un protocolo/caracterización en marcha.
