@@ -2461,7 +2461,7 @@ class App(ctk.CTk):
             "error":         ("✕ Error",       config.COLOR_ESTADO_ERROR),
         }
         try:
-            while not self._cola-estado.empty():
+            while not self._cola_estado.empty():
                 estado=self._cola_estado.get_nowait()
 
                 if estado == "conectado":
