@@ -41,6 +41,7 @@ import numpy as np
 
 #conexión con simulación del ESP32
 from ws_client import WSClient
+import queue
 
 #para generar un hilo paralelo a la app
 import threading
@@ -102,6 +103,7 @@ class App(ctk.CTk):
         self.historial_sesion= []
         self.ultimos_datos_telemetria = {}
         self.metricas_caracterizacion = {}
+        self._cola_estado= queue.Queue()
         # Los widgets de UI (p. ej. `e_tiempo_caracterizacion`) se crean en `crear_ui()` más abajo,
         # por eso no debemos usar `self.e_tiempo_caracterizacion.get()` aquí (aún no existe).
         # Usar el tamaño por defecto de las gráficas (`self.tiempo_grafica_flujo`) para inicializar buffers.
@@ -116,7 +118,7 @@ class App(ctk.CTk):
         with open(self.ruta_archivo_temporal, "w", encoding = "utf-8"):
             pass
 
-    
+        
         #buffers históricos
         self.buffer_historico_flujo = []
         self.buffer_historico_concentracion = []
@@ -203,6 +205,7 @@ class App(ctk.CTk):
         self.ws_client.iniciar()
         #se llama a la función para procesar los mensajes recibidos de ws_client
         self._procesar_cola_ws()
+        self._procesar_estado_ws
         self.crear_ui()
         self.tiempo_sesion()
 
@@ -2445,8 +2448,11 @@ class App(ctk.CTk):
         self.consola.registro(f"[ESP32] {mensaje}", nivel=nivel_mensaje)
     
                 
-
     def _on_estado_ws(self, estado: str):
+        self._cola_estado.put_nowait(estado)
+
+
+    def _procesar_estado_ws(self):
         # Actualizar el indicador de conexión en la cabecera
         textos = {
             "conectando":    ("◌ Conectando…",  config.COLOR_ESTADO_CONECTANDO),
@@ -2454,23 +2460,28 @@ class App(ctk.CTk):
             "desconectado":  ("○ Desconectado", config.COLOR_ESTADO_DESCONECTADO),
             "error":         ("✕ Error",       config.COLOR_ESTADO_ERROR),
         }
+        try:
+            while not self._cola-estado.empty():
+                estado=self._cola_estado.get_nowait()
 
-        if estado == "conectado":
-            self.consola.registro("Conexión establecida con el ESP32", nivel="INFO")
-        elif estado == "desconectado":
-            self.consola.registro(f"Sin conexión con el ESP32. Reintentando en {config.RECONEXION_AUTOMATICA_S} s…", nivel="ERROR")
-            if (self.protocolo_activo and not self.protocolo_parado) or self.caracterizacion_activo() or self.canal_activo is not None:
-                #Intento de parada de todos los canales como medida de seguridad en caso de que el sistema estuviera activo y se pierda la conexión con el ESP32. 
-                self.ws_client.enviar({"cmd": "parar_todos"})
-                self.consola.registro("COMPRUEBE QUE EL SISTEMA ESTÁ APAGADO. SI NO ES ASÍ, PULSE LA SETA DE EMERGENCIA.", nivel="AVISO")
-        texto, color = textos.get(estado, ("○ Desconectado", "#fa8989"))
-        self.after(0, lambda: self.l_estado_conexion.configure(text=texto, text_color=color))
-        #se reactiva el botón de búsqueda solo en estados terminales del intento de conexión,
-        #nunca durante "conectando", para no permitir que una nueva búsqueda cancele el intento en curso.
-        #Se respeta el bloqueo de bloquear_botones() si hay un protocolo/caracterización en marcha.
-        bloqueo_por_proceso = (self.protocolo_activo and not self.protocolo_parado) or self.caracterizacion_activo() or self.canal_activo is not None
-        if estado in ("conectado", "desconectado", "error") and not bloqueo_por_proceso:
-            self.after(0, lambda: self.b_buscar_dispositivos.configure(state="normal"))
+                if estado == "conectado":
+                    self.consola.registro("Conexión establecida con el ESP32", nivel="INFO")
+                elif estado == "desconectado":
+                    self.consola.registro(f"Sin conexión con el ESP32. Reintentando en {config.RECONEXION_AUTOMATICA_S} s…", nivel="ERROR")
+                    if (self.protocolo_activo and not self.protocolo_parado) or self.caracterizacion_activo() or self.canal_activo is not None:
+                        #Intento de parada de todos los canales como medida de seguridad en caso de que el sistema estuviera activo y se pierda la conexión con el ESP32. 
+                        self.ws_client.enviar({"cmd": "parar_todos"})
+                        self.consola.registro("COMPRUEBE QUE EL SISTEMA ESTÁ APAGADO. SI NO ES ASÍ, PULSE LA SETA DE EMERGENCIA.", nivel="AVISO")
+                texto, color = textos.get(estado, ("○ Desconectado", "#fa8989"))
+                self.after(0, lambda: self.l_estado_conexion.configure(text=texto, text_color=color))
+                #se reactiva el botón de búsqueda solo en estados terminales del intento de conexión,
+                #nunca durante "conectando", para no permitir que una nueva búsqueda cancele el intento en curso.
+                #Se respeta el bloqueo de bloquear_botones() si hay un protocolo/caracterización en marcha.
+                bloqueo_por_proceso = (self.protocolo_activo and not self.protocolo_parado) or self.caracterizacion_activo() or self.canal_activo is not None
+                if estado in ("conectado", "desconectado", "error") and not bloqueo_por_proceso:
+                    self.after(0, lambda: self.b_buscar_dispositivos.configure(state="normal"))
+        finally:
+            self.after(config.INTERVALO_SONDEO_COLA_WS_MS, self._procesar_estado_ws)
 
 if __name__ == "__main__":  
     app = App()
