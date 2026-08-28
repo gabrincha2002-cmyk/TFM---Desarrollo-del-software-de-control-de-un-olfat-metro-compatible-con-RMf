@@ -500,7 +500,7 @@ class App(ctk.CTk):
         self.ax_concentracion.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
         self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_concentracion.set_xlabel("Tiempo (s)")
-        self.ax_concentracion.set_ylabel("Concentracion (µg/m\u00B3)")
+        self.ax_concentracion.set_ylabel("Índice VOC")
         self.ax_concentracion.plot(self.tiempo_grafica_concentracion,self.buffer_concentracion)
         fig_concentracion.set_facecolor('#242424')  # Fondo de la figura transparente
         self.ax_concentracion.set_facecolor("#242424")  # Fondo del gráfico transparente
@@ -2223,7 +2223,7 @@ class App(ctk.CTk):
             self.ax_concentracion.set_xlim(0,int(self.e_tiempo_caracterizacion.get()))
             self.ax_concentracion.set_ylim(config.LIMITESY["concentracion"][0],config.LIMITESY["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_concentracion.set_xlabel("Tiempo (s)")
-            self.ax_concentracion.set_ylabel("Concentración (µg/m\u00B3)")
+            self.ax_concentracion.set_ylabel("Índice VOC")
             self.ax_concentracion.tick_params(colors = "#ffffff") 
             self.ax_concentracion.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
             self.ax_concentracion.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y

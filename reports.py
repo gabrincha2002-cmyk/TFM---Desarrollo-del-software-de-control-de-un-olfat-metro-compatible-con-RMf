@@ -137,8 +137,8 @@ def generar_csv(ruta: str , datos: DatosInforme):
                             ]
 
         #RESULTADOS CARACTERIZACIÓN
-        seccion_caracterizacion_resultados = [["RESULTADOS CARACTERIZACIÓN"],["Tiempo caracterización (s)","Canal", "Olor", "Concentración media(µg/m\u00B3)","Concentración max. (µg/m\u00B3)", 
-                                   "Concentración min (µg/m\u00B3)", 
+        seccion_caracterizacion_resultados = [["RESULTADOS CARACTERIZACIÓN"],["Tiempo caracterización (s)","Canal", "Olor", "Concentración media(VOC)","Concentración max.(VOC)", 
+                                   "Concentración min.(VOC)", 
                                    "Flujo media(ml/min)","Velocidad media(rpm)","Latencia media(ms)"]]
 
         #si la variable metricas_caracterizacion existe ejecuta el siguiente código
@@ -158,7 +158,7 @@ def generar_csv(ruta: str , datos: DatosInforme):
         seccion_caracterizacion_resultados.append([])
 
         #HISTORIAL DE CARACTERIZACIÓN
-        seccion_caracterizacion_historial = [["HISTORIAL DE CARACTERIZACIÓN"],["Hora","Onset (s)","Canal", "Olor","Concentración (µg/m\u00B3)", 
+        seccion_caracterizacion_historial = [["HISTORIAL DE CARACTERIZACIÓN"],["Hora","Onset (s)","Canal", "Olor","Concentración(VOC)", 
                                    "Flujo (ml/min)","Velocidad (rpm)","Latencia (ms)"]]
         for muestra in _conversor_list_muestras_caracterizacion(datos):
                 seccion_caracterizacion_historial.append([
@@ -272,7 +272,7 @@ def generar_excel(ruta: str, datos: DatosInforme):
         def ajustar_ancho_columnas(hoja):
             for columna in hoja.columns:
                 max_ancho = max(len(str(celda.value or "")) for celda in columna)
-                hoja.column_dimensions[columna[0].column_letter].widht= max_ancho + 4
+                hoja.column_dimensions[columna[0].column_letter].width= max_ancho + 4
 
         ##HOJA 1: RESUMEN DE SESIÓN-----------------------------------------
         hoja_resumen = workbook.active
@@ -319,8 +319,8 @@ def generar_excel(ruta: str, datos: DatosInforme):
         fila +=1
 
         #se definen las cabeceras comunes a todos los datos
-        cabeceras_caracterizacion = ["Tiempo caracterización (s)","Canal", "Olor", "Concentración media (µg/m\u00B3)","Concentración max. (µg/m\u00B3)", 
-                                "Concentración min. (µg/m\u00B3)", "Flujo medio (ml/min)",
+        cabeceras_caracterizacion = ["Tiempo caracterización (s)","Canal", "Olor", "Concentración media(VOC)","Concentración max.(VOC)", 
+                                "Concentración min.(VOC)", "Flujo medio (ml/min)",
                                 "Velocidad media(rpm)","Latencia media(ms)"]
         
         #se le aplica el estilo creado previamente correspondiente a las cabeceras
@@ -359,7 +359,7 @@ def generar_excel(ruta: str, datos: DatosInforme):
         ##HOJA 2: HISTORIAL DE CARACTERIZACIÓN--------------------------------
         hoja_historial_caracterizacion = workbook.create_sheet("Historial Caracterización")
 
-        cabeceras_historial_caracterizacion = ["Hora", "Onset(s)","Canal", "Olor", "Estado","Concentración (µg/m\u00B3)", "Flujo (ml/min)",
+        cabeceras_historial_caracterizacion = ["Hora", "Onset(s)","Canal", "Olor", "Estado","Concentración(VOC)", "Flujo (ml/min)",
                                      "Velocidad (rpm)", "Latencia (ms)"]
         
         for columna, cabecera in enumerate(cabeceras_historial_caracterizacion,start=1):
@@ -569,8 +569,8 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #RESULTADOS DE CARACTERIZACIÓN
         historia.append(Paragraph("Resultados de caracterizacion", estilo_seccion))
         cabeceras_caracterizacion = [[                                    
-        "Tiempo(s)","Canal", "Olor", "ug/m³ med.", "ug/m³ max.",
-        "ug/m³ min.", "ml/min med.", "rpm med.", "ms med."
+        "Tiempo(s)","Canal", "Olor", "VOC medio", "VOC max.",
+        "VOC min.", "ml/min med.", "rpm med.", "ms med."
         ]]
         datos_caracterizacion = []
         if datos.metricas_caracterizacion:
@@ -595,7 +595,7 @@ def generar_pdf(ruta: str, datos: DatosInforme):
         #HISTORIAL DE CARACTERIZACIÓN
         historia.append(Paragraph("Historial Caracterización", estilo_seccion))
         cabeceras_historial_caracterizacion = [[
-            "Hora", "Onset(s)","Canal", "Olor","Estado","µg/m\u00B3", "ml/min","rpm", "ms"
+            "Hora", "Onset(s)","Canal", "Olor","Estado","Concentración(VOC)", "ml/min","rpm", "ms"
         ]]
         datos_historial_caracterizacion = []
         for muestra in _conversor_list_muestras_caracterizacion(datos):
