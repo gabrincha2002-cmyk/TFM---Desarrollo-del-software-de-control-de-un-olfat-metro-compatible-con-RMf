@@ -6,22 +6,19 @@
 ```
 📁 OlfaMetric_v2
 ├── 📁 backups
-│   ├── 📄 iniciar_protocolo_original
 │   ├── 🐍 olfametric_app_borrador.py
 │   ├── 🐍 olfametric_app_original.py
-│   ├── 🐍 script de prueba.py
-│   ├── 🐍 version funcional.py
-│   └── 🐍 ws_client_original.py
-├── 📁 tests automáticos
-├── 📁 tests manuales
-│   └── 🐍 test_ping_pong.py
+│   ├── 🐍 ws_client_original.py
+├── └── 🐍 olfato_sim.py
+├── 📁 archivos_generados
+│   ├── historial_consola.log
+│   ├── historial_sesion.jsonl
 ├── ⚙️ .gitattributes
 ├── ⚙️ .gitignore
 ├── 📝 README.md
 ├── 🐍 config.py
 ├── 🐍 discovery.py
 ├── 🐍 main.py
-├── 🐍 olfato_sim.py
 ├── 🐍 reports.py
 ├── 📄 sim.bat
 ├── 🐍 widgets.py

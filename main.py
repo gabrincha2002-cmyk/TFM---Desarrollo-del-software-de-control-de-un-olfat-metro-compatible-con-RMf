@@ -113,7 +113,7 @@ class App(ctk.CTk):
         self.buffer_velocidad = collections.deque([np.nan]*config.TAMANO_BUFFER_GRAFICAS,maxlen=config.TAMANO_BUFFER_GRAFICAS)
 
         os.makedirs(config.DIRECTORIO_ARCHIVOS_TEMPORALES, exist_ok=True)
-        self.ruta_archivo_temporal = os.path.join(config.DIRECTORIO_ARCHIVOS_TEMPORALES, "historial_sesion_.jsonl")
+        self.ruta_archivo_temporal = os.path.join(config.DIRECTORIO_ARCHIVOS_TEMPORALES, "historial_sesion.jsonl")
 
         with open(self.ruta_archivo_temporal, "w", encoding = "utf-8"):
             pass
