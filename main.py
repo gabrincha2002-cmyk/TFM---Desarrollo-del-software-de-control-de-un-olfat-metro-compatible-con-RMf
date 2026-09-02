@@ -233,9 +233,9 @@ class App(ctk.CTk):
         """Lee mensajes de la cola WS y los procesa en el hilo de Tkinter."""
         try:
             # Recorre y procesa todos los mensajes pendientes en la cola de recepción
-            while not self.ws_client._cola_rx.empty():
+            while not self.ws_client._cola_recibidos.empty():
                 # Obtiene el siguiente mensaje sin esperar (get_nowait evita bloqueos)
-                datos = self.ws_client._cola_rx.get_nowait()
+                datos = self.ws_client._cola_recibidos.get_nowait()
 
                 # Si es un mensaje de confirmación (ACK) o configuración, envía a su handler
                 if "ack" in datos or datos.get("tipo") == "config":
@@ -2180,7 +2180,7 @@ class App(ctk.CTk):
         # Se llama una vez el ESP32 confirma que la válvula ha llegado a la posición de
         # este canal: recién entonces se enciende el motor y arranca el cronómetro de
         # "tiempo activo" del canal (ver actualizar_canales() y widgets.Canal).
-        self.ws_client.enviar({"cmd": "activar", "canal": canal.num_canal, "velocidad_%": 14})
+        self.ws_client.enviar({"cmd": "activar", "canal": canal.num_canal, "velocidad_%": config.PORCENTAJE_VELOCIDAD})
         canal.confirmar_activacion()
 
     def actualizar_graficas(self):
@@ -2458,7 +2458,6 @@ class App(ctk.CTk):
             "conectando":    ("◌ Conectando…",  config.COLOR_ESTADO_CONECTANDO),
             "conectado":     ("● Conectado",    config.COLOR_ESTADO_OK),
             "desconectado":  ("○ Desconectado", config.COLOR_ESTADO_DESCONECTADO),
-            "error":         ("✕ Error",       config.COLOR_ESTADO_ERROR),
         }
         try:
             while not self._cola_estado.empty():

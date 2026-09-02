@@ -71,8 +71,8 @@ class WSClient:
         self._on_estado   = on_estado
         self._reconectar  = reconectar_s
 
-        self._cola_tx: queue.Queue = queue.Queue()   # mensajes pendientes de envío a ESP32
-        self._cola_rx: queue.Queue = queue.Queue()   # mensajes recibidos pendientes de envío a App
+        self._cola_envio: queue.Queue = queue.Queue()   # mensajes pendientes de envío a ESP32
+        self._cola_recibidos: queue.Queue = queue.Queue()   # mensajes recibidos pendientes de envío a App
         self._loop:    Optional[asyncio.AbstractEventLoop] = None
         self._hilo:    Optional[threading.Thread]          = None
         self._tarea_principal: Optional[asyncio.Task]      = None #para guardar la tarea asíncrona que correrá en el bucle de 
@@ -113,7 +113,7 @@ class WSClient:
                 # dentro de websockets.connect(), sin esperar a que falle por su cuenta.
                 self._loop.call_soon_threadsafe(self._tarea_principal.cancel)
         if self._hilo and self._hilo.is_alive():
-            self._hilo.join(timeout=3.0)
+            self._hilo.join(timeout=config.TIMEOUT_CIERRE_HILO_S)
             if self._hilo.is_alive():
                 logger.warning("El hilo de WSClient no terminó a tiempo al detener; puede quedar una reconexión en curso con la URI anterior.")
         logger.info("WSClient detenido.")
@@ -123,7 +123,7 @@ class WSClient:
         Encola un mensaje para enviarlo al ESP32 / simulador.
         Seguro para llamar desde el hilo principal de Tkinter.
         """
-        self._cola_tx.put_nowait(json.dumps(datos))
+        self._cola_envio.put_nowait(json.dumps(datos))
 
     # ── Internos ──────────────────────────────────────────────
 
@@ -148,7 +148,7 @@ class WSClient:
         while self._activo:
             self._on_estado("conectando")
             try:
-                async with websockets.connect(self.uri, ping_interval=15, ping_timeout=15, open_timeout=5) as ws:
+                async with websockets.connect(self.uri, ping_interval=config.PING_INTERVAL_S, ping_timeout=config.PING_TIMEOUT_S, open_timeout=config.OPEN_TIMEOUT_S) as ws:
                     self._ws = ws
                     self.conectado = True
                     self._on_estado("conectado")
@@ -188,7 +188,7 @@ class WSClient:
                 datos = json.loads(mensaje)
                 datos["latencia"] = await self.calcular_latencia(ws)
                 # Mete en cola los datos recibidos para que el hilo principal los procese
-                self._cola_rx.put_nowait(datos)
+                self._cola_recibidos.put_nowait(datos)
             except json.JSONDecodeError as e:
                 logger.warning(f"Mensaje no parseable: {e}")
 
@@ -196,10 +196,10 @@ class WSClient:
         """Drena la cola de salida y envía mensajes al servidor."""
         while True:
             # Espera no bloqueante de mensajes en la cola
-            await asyncio.sleep(0.05)
-            while not self._cola_tx.empty():
+            await asyncio.sleep(config.INTERVALO_SONDEO_COLA_ENVIO_S)
+            while not self._cola_envio.empty():
                 try:
-                    msg = self._cola_tx.get_nowait()
+                    msg = self._cola_envio.get_nowait()
                     await ws.send(msg)
                 except websockets.ConnectionClosed:
                     return

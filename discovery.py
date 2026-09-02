@@ -4,9 +4,7 @@
 
 import time
 import zeroconf as zc
-
-SERVICIO_MDNS = "_olfatometro._tcp.local."
-TIMEOUT_SEGUNDOS = 5
+import config
 
 def buscar_mdns():
     #se trata de un diccinario que podrá ser modificado por la clase oyente, y guarda la
@@ -36,7 +34,7 @@ def buscar_mdns():
     #.local.       → dominio mDNS (siempre este, con el punto final)
     #El único propósito de la variable buscador es mantener vivo el objeto 
     # en memoria durante el bucle de espera.
-    _buscador = zc.ServiceBrowser(zconf, SERVICIO_MDNS, Oyente())
+    _buscador = zc.ServiceBrowser(zconf, config.SERVICIO_MDNS, Oyente())
         
 
     """
@@ -46,7 +44,7 @@ def buscar_mdns():
     siempre hay que cerrarlo.
     """
     tiempo_inicio = time.time()
-    while direccion_controlador["ip"] is None and time.time() - tiempo_inicio < TIMEOUT_SEGUNDOS:
+    while direccion_controlador["ip"] is None and time.time() - tiempo_inicio < config.TIMEOUT_SEGUNDOS:
         time.sleep(0.1)
 
     _buscador.cancel()  # Detiene el ServiceBrowser
