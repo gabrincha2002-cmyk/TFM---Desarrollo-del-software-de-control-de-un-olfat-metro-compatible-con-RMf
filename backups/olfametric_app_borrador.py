@@ -35,9 +35,10 @@ import matplotlib as mpl #para poder exportar las gráficas como imágenes
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import collections
+import numpy as np
 
 #conexión con simulación del ESP32
-from ws_client import WSClient
+from backups.ws_client_original import WSClient
 
 #para generar un hilo paralelo a la app
 import threading
@@ -97,11 +98,12 @@ class Canal(ctk.CTkFrame):
         # Barra de progreso de la actividad
         self.pb_actividad_canal = ctk.CTkProgressBar(self, width=400, height=20)
         self.pb_actividad_canal.grid(row=3, column=0, padx=10, pady=(10,5), sticky="w")
+        self.pb_actividad_canal.set(0.0)
 
         # Porcentaje de actividad
         self.l_porcentaje_act_canal = ctk.CTkLabel(self, text="0%", font=ctk.CTkFont(size=14))
         self.l_porcentaje_act_canal.grid(row=3, column=1, padx=10, pady=(5,10), sticky="w")
-
+        self.l_porcentaje_act_canal.configure(text="0%")
         #Botón Activar
 
         self.b_activar_canal = ctk.CTkButton(self, text="Activar", fg_color="#85ad75",text_color="#ffffff", 
@@ -126,6 +128,10 @@ class Canal(ctk.CTkFrame):
         if self.after_cronometro:
             self.after_cancel(self.after_cronometro)
             self.after_cronometro = None
+    
+    def actualizar_barra_progreso(self, valor):
+        self.pb_actividad_canal.set(valor)
+        
 
     def activar_canal(self,tiempo_inicial=datetime.datetime.strptime("00:00:00", "%H:%M:%S")):
         if not self.estado_canal:
@@ -145,6 +151,10 @@ class Canal(ctk.CTkFrame):
         if self.estado_canal:
             self.estado_canal=False
             self.pausar_cronometro()
+            # se congela la barra de progreso al parar
+            self.pb_actividad_canal.stop()
+            self.l_porcentaje_act_canal.configure(text=self.pb_actividad_canal.get())
+        
             self.configure(fg_color="#343638", border_color="#4a4c4e", border_width=1)  # Restaura el fondo del canal para indicar que está inactivo
             self.b_activar_canal.configure(text="Activar", fg_color="#85ad75",text_color="#ffffff",border_color="#006400",border_width=1,
                 font=ctk.CTkFont(size=14, weight="bold"))
@@ -262,10 +272,10 @@ class App(ctk.CTk):
         # Los widgets de UI (p. ej. `e_tiempo_calibrado`) se crean en `crear_ui()` más abajo,
         # por eso no debemos usar `self.e_tiempo_calibrado.get()` aquí (aún no existe).
         # Usar el tamaño por defecto de las gráficas (`self.tiempo_grafica_flujo`) para inicializar buffers.
-        self.buffer_flujo = collections.deque([0]*61, maxlen=61)
-        self.buffer_concentracion = collections.deque([0]*61,maxlen=61)
-        self.buffer_latencia = collections.deque([0]*61,maxlen=61)
-        self.buffer_velocidad = collections.deque([0]*61,maxlen=61)
+        self.buffer_flujo = collections.deque([np.nan]*61, maxlen=61)
+        self.buffer_concentracion = collections.deque([np.nan]*61,maxlen=61)
+        self.buffer_latencia = collections.deque([np.nan]*61,maxlen=61)
+        self.buffer_velocidad = collections.deque([np.nan]*61,maxlen=61)
 
     
         #buffers históricos
@@ -283,7 +293,7 @@ class App(ctk.CTk):
         self.segundos_restantes_latencia = 0
         self.tiempo_guardado = None
 
-        #protocolo
+        #protocolo 
         self.after_activo = None
         self.canal_activo= None
         self.canal_anterior= None
@@ -297,7 +307,6 @@ class App(ctk.CTk):
 
         #calibrado
         self.canal_calibrado = None
-
         self.calibrado_velocidad_parado = False
         self.calibrado_flujo_parado = False
         self.calibrado_concentracion_parado = False
@@ -308,11 +317,17 @@ class App(ctk.CTk):
         self.calibrando_flujo            = False
         self.calibrando_concentracion    = False
         self.calibrando_latencia         = False
+
         # buffers por parámetro
         self.buffer_historico_calibrado_velocidad      = []
         self.buffer_historico_calibrado_flujo          = []
         self.buffer_historico_calibrado_concentracion  = []
         self.buffer_historico_calibrado_latencia       = []
+        self.contador_velocidad = 0
+        self.contador_flujo = 0
+        self.contador_concentracion = 0
+        self.contador_latencia = 0
+
         # after por parámetro
         self.after_calibrado_velocidad       = None
         self.after_calibrado_flujo           = None
@@ -322,7 +337,7 @@ class App(ctk.CTk):
 
         #Cliente para establecer conexión con el controlador ESP32-WROOM (o simulador)
         self.ws_client = WSClient(
-        uri        = "ws://localhost:8765",   # o IP del ESP32
+        uri        = "ws://olfametro.local:8765",   # o IP del ESP32
         on_datos   = self._on_datos_ws,
         on_estado  = self._on_estado_ws,
     )
@@ -335,12 +350,24 @@ class App(ctk.CTk):
         self.grid_columnconfigure(0, weight=2)  # Columna de canales y cabecera se expande
         self.grid_columnconfigure(1, weight=1) # Columna de protocolo se expande 
 
+        #comienzo estableciendo conexión con ESP32
         self.ws_client.iniciar()
+        #se llama a la función para procesar los mensajes recibidos de ws_client
+        self._procesar_cola_ws()
         self.crear_ui()
         self.tiempo_sesion()
 
 
-
+    def _procesar_cola_ws(self):
+        """Lee mensajes de la cola WS y los procesa en el hilo de Tkinter."""
+        try:
+            while not self.ws_client._cola_rx.empty():
+                datos = self.ws_client._cola_rx.get_nowait()
+                self._on_datos_ws(datos)
+        except Exception as e:
+            self.consola.registro(f"Error procesando cola WS: {e}", nivel="ERROR")
+        finally:
+            self.after(50, self._procesar_cola_ws)  # revisar cada 50m
 
     #CONSTRUCCIÓN DE INTERFAZ DE USUARIO
     def crear_ui(self):
@@ -436,32 +463,36 @@ class App(ctk.CTk):
         #self.l_calibracion.grid(row=0, column=0, padx=10, pady=(10,5), sticky="n")
 
         # Selección de canales a calibrar
+        self.f_calibracion_canales_tiempo = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
+        self.f_calibracion_canales_tiempo.grid(row=0, column=0, padx=10, pady=5, sticky="ew")
+
         sv_canales_calibrado = ctk.StringVar(value="Seleccionar canal a calibrar")
-        self.comb_canales_calibrados = ctk.CTkComboBox(self.f_calibracion_scroll, values=[],
+        self.comb_canales_calibrados = ctk.CTkComboBox(self.f_calibracion_canales_tiempo, values=[],
                                              width=180, height=36, text_color="#ffffff",command=self.seleccionar_calibrado,dropdown_fg_color="#0a5f70", variable=sv_canales_calibrado)
-        self.comb_canales_calibrados.grid(row=0, column=0, padx=0, pady=5, sticky="w")
+        self.comb_canales_calibrados.grid(row=0, column=0, padx=10, pady=5, sticky="w")
 
-        self.e_tiempo_calibrado = SpinboxCTk(self.f_calibracion_scroll, valor=30, valor_min=1, valor_max=9999999, escalon=1, width=60, height=15)
-        self.e_tiempo_calibrado.grid(row=0, column=0, padx=0, pady=5, sticky="e")
-        self.l_tiempo_calibrado = ctk.CTkLabel(self.f_calibracion_scroll, text="Tiempo:", text_color="#458B8D", font=ctk.CTkFont(size=14, weight="bold"))
-        self.l_tiempo_calibrado.grid(row=0, column=0, padx=195, pady=5, sticky="w")
+        self.l_tiempo_calibrado = ctk.CTkLabel(self.f_calibracion_canales_tiempo, text="Tiempo:", text_color="#458B8D", font=ctk.CTkFont(size=14, weight="bold"))
+        self.l_tiempo_calibrado.grid(row=0, column=1, padx=0, pady=5, sticky="e")
+        self.e_tiempo_calibrado = SpinboxCTk(self.f_calibracion_canales_tiempo, valor=30, valor_min=1, valor_max=9999999, escalon=1, width=60, height=15)
+        self.e_tiempo_calibrado.grid(row=0, column=2, padx=0, pady=5, sticky="w")
 
 
-
+        self.f_botones_calibrado_general = ctk.CTkFrame(self.f_calibracion_scroll, fg_color="transparent", width=30, height=15, corner_radius=10 ,border_width=0)
+        self.f_botones_calibrado_general.grid(row=0, column=1, padx=15, pady=5, sticky="e")
         #Iniciar calibrado general
-        self.b_iniciar_calibrado_general = ctk.CTkButton(self.f_calibracion_scroll, text="Inicio General", text_color="#ffffff", fg_color= "#85ad75", width= 10, height=15,
+        self.b_iniciar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Inicio General", text_color="#ffffff", fg_color= "#85ad75", width= 10, height=15,
                                                    hover_color="#488f51", border_color="#006400", border_width=1, corner_radius=10,command=self.iniciar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
-        self.b_iniciar_calibrado_general.grid(row=0, column=1, padx=(24,0), pady=5, sticky="w")
+        self.b_iniciar_calibrado_general.grid(row=0, column=0, ipadx=0, padx=5, pady=5, sticky="wsne")
 
         #reiniciar calibrado general
-        self.b_reiniciar_calibrado_general = ctk.CTkButton(self.f_calibracion_scroll, text="Reinicio General", text_color="#ffffff", fg_color= "#C7BE19" , width=10, height=15,
+        self.b_reiniciar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Reinicio General", text_color="#ffffff", fg_color= "#C7BE19" , width=10, height=15,
                                                    hover_color="#9da31e", border_color="#F6F04F", border_width= 1, corner_radius=10,command=self.reiniciar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
-        self.b_reiniciar_calibrado_general.grid(row=0, column=1, padx=(160,0), pady=5, sticky="w")
+        self.b_reiniciar_calibrado_general.grid(row=0, column=1, ipadx=0, padx=5, pady=5, sticky="wsne")
 
         #parar calibrado general
-        self.b_parar_calibrado_general = ctk.CTkButton(self.f_calibracion_scroll, text="Parada General", text_color="#ffffff", fg_color= "#f56a6a", width=10, height=15,
+        self.b_parar_calibrado_general = ctk.CTkButton(self.f_botones_calibrado_general, text="Parada General", text_color="#ffffff", fg_color= "#f56a6a", width=10, height=15,
                                                    hover_color="#ee4242", border_color="#ff0000", border_width= 1, corner_radius=10,command=self.parar_calibrado_general,font=ctk.CTkFont(size=18, weight="bold"))
-        self.b_parar_calibrado_general.grid(row=0, column=1, padx=(0,30), pady=5, sticky="e")
+        self.b_parar_calibrado_general.grid(row=0, column=2, ipadx=0 ,padx=5, pady=5, sticky="wsne")
 
         #Calibración Velocidad
         self.l_calibrado_velocidad = ctk.CTkLabel(self.f_calibracion_scroll, text="Velocidad", text_color="#458B8D", font=ctk.CTkFont(size=20, weight="bold"))
@@ -470,6 +501,8 @@ class App(ctk.CTk):
         #Gráfica en tiempo real - Velocidad
         fig_velocidad = Figure(figsize=(10,5),dpi=60)
         self.ax_velocidad = fig_velocidad.add_subplot(111)
+        self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_velocidad.set_ylim(self.limitesy["velocidad"][0],self.limitesy["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_velocidad.set_xlabel("Tiempo (s)")
         self.ax_velocidad.set_ylabel("Velocidad (m/s)")
         #fig_velocidad.set_facecolor("#222526")  # Fondo de la figura transparente
@@ -483,7 +516,7 @@ class App(ctk.CTk):
         self.ax_velocidad.spines['left'].set_color('#ffffff')  # Color de
         self.ax_velocidad.spines['top'].set_color('#ffffff')  # Color de la línea superior
         self.ax_velocidad.spines['right'].set_color('#ffffff')  # Color de la línea derecha
-        self.ax_velocidad.plot(self.tiempo_grafica_velocidad,self.buffer_velocidad)
+        self.ax_velocidad.plot(self.tiempo_grafica_velocidad,list(self.buffer_velocidad)[::-1])
         fig_velocidad.tight_layout()
         self.canvas_velocidad = FigureCanvasTkAgg(fig_velocidad, master=self.f_calibracion_scroll)
         self.canvas_velocidad.get_tk_widget().grid(row=2, column=0, padx=10, pady=0, sticky="nesw")
@@ -517,6 +550,8 @@ class App(ctk.CTk):
         #Gráfica en tiempo real - Flujo
         fig_flujo = Figure(figsize=(10,5),dpi=60)
         self.ax_flujo = fig_flujo.add_subplot(111)
+        self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_flujo.set_ylim(self.limitesy["flujo"][0],self.limitesy["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_flujo.set_xlabel("Tiempo (s)")
         self.ax_flujo.set_ylabel("Flujo (ml/min)")
         self.ax_flujo.plot(self.tiempo_grafica_flujo,self.buffer_flujo)
@@ -562,6 +597,8 @@ class App(ctk.CTk):
         #Gráfica en tiempo real - Concentración
         fig_concentracion = Figure(figsize=(10,5),dpi=60)
         self.ax_concentracion = fig_concentracion.add_subplot(111)
+        self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_concentracion.set_ylim(self.limitesy["concentracion"][0],self.limitesy["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_concentracion.set_xlabel("Tiempo (s)")
         self.ax_concentracion.set_ylabel("Concentracion (µg/m\u00B3)")
         self.ax_concentracion.plot(self.tiempo_grafica_concentracion,self.buffer_concentracion)
@@ -608,6 +645,8 @@ class App(ctk.CTk):
         #Gráfica en tiempo real - Latencia
         fig_latencia = Figure(figsize=(10,5),dpi=60)
         self.ax_latencia = fig_latencia.add_subplot(111)
+        self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_latencia.set_ylim(self.limitesy["latencia"][0],self.limitesy["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_latencia.set_xlabel("Tiempo (s)")
         self.ax_latencia.set_ylabel("Latencia (ms)")
         self.ax_latencia.plot(self.tiempo_grafica_latencia,self.buffer_latencia)
@@ -1067,14 +1106,15 @@ class App(ctk.CTk):
         
         seccion_protocolo.append([])
 
-        seccion_calibrado = [["RESULTADOS CALIBRACIÓN"],["Canal", "Olor", "Concentración bruta (µg/m\u00B3)", 
+        seccion_calibrado = [["RESULTADOS CALIBRACIÓN"],["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración bruta (µg/m\u00B3)", 
                                    "Concentración neta (µg/m\u00B3)", 
                                    "Flujo (ml/min)","Velocidad (rpm)","Latencia (ms)"]]
 
         #si la variable metricas_calibracion existe ejecuta el siguiente código
         if self.metricas_calibracion:
             for num_canal, metrica in self.metricas_calibracion.items():
-                seccion_calibrado.append([self.colores_canales[num_canal],
+                seccion_calibrado.append([self.e_tiempo_calibrado.get(),
+                                          self.colores_canales[num_canal],
                                           metrica.get("olor",""),
                                           #redondea al segundo decimal la concentración bruta medida en la calibración del canal
                                           #si la concentración bruta no existe, devuelve 0 como valor por defecto
@@ -1088,14 +1128,16 @@ class App(ctk.CTk):
         seccion_calibrado.append([])
 
         #historial completo de los datos
-        seccion_historial = [["HISTORIAL DE DATOS"],["Hora","Canal", "Olor",
+        seccion_historial = [["HISTORIAL DE DATOS"],["Onset (s)","Hora","Canal", "Olor",
                                    "Estado","Flujo (ml/min)","Concentración (µg/m\u00B3)",
                                    "Concentración bruta (µg/m\u00B3),",
                                    "Concentración neta (µg/m\u00B3)", "Velocidad (rpm)","Latencia (ms)"]]
         
         for metrica in self.historial_sesion :
             #las claves definidas deben coincidir con las del simulador
+            onset = round(metrica["timestamp"] - self.tiempo_inicio_sesion,3)
             seccion_historial.append([
+                onset,
                 datetime.datetime.fromtimestamp(metrica["timestamp"]).strftime("%H:%M:%S"),
                 self.colores_canales[metrica["canal"]],
                 metrica.get("olor",""),
@@ -1108,7 +1150,8 @@ class App(ctk.CTk):
                 metrica.get("latencia",0)
             ])
             
-        
+        ruta_eventos = ruta.replace(".csv", "_eventos.csv")
+        self._generar_csv_eventos(ruta_eventos)
         
         try:
             #Se añade el BOM de UTF-8 al principio del archivo. Sin esto Excel en Windows 
@@ -1125,6 +1168,53 @@ class App(ctk.CTk):
         
         except Exception as e:
             self.consola.registro(f"Error al guardar CSV: {e}", nivel= "ERROR")
+    
+    def _generar_csv_eventos(self,ruta):
+        """
+        CSV de eventos de estimulación compatible con neuroimagen.
+        Columnas: onset, duration, trial_type
+        Formato compatible con BIDS (Brain Imaging Data Structure),
+        estándar creciente en neuroimagen.
+        """
+        eventos = [["onset","duration","trial_type","canal","olor"]]
+
+        canal_inicio = {}
+
+        for metrica in self.historial_sesion:
+            canal = metrica.get("canal", -1)
+            estado = metrica.get("estado", "")
+            olor = metrica.get("olor", "")
+            timestamp = metrica.get ("timestamp", 0)
+            onset = round(timestamp - self.tiempo_inicio_sesion,3)
+            print(canal_inicio)
+            print(estado)
+            if estado == "activo" and canal not in canal_inicio:
+                #se registra el inicio de la estimulación
+                canal_inicio[canal]= {
+                    "onset": onset,
+                    "timestamp": timestamp,
+                    "olor": olor
+                }
+            elif estado == "inactivo" and canal in canal_inicio:
+                inicio = canal_inicio.pop(canal)
+                duracion = round(onset - inicio["onset"],3)
+                eventos.append([
+                    inicio["onset"],
+                    duracion,
+                    "estimulación" if canal != 2 else "desensibilización",
+                    self.colores_canales[canal],
+                    inicio["olor"]
+                ])
+        try:
+            with open(ruta, "w", newline="", encoding="utf-8-sig") as fila:
+                writer = csv.writer(fila, delimiter=";")    
+                writer.writerows(eventos)
+            self.consola.registro("CSV de eventos guardado correctamente")
+        
+        except Exception as e:
+            self.consola.registro(f"Error al guardar CSV de eventos: {e}", nivel= "ERROR")
+
+        
 
     def generar_excel(self,ruta):
         workbook = openpyxl.Workbook()
@@ -1187,7 +1277,7 @@ class App(ctk.CTk):
         fila +=1
 
         #se definen las cabeceras comunes a todos los datos
-        cabeceras_calibracion = ["Canal", "Olor", "Concentración bruta (µg/m\u00B3)", 
+        cabeceras_calibracion = ["Tiempo calibración (s)","Canal", "Olor", "Concentración (µg/m\u00B3)","Concentración bruta (µg/m\u00B3)", 
                                 "Concentración neta (µg/m\u00B3)", "Flujo medio (ml/min)",
                                 "Velocidad media(rpm)","Latencia media(ms)"]
         
@@ -1204,6 +1294,7 @@ class App(ctk.CTk):
         if self.metricas_calibracion:
             for num_canal, metrica in self.metricas_calibracion.items():
                 fila_datos = [
+                    self.e_tiempo_calibrado.get(),
                     self.colores_canales[num_canal],
                     metrica.get("olor",""),
                     round(self.media(metrica.get("concentracion", 0)), 2),
@@ -1267,6 +1358,7 @@ class App(ctk.CTk):
 
         if self.metricas_calibracion:
             fila = 3
+            archivos_temporales = []
             for num_canal, metricas in self.metricas_calibracion.items():
                 color_canal = self.colores_canales[num_canal]
                 #muestras = metrica.get("muestras", {})
@@ -1292,6 +1384,7 @@ class App(ctk.CTk):
                     #Se guarda temporalmente la figura/gráfica generada, para luego insertarla en el Excel
                     with tempfile.NamedTemporaryFile(suffix=".png", delete= False) as temporal:
                         ruta_figura = temporal.name
+                    archivos_temporales.append(ruta_figura)
 
                     figura.savefig(ruta_figura, bbox_inches='tight', facecolor=figura.get_facecolor())
                     plt.close(figura)
@@ -1302,14 +1395,19 @@ class App(ctk.CTk):
                     hoja_graficas.add_image(imagen)
                     fila += 18
 
-                    os.unlink(ruta_figura)  # Elimina la imagen temporal después de insertarla en el Excel
-                    self.consola.registro("LLEGA HASTA AQUÍiiiiiii")
 
         try:
             #guardamos el workbook con el conjunto de las hojas y datos generados en la ruta seleccionada 
             # por el usuario
             workbook.save(ruta)
             self.consola.registro("Excel guardado correctamente")
+            # Ahora sí eliminamos los archivos temporales usados para las imágenes
+            for archivo in archivos_temporales:
+                try:
+                    if os.path.exists(archivo):
+                        os.unlink(archivo)
+                except Exception:
+                    self.consola.registro(f"Error al eliminar el archivo temporal: {archivo}", nivel="ERROR")
 
         except Exception as e:
             self.consola.registro(f"Error al guardar Excel: {e}", nivel="ERROR")
@@ -1407,13 +1505,14 @@ class App(ctk.CTk):
         # RESULTADOS DE CALIBRACIÓN
         historia.append(Paragraph("Resultados de calibracion", estilo_seccion))
         cabeceras_calibracion = [[                                    # ✅ lista de listas
-        "Canal", "Olor", "Conc.(ug/m³)", "C.bruta(ug/m³)",
+        "Tiempo","Canal", "Olor", "Conc.(ug/m³)", "C.bruta(ug/m³)",
         "C.neta(ug/m³)", "Flujo(ml/min)", "Vel (rpm)", "Latencia(ms)"
         ]]
         datos_calibracion = []
         if self.metricas_calibracion:
             for num_canal, metrica in self.metricas_calibracion.items():
                 datos_calibracion.append([
+                    self.e_tiempo_calibrado.get(),
                     self.colores_canales[num_canal],
                     metrica.get("olor", ""),
                     round(self.media(metrica.get("concentracion", [])), 2),
@@ -1424,7 +1523,7 @@ class App(ctk.CTk):
                     round(self.media(metrica.get("latencia", [])), 1),
                     ])
         tabla_calibracion = Table(cabeceras_calibracion + datos_calibracion,
-                               colWidths=[22*mm, 24*mm, 26*mm, 28*mm, 28*mm, 24*mm, 22*mm, 24*mm])
+                               colWidths=[10*mm,22*mm, 24*mm, 26*mm, 28*mm, 28*mm, 24*mm, 22*mm, 14*mm])
         tabla_calibracion.setStyle(estilo_tabla_cabecera)
         historia.append(tabla_calibracion)
         historia.append(PageBreak())
@@ -1525,6 +1624,7 @@ class App(ctk.CTk):
         #El único propósito de la variable buscador es mantener vivo el objeto 
         # en memoria durante el bucle de espera.
         buscador = zc.ServiceBrowser(zconf, "_esp32._tcp.local.", Oyente())
+        
 
         """
         Como ServiceBrowser es asíncrono (trabaja en su propio hilo interno), necesitas 
@@ -1926,6 +2026,12 @@ class App(ctk.CTk):
             self.consola.registro()
         if protocolo_activo and 
         """
+    
+    limitesy = {"velocidad": [0,10000],
+                "flujo": [0,500],
+                "concentracion": [0,500],
+                "latencia": [0,1000]
+                }
 
     #CALIBRADO VELOCIDAD
     def iniciar_calibrado_velocidad(self):
@@ -1933,8 +2039,9 @@ class App(ctk.CTk):
             if not self.calibrado_velocidad_parado and not self.calibrando_velocidad:
                 self.calibrando_velocidad = True
                 self.consola.registro("Iniciando calibrado de velocidad...")
-                self.buffer_velocidad = collections.deque([0]*int(self.e_tiempo_calibrado.get()),maxlen=int(self.e_tiempo_calibrado.get()))
-                self.tiempo_grafica_velocidad = collections.deque(range(0,int(self.e_tiempo_calibrado.get())),maxlen=int(self.e_tiempo_calibrado.get()))
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                self.tiempo_grafica_velocidad = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
                 self.b_iniciar_calibrado_velocidad.configure(state="disabled")
                 self.b_reiniciar_calibrado_velocidad.configure(state="disabled")
                 self.canal_calibrado.activar_canal()
@@ -1971,6 +2078,7 @@ class App(ctk.CTk):
         self.calibrando_velocidad = False
         self.calibrado_velocidad_parado = False
         self.segundos_restantes_velocidad = 0
+        self.contador_velocidad = 0
         self.tiempo_guardado = None
         if self.after_calibrado_velocidad:
             self.after_cancel(self.after_calibrado_velocidad)
@@ -1981,12 +2089,17 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de velocidad.", nivel="AVISO")
 
         self.buffer_historico_calibrado_velocidad.clear()
-        self.buffer_velocidad = collections.deque([0]*61, maxlen=61)
-        self.tiempo_grafica_velocidad = collections.deque(list(range(0,61)), maxlen=61)
+        tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+        self.tiempo_grafica_velocidad = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+        self.buffer_velocidad = collections.deque([np.nan]*len(self.tiempo_grafica_velocidad), maxlen=len(self.tiempo_grafica_velocidad))
+        #self.buffer_velocidad = collections.deque([np.nan]*61, maxlen=61)
+        #self.tiempo_grafica_velocidad = collections.deque(list(range(0,61)), maxlen=61)
 
         self.ax_velocidad.clear()
         self.ax_velocidad.set_xlabel("Tiempo (s)")
         self.ax_velocidad.set_ylabel("Velocidad (m/s)")
+        self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_velocidad.set_ylim(self.limitesy["velocidad"][0],self.limitesy["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_velocidad.tick_params(colors = "#ffffff") 
         self.ax_velocidad.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
         self.ax_velocidad.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
@@ -2015,7 +2128,7 @@ class App(ctk.CTk):
 
             if self.segundos_restantes_velocidad > 0:
                 self.consola.registro(f"Calibrado de velocidad parado con {self.segundos_restantes_velocidad} segundos restantes")
-        
+
             else:
                 if self.canal_calibrado is not None:
                     num_canal = self.canal_calibrado.num_canal
@@ -2026,6 +2139,8 @@ class App(ctk.CTk):
                     self.calibrando_velocidad = False
                     self.calibrado_velocidad_parado = False
                     self.consola.registro("Calibrado de velocidad finalizado")
+            
+
                 else:
                     self.consola.registro("No se pudieron guardar las métricas de calibrado: No hay ningún canal seleccionado para calibrar.", nivel="AVISO")
         else:
@@ -2038,8 +2153,9 @@ class App(ctk.CTk):
             if not self.calibrado_flujo_parado and not self.calibrando_flujo:
                 self.calibrando_flujo = True
                 self.consola.registro("Iniciando calibrado de flujo...")
-                self.buffer_flujo = collections.deque([0]*int(self.e_tiempo_calibrado.get()),maxlen=int(self.e_tiempo_calibrado.get()))
-                self.tiempo_grafica_flujo = collections.deque(range(int(self.e_tiempo_calibrado.get())),maxlen=int(self.e_tiempo_calibrado.get()))
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                self.tiempo_grafica_flujo = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                self.buffer_flujo = collections.deque([np.nan]*len(self.tiempo_grafica_flujo), maxlen=len(self.tiempo_grafica_flujo))
                 self.b_iniciar_calibrado_flujo.configure(state="disabled")
                 self.b_reiniciar_calibrado_flujo.configure(state="disabled")
                 self.canal_calibrado.activar_canal()
@@ -2076,6 +2192,7 @@ class App(ctk.CTk):
         self.calibrando_flujo = False
         self.calibrado_flujo_parado = False
         self.segundos_restantes_flujo = 0
+        self.contador_flujo = 0
         self.tiempo_guardado = None
         if self.after_calibrado_flujo:
             self.after_cancel(self.after_calibrado_flujo)
@@ -2086,13 +2203,21 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de flujo.", nivel="AVISO")
 
         self.buffer_historico_calibrado_flujo.clear()
-        self.buffer_flujo = collections.deque([0]*61, maxlen=61)
+        self.buffer_flujo = collections.deque([np.nan]*61, maxlen=61)
         self.tiempo_grafica_flujo = collections.deque(list(range(0,61)), maxlen=61)
 
         self.ax_flujo.clear()
+        self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_flujo.set_ylim(self.limitesy["flujo"][0],self.limitesy["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_flujo.set_xlabel("Tiempo (s)")
         self.ax_flujo.set_ylabel("Flujo (l/min)")
-        self.ax_flujo.set_title("Flujo")
+        self.ax_flujo.tick_params(colors = "#ffffff") 
+        self.ax_flujo.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
+        self.ax_flujo.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
+        self.ax_flujo.spines['bottom'].set_color('#ffffff')  # Color de la línea del eje x
+        self.ax_flujo.spines['left'].set_color('#ffffff')  # Color de
+        self.ax_flujo.spines['top'].set_color('#ffffff')  # Color de la línea superior
+        self.ax_flujo.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.canvas_flujo.draw()
 
         self.b_iniciar_calibrado_flujo.configure(state="normal")
@@ -2138,8 +2263,9 @@ class App(ctk.CTk):
             if not self.calibrado_concentracion_parado and not self.calibrando_concentracion:
                 self.calibrando_concentracion = True
                 self.consola.registro("Iniciando calibrado de concentración...")
-                self.buffer_concentracion = collections.deque([0]*int(self.e_tiempo_calibrado.get()),maxlen=int(self.e_tiempo_calibrado.get()))
-                self.tiempo_grafica_concentracion = collections.deque(range(0,int(self.e_tiempo_calibrado.get())),maxlen=int(self.e_tiempo_calibrado.get()))
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                self.tiempo_grafica_concentracion = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                self.buffer_concentracion = collections.deque([np.nan]*len(self.tiempo_grafica_concentracion), maxlen=len(self.tiempo_grafica_concentracion))
                 self.b_iniciar_calibrado_concentracion.configure(state="disabled")
                 self.b_reiniciar_calibrado_concentracion.configure(state="disabled")
                 self.canal_calibrado.activar_canal()
@@ -2176,6 +2302,7 @@ class App(ctk.CTk):
         self.calibrando_concentracion = False
         self.calibrado_concentracion_parado = False
         self.segundos_restantes_concentracion = 0
+        self.contador_concentracion = 0
         self.tiempo_guardado = None
         if self.after_calibrado_concentracion:
             self.after_cancel(self.after_calibrado_concentracion)
@@ -2186,13 +2313,21 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de concentración.", nivel="AVISO")
 
         self.buffer_historico_calibrado_concentracion.clear()
-        self.buffer_concentracion = collections.deque([0]*61, maxlen=61)
+        self.buffer_concentracion = collections.deque([np.nan]*61, maxlen=61)
         self.tiempo_graficas_concentracion = collections.deque(list(range(0,61)), maxlen=61)
 
         self.ax_concentracion.clear()
+        self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_concentracion.set_ylim(self.limitesy["concentracion"][0],self.limitesy["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_concentracion.set_xlabel("Tiempo (s)")
         self.ax_concentracion.set_ylabel("Concentración (ppm)")
-        self.ax_concentracion.set_title("Concentración")
+        self.ax_concentracion.tick_params(colors = "#ffffff") 
+        self.ax_concentracion.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
+        self.ax_concentracion.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
+        self.ax_concentracion.spines['bottom'].set_color('#ffffff')  # Color de la línea del eje x
+        self.ax_concentracion.spines['left'].set_color('#ffffff')  # Color de
+        self.ax_concentracion.spines['top'].set_color('#ffffff')  # Color de la línea superior
+        self.ax_concentracion.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.canvas_concentracion.draw()
 
         self.b_iniciar_calibrado_concentracion.configure(state="normal")
@@ -2216,6 +2351,7 @@ class App(ctk.CTk):
                 #self.tiempo_guardado = datetime.datetime.strptime(int(self.e_tiempo_calibrado.get()) - self.segundos_restantes, "%H:%M:%S")
                 #self.consola.registro(f"{self.tiempo_guardado}")
                 self.consola.registro(f"Calibrado de concentración parado con {self.segundos_restantes_concentracion} segundos restantes")
+
         
             else:
                 if self.canal_calibrado is not None:
@@ -2238,8 +2374,9 @@ class App(ctk.CTk):
             if not self.calibrado_latencia_parado and not self.calibrando_latencia:
                 self.calibrando_latencia = True
                 self.consola.registro("Iniciando calibrado de latencia...")
-                self.buffer_latencia = collections.deque([0]*int(self.e_tiempo_calibrado.get()),maxlen=int(self.e_tiempo_calibrado.get()))
-                self.tiempo_grafica_latencia = collections.deque(range(0,int(self.e_tiempo_calibrado.get())),maxlen=int(self.e_tiempo_calibrado.get()))
+                tiempo_calibrado_segundos=int(self.e_tiempo_calibrado.get())*1000
+                self.tiempo_grafica_latencia = collections.deque((i * 0.1 for i in range(tiempo_calibrado_segundos)), maxlen=tiempo_calibrado_segundos)
+                self.buffer_latencia = collections.deque([np.nan]*len(self.tiempo_grafica_latencia), maxlen=len(self.tiempo_grafica_latencia))
                 self.b_iniciar_calibrado_latencia.configure(state="disabled")
                 self.b_reiniciar_calibrado_latencia.configure(state="disabled")
                 self.canal_calibrado.activar_canal()
@@ -2276,6 +2413,7 @@ class App(ctk.CTk):
         self.calibrando_latencia = False
         self.calibrado_latencia_parado = False
         self.segundos_restantes_latencia = 0
+        self.contador_latencia = 0
         self.tiempo_guardado = None
         if self.after_calibrado_latencia:
             self.after_cancel(self.after_calibrado_latencia)
@@ -2286,13 +2424,21 @@ class App(ctk.CTk):
             self.consola.registro("No hay ningún canal seleccionado para calibrar. Seleccione un canal para iniciar el calibrado de latencia.", nivel="AVISO")
 
         self.buffer_historico_calibrado_latencia.clear()
-        self.buffer_latencia = collections.deque([0]*61, maxlen=61)
+        self.buffer_latencia = collections.deque([np.nan]*61, maxlen=61)
         self.tiempo_grafica_latencia = collections.deque(list(range(0,61)), maxlen=61)
 
         self.ax_latencia.clear()
+        self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+        self.ax_latencia.set_ylim(self.limitesy["latencia"][0],self.limitesy["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
         self.ax_latencia.set_xlabel("Tiempo (s)")
         self.ax_latencia.set_ylabel("Latencia (ms)")
-        self.ax_latencia.set_title("Latencia")
+        self.ax_latencia.tick_params(colors = "#ffffff") 
+        self.ax_latencia.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
+        self.ax_latencia.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
+        self.ax_latencia.spines['bottom'].set_color('#ffffff')  # Color de la línea del eje x
+        self.ax_latencia.spines['left'].set_color('#ffffff')  # Color de
+        self.ax_latencia.spines['top'].set_color('#ffffff')  # Color de la línea superior
+        self.ax_latencia.spines['right'].set_color('#ffffff')  # Color de la línea derecha
         self.canvas_latencia.draw()
 
         self.b_iniciar_calibrado_latencia.configure(state="normal")
@@ -2395,33 +2541,64 @@ class App(ctk.CTk):
         #self.buffer_concentración.append(nuevo_valor_concentración)
         #self.buffer_latencia.append(nuevo_valor_latencia)
         if self.calibrando_velocidad and not self.calibrado_velocidad_parado:
-            self.ax_velocidad.clear()
-            self.ax_velocidad.plot(self.tiempo_grafica_velocidad, self.buffer_velocidad)
+            if not self.ax_velocidad.lines:
+                self.ax_velocidad.clear()
+                self.ax_velocidad.plot(self.tiempo_grafica_velocidad, self.buffer_velocidad)
+            else: 
+                self.ax_velocidad.lines[0].set_data(self.tiempo_grafica_velocidad, self.buffer_velocidad)
+            self.ax_velocidad.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_velocidad.set_ylim(self.limitesy["velocidad"][0],self.limitesy["velocidad"][1])  # Ajusta el rango del eje y según tus datos esperados
+            #self.ax_velocidad.plot(self.tiempo_grafica_velocidad, self.buffer_velocidad)
             self.ax_velocidad.set_xlabel("Tiempo (s)")
             self.ax_velocidad.set_ylabel("Velocidad (m/s)")
+            self.ax_velocidad.tick_params(colors = "#ffffff") 
+            self.ax_velocidad.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
+            self.ax_velocidad.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_velocidad.draw()
         if self.calibrando_flujo and not self.calibrado_flujo_parado:
-            self.ax_flujo.clear()
-            self.ax_flujo.plot(self.tiempo_grafica_flujo, self.buffer_flujo)
+            if not self.ax_flujo.lines:
+                self.ax_flujo.clear()
+                self.ax_flujo.plot(self.tiempo_grafica_flujo, self.buffer_flujo)
+            else: 
+                self.ax_flujo.lines[0].set_data(self.tiempo_grafica_flujo, self.buffer_flujo)
+            self.ax_flujo.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_flujo.set_ylim(self.limitesy["flujo"][0],self.limitesy["flujo"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_flujo.set_xlabel("Tiempo (s)")
             self.ax_flujo.set_ylabel("Flujo (ml/min)")
+            self.ax_flujo.tick_params(colors = "#ffffff") 
+            self.ax_flujo.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
+            self.ax_flujo.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_flujo.draw()
         if self.calibrando_concentracion and not self.calibrado_concentracion_parado:
-            self.ax_concentracion.clear()
-            self.ax_latencia.clear()
-            self.ax_concentracion.plot(self.tiempo_grafica_concentracion, self.buffer_concentracion)
+            if not self.ax_concentracion.lines:
+                self.ax_concentracion.clear()
+                self.ax_concentracion.plot(self.tiempo_grafica_concentracion, self.buffer_concentracion)
+            else: 
+                self.ax_concentracion.lines[0].set_data(self.tiempo_grafica_concentracion, self.buffer_concentracion)
+            self.ax_concentracion.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_concentracion.set_ylim(self.limitesy["concentracion"][0],self.limitesy["concentracion"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_concentracion.set_xlabel("Tiempo (s)")
             self.ax_concentracion.set_ylabel("Concentración (µg/m\u00B3)")
+            self.ax_concentracion.tick_params(colors = "#ffffff") 
+            self.ax_concentracion.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
+            self.ax_concentracion.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_concentracion.draw()
         if self.calibrando_latencia and not self.calibrado_latencia_parado:
-            self.ax_latencia.clear()
-            self.ax_latencia.plot(self.tiempo_grafica_latencia, self.buffer_latencia)
+            if not self.ax_latencia.lines:
+                self.ax_latencia.clear()
+                self.ax_latencia.plot(self.tiempo_grafica_latencia, self.buffer_latencia)
+            else: 
+                self.ax_latencia.lines[0].set_data(self.tiempo_grafica_latencia, self.buffer_latencia)
+            self.ax_latencia.set_xlim(0,int(self.e_tiempo_calibrado.get()))
+            self.ax_latencia.set_ylim(self.limitesy["latencia"][0],self.limitesy["latencia"][1])  # Ajusta el rango del eje y según tus datos esperados
             self.ax_latencia.set_xlabel("Tiempo (s)")
             self.ax_latencia.set_ylabel("Latencia (ms)")
-            self.ax_latencia.set_title("Latencia")
+            self.ax_latencia.tick_params(colors = "#ffffff") 
+            self.ax_latencia.xaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje x
+            self.ax_latencia.yaxis.label.set_color("#ffffff")  # Color de las etiquetas del eje y
             self.canvas_latencia.draw()
             
-        self.after_actualizar_graficas = self.after(1000, self.actualizar_graficas)
+        self.after_actualizar_graficas = self.after(100, self.actualizar_graficas)
     
 
 
@@ -2435,7 +2612,7 @@ class App(ctk.CTk):
     def actualizar_canales(self,num_canal,accion):     
             if accion== "activar":
                 if self.canal_activo != None and self.canal_activo.num_canal != num_canal:
-                    self.self.canal_activo.parar_canal()
+                    self.canal_activo.parar_canal()
                 self.canal_activo = self.cuadros_canales[num_canal]
                 self.sv_canal_activo.set(f"Canal {self.canal_activo.e_olor_canal.get()}" if self.canal_activo.e_olor_canal.get() else "Canal Blanco")
 
@@ -2447,15 +2624,27 @@ class App(ctk.CTk):
                     else:
                         self.sv_canal_anterior.set(f"Canal Blanco" if self.indice_canal_protocolo - 1 >= 0 else "Ninguno")
                         self.sv_canal_siguiente.set(f"Canal Blanco" if self.indice_canal_protocolo + 1 <= len(self.canales_protocolo)  else "Ninguno")      
-
+                self.consola.registro(f"Canal {num_canal} SE ACTIVA")
                 self.ws_client.enviar({"cmd": "activar", "canal": num_canal, "velocidad_%": 100})
             
             if accion== "parar":
-                if self.canal_activo.num_canal == num_canal:
+                if self.canal_activo is not None and self.canal_activo.num_canal == num_canal:
+                    self.historial_sesion.append({
+                                "timestamp" : time.time(),
+                                "canal" : self.canal_activo.num_canal,
+                                "olor" : self.canal_activo.e_olor_canal.get()
+                                if self.canal_activo.e_olor_canal.winfo_exists() else "",
+                                "estado" : "inactivo" ,
+                                "flujo" : 0.0,
+                                "velocidad_motor" : 0.0,
+                                "concentracion" : 0.0,
+                                "latencia" : 0
+                    })
                     self.canal_activo = None
                     self.sv_canal_activo.set("Ninguno")
-                    #podrían establecerse como valor "Ninguno" a los canales anterior y siguiente.
 
+                    #podrían establecerse como valor "Ninguno" a los canales anterior y siguiente.
+                self.consola.registro(f"Canal {num_canal} SE PARA")
                 self.ws_client.enviar({"cmd": "parar", "canal": num_canal})
         
 
@@ -2464,16 +2653,18 @@ class App(ctk.CTk):
 
 #FUNCIONES NECESARIAS PARA LA CONCEXIÓN CON ESP32
     def _on_datos_ws(self, datos: dict):
-# Llamado desde el hilo WS → usar after() para tocar la UI
-        canal = datos.get("canal", -1)
+        if "ack" in datos or datos.get("tipo") == "config":
+            return
+        # Llamado desde el hilo WS → usar after() para tocar la UI
+        num_canal = datos.get("canal", -1)
         # Actualizar buffers de la gráfica correspondiente
-        if self.canal_activo is not None and canal == self.canal_activo.num_canal:
+        if self.canal_activo is not None and num_canal == self.canal_activo.num_canal:
 
-            self.buffer_historico_flujo.append(datos["flujo"])
-            self.buffer_historico_velocidad.append(datos["velocidad_motor"])
-            self.buffer_historico_concentracion.append(datos["concentracion"])
-            self.buffer_historico_latencia.append(datos["latencia"])
-            self.buffer_historico_timestamps.append(datos["timestamp"])
+            self.buffer_historico_flujo.append(datos.get("flujo", 0.0))
+            self.buffer_historico_velocidad.append(datos.get("velocidad_motor", 0.0))
+            self.buffer_historico_concentracion.append(datos.get("concentracion", 0.0))
+            self.buffer_historico_latencia.append(datos.get("latencia", 0))
+            self.buffer_historico_timestamps.append(datos.get("timestamp", time.time()))
 
             try:
                 olor = self.canal_activo.e_olor_canal.get()
@@ -2484,29 +2675,50 @@ class App(ctk.CTk):
             datos_con_hist["olor"] = olor
             self.historial_sesion.append(datos_con_hist)
         
-        if self.canal_calibrado is not None and canal == self.canal_calibrado.num_canal:
-            if self.calibrando_flujo:
-                self.buffer_flujo.append(datos["flujo"])
+        
+        if self.canal_calibrado is not None and num_canal == self.canal_calibrado.num_canal:
+            if self.calibrando_flujo and not self.calibrado_flujo_parado:
+                #self.buffer_flujo.append(datos["flujo"])
+                self.buffer_flujo[self.contador_flujo]=(datos.get("flujo", 0.0))
+                self.contador_flujo += 1
                 self.buffer_historico_calibrado_flujo.append(datos["flujo"])
-            if self.calibrando_concentracion:
-                self.buffer_concentracion.append(datos["concentracion"])
+            if self.calibrando_concentracion and not self.calibrado_concentracion_parado:
+                #self.buffer_concentracion.append(datos["concentracion"])
+                self.buffer_concentracion[self.contador_concentracion]=(datos.get("concentracion", 0.0))
+                self.contador_concentracion += 1
                 self.buffer_historico_calibrado_concentracion.append(datos["concentracion"])
-            if self.calibrando_latencia:
-                self.buffer_latencia.append(datos["latencia"])
+            if self.calibrando_latencia and not self.calibrado_latencia_parado:
+                #self.buffer_latencia.append(datos["latencia"])
+                self.buffer_latencia[self.contador_latencia]=(datos.get("latencia", 0.0))
+                self.contador_latencia += 1
                 self.buffer_historico_calibrado_latencia.append(datos["latencia"])
-            if self.calibrando_velocidad:
-                self.buffer_velocidad.append(datos["velocidad_motor"])
+            if self.calibrando_velocidad and not self.calibrado_velocidad_parado:
+                #self.buffer_velocidad[self.contador]
+                    #self.buffer_velocidad.append(datos["velocidad_motor"])
+                self.buffer_velocidad[self.contador_velocidad] = (datos.get("velocidad_motor", 0.0))
+                self.contador_velocidad += 1
                 self.buffer_historico_calibrado_velocidad.append(datos["velocidad_motor"])
 
         # Actualizar labels de Estado
-        self.after(0, self._actualizar_labels_estado, datos)
+        self.after(100, self._actualizar_labels_estado, datos)
 
 
     def _actualizar_labels_estado(self, datos):
-        if datos.get("canal") == self.canal_activo:
-            self.sv_flujo_aire_canal.set(f"{datos['flujo']:.1f} ml/min")
-            self.sv_concentracion_canal.set(f"{datos['concentracion']:.1f} µg/m\u00B3")
-            self.sv_latencia_canal.set(f"{datos['latencia']} ms")
+        if self.canal_activo is not None:
+            if datos.get("canal") == self.canal_activo.num_canal:
+                if self.calibrado_activo():
+                    #self.sv_velocidad_motor.set(f"{datos['velocidad_motor']:.1f} m/s")
+                    self.sv_flujo_aire_canal.set(f"{datos['flujo']:.1f} ml/min")
+                    self.sv_concentracion_canal.set(f"{datos['concentracion']:.1f} µg/m\u00B3")
+                    self.sv_latencia_canal.set(f"{datos['latencia']} ms")
+                #Quiero calcular una estimación
+                else:
+                    #añadir por cada parámetro una fórmula de estimación
+                    self.sv_flujo_aire_canal.set(f"{datos['flujo']:.1f} ml/min")
+                    self.sv_concentracion_canal.set(f"{datos['concentracion']:.1f} µg/m\u00B3")
+                    self.sv_latencia_canal.set(f"{datos['latencia']} ms") #la latencia no hace falta aproximarla, se sabe su valor en cada momento
+                    
+                
 
     def _on_estado_ws(self, estado: str):
         # Actualizar el indicador de conexión en la cabecera

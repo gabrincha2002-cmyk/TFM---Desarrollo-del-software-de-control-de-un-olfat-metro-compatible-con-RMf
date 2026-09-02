@@ -10,7 +10,6 @@
     from ws_client import WSClient
     self.ws_client = WSClient(
         uri        = "ws://localhost:8765",   # o IP del ESP32
-        on_datos   = self._on_datos_ws,
         on_estado  = self._on_estado_ws,
     )
     self.ws_client.iniciar()
@@ -33,6 +32,7 @@ import logging
 import time
 import queue
 from typing import Callable, Optional
+import config
 
 logger = logging.getLogger(__name__)
 
@@ -63,19 +63,20 @@ class WSClient:
     def __init__(
         self,
         uri:           str,
-        on_datos:      Callable[[dict], None],
         on_estado:     Callable[[str], None],
-        reconectar_s:  float = 0.5,
+        reconectar_s:  float = config.RECONEXION_AUTOMATICA_S,
     ):
+        self._ws = None
         self.uri          = uri
-        self._on_datos    = on_datos
         self._on_estado   = on_estado
         self._reconectar  = reconectar_s
 
-        self._cola_tx: queue.Queue = queue.Queue()   # mensajes pendientes de envío a ESP32
-        self._cola_rx: queue.Queue = queue.Queue()   # mensajes recibidos pendientes de envío a App
+        self._cola_envio: queue.Queue = queue.Queue()   # mensajes pendientes de envío a ESP32
+        self._cola_recibidos: queue.Queue = queue.Queue()   # mensajes recibidos pendientes de envío a App
         self._loop:    Optional[asyncio.AbstractEventLoop] = None
         self._hilo:    Optional[threading.Thread]          = None
+        self._tarea_principal: Optional[asyncio.Task]      = None #para guardar la tarea asíncrona que correrá en el bucle de 
+                                                                    #eventos de conexión y poder cancelarlo cunado se quiera
         self._activo   = False
         self.conectado = False
 
@@ -89,10 +90,32 @@ class WSClient:
         logger.info(f"WSClient iniciado → {self.uri}")
 
     def detener(self):
-        """Para la conexión y el hilo de fondo."""
+        """Para la conexión y el hilo de fondo.
+
+        Cancela activamente la tarea en curso (esté conectada, intentando conectar
+        o esperando entre reintentos) y espera a que el hilo de fondo termine antes
+        de devolver el control. Sin esto, un iniciar() llamado justo después (p.ej.
+        al reconectar con una URI encontrada por mDNS) podía arrancar un segundo
+        hilo/event-loop mientras el anterior seguía vivo —atascado en un intento de
+        conexión a una URI inalcanzable, que puede tardar bastante en fallar por sí
+        solo—, dejando dos bucles de reconexión compitiendo por los mismos atributos
+        (_ws, _loop, conectado) con URIs distintas.
+        """
         self._activo = False
-        if self._loop:
-            self._loop.call_soon_threadsafe(self._loop.stop)
+        self.conectado = False
+        if self._loop and self._loop.is_running():
+            if self._ws:
+                asyncio.run_coroutine_threadsafe(self._ws.close(), self._loop)
+            if self._tarea_principal and not self._tarea_principal.done():
+                # cancel() debe programarse desde dentro del propio loop (call_soon_threadsafe),
+                # ya que los objetos de asyncio no son seguros de tocar desde otro hilo. Esto
+                # interrumpe de inmediato cualquier await en curso, incluido uno bloqueado
+                # dentro de websockets.connect(), sin esperar a que falle por su cuenta.
+                self._loop.call_soon_threadsafe(self._tarea_principal.cancel)
+        if self._hilo and self._hilo.is_alive():
+            self._hilo.join(timeout=config.TIMEOUT_CIERRE_HILO_S)
+            if self._hilo.is_alive():
+                logger.warning("El hilo de WSClient no terminó a tiempo al detener; puede quedar una reconexión en curso con la URI anterior.")
         logger.info("WSClient detenido.")
 
     def enviar(self, datos: dict):
@@ -100,15 +123,24 @@ class WSClient:
         Encola un mensaje para enviarlo al ESP32 / simulador.
         Seguro para llamar desde el hilo principal de Tkinter.
         """
-        self._cola_tx.put_nowait(json.dumps(datos))
+        self._cola_envio.put_nowait(json.dumps(datos))
 
     # ── Internos ──────────────────────────────────────────────
 
     def _ejecutar_loop(self):
         self._loop = asyncio.new_event_loop()
         asyncio.set_event_loop(self._loop)
-        self._loop.run_until_complete(self._ciclo_conexion())
-        self._loop.close()
+        self._tarea_principal = self._loop.create_task(self._ciclo_conexion())
+        try:
+            self._loop.run_until_complete(self._tarea_principal)
+        except asyncio.CancelledError:
+            pass
+        #se procede a la limpieza en caso de que el hilo esté a punto de morir
+        finally:
+            #se realiza la limpieza de la tarea principal realizada
+            self._tarea_principal = None
+            #se cierra el bucle ejecutado para la conexión del cliente websocket con el servidor liberando recursos
+            self._loop.close()
 
     async def _ciclo_conexion(self):
         """Intenta conectar y reconectar indefinidamente."""
@@ -116,10 +148,12 @@ class WSClient:
         while self._activo:
             self._on_estado("conectando")
             try:
-                async with websockets.connect(self.uri, ping_interval=20 , ping_timeout=15) as ws:
+                async with websockets.connect(self.uri, ping_interval=config.PING_INTERVAL_S, ping_timeout=config.PING_TIMEOUT_S, open_timeout=config.OPEN_TIMEOUT_S) as ws:
+                    self._ws = ws
                     self.conectado = True
                     self._on_estado("conectado")
                     logger.info(f"Conectado a {self.uri}")
+
 
                     # Dos corutinas en paralelo: recibir y enviar
                     await asyncio.gather(
@@ -131,6 +165,9 @@ class WSClient:
                 logger.warning(f"Sin conexión ({e}). Reintentando en {self._reconectar} s…")
                 self.conectado = False
                 self._on_estado("desconectado")
+
+            finally:
+                self._ws = None
 
             if self._activo:
                 await asyncio.sleep(self._reconectar)
@@ -149,12 +186,9 @@ class WSClient:
         async for mensaje in ws:
             try:
                 datos = json.loads(mensaje)
-                if "timestamp" in datos:
-                    #se incluye el cálculo de la latencia
-                    latencia_ms = (time.time() - datos["timestamp"]) * 1000
-                    datos["latencia"] = round(latencia_ms,1)
-                # No llamar _on_datos directamente — meter en cola
-                self._cola_rx.put_nowait(datos)
+                datos["latencia"] = await self.calcular_latencia(ws)
+                # Mete en cola los datos recibidos para que el hilo principal los procese
+                self._cola_recibidos.put_nowait(datos)
             except json.JSONDecodeError as e:
                 logger.warning(f"Mensaje no parseable: {e}")
 
@@ -162,12 +196,19 @@ class WSClient:
         """Drena la cola de salida y envía mensajes al servidor."""
         while True:
             # Espera no bloqueante de mensajes en la cola
-            await asyncio.sleep(0.05)
-            while not self._cola_tx.empty():
+            await asyncio.sleep(config.INTERVALO_SONDEO_COLA_ENVIO_S)
+            while not self._cola_envio.empty():
                 try:
-                    msg = self._cola_tx.get_nowait()
+                    msg = self._cola_envio.get_nowait()
                     await ws.send(msg)
                 except websockets.ConnectionClosed:
                     return
                 except Exception as e:
                     logger.warning(f"Error enviando: {e}")
+
+    async def calcular_latencia(self, ws):
+            tiempo_ping = time.perf_counter()
+            espera_pong = await ws.ping()
+            await espera_pong
+            tiempo_pong = time.perf_counter()
+            return round((tiempo_pong - tiempo_ping)*1000,1)
